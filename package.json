@@ -1,5 +1,5 @@
 {
-  "name": "authzed-node",
+  "name": "@authzed/authzed-node",
   "version": "0.0.1",
   "description": "authzed client for nodejs",
   "main": "index.js",
@@ -7,7 +7,8 @@
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
-    "test": "jasmine --config=jasmine.json"
+    "test": "./scripts/run-and-test.sh",
+    "only-run-tests": "jasmine --config=jasmine.json",
     "buf": "./buf.gen.yaml"
   },
   "dependencies": {
