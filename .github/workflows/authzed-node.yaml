@@ -1,0 +1,50 @@
+name: authzed-node CI
+on:
+  pull_request:
+    branches:
+    - '*'
+    paths:
+    - src/**
+    - .github/workflows/authzed-node.yaml
+  push:
+    branches:
+    - master
+    paths:
+    - src/**
+    - .github/workflows/authzed-node.yaml
+  release:
+    types: [published]
+jobs:
+  test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: "authzed/action-testserver@main"
+    - uses: bahmutov/npm-install@v1
+      with:
+        working-directory: ./
+    - name: Run Yarn lint
+      run: CI=true yarn lint
+      working-directory: ./
+    - name: Run Yarn tests
+      run: CI=true yarn only-run-tests
+      working-directory: ./
+  publish-npm:
+    name: Publish to NPM
+    needs:
+    - test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - run: npm install
+      - run: npm test
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: ${{ github.ref }}
+          access: public
