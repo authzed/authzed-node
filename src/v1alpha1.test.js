@@ -1,5 +1,4 @@
 const authzed = require('./v1alpha1.js');
-const grpc = require('@grpc/grpc-js');
 
 describe("a write", () => {
     it("should succeed", (done) => {

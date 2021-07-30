@@ -16,7 +16,7 @@ function Client(token, endpoint = util.authzedEndpoint, insecure = false) {
   this.acl = new aclsvc.ACLServiceClient(endpoint, creds);
   this.ns = new nssvc.NamespaceServiceClient(endpoint, creds);
   this.watch = new watchsvc.WatchServiceClient(endpoint, creds);
-};
+}
 
 module.exports = {
   Client: Client,

@@ -7,7 +7,7 @@ const util = require('./util')
 function Client(token, endpoint = util.authzedEndpoint, insecure = false) {
     const creds = util.createClientCreds(token, insecure);
     this.schema = new schemasvc.SchemaServiceClient(endpoint, creds);
-};
+}
 
 module.exports = {
     Client: Client,

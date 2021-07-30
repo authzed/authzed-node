@@ -9,13 +9,15 @@
   "scripts": {
     "test": "./scripts/run-and-test.sh",
     "only-run-tests": "jasmine --config=jasmine.json",
-    "buf": "./buf.gen.yaml"
+    "buf": "./buf.gen.yaml",
+    "lint": "./node_modules/.bin/eslint src"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.2.8",
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
+    "eslint": "^7.31.0",
     "grpc-tools": "^1.10.0",
     "jasmine": "^3.6.4"
   }

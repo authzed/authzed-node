@@ -1,6 +1,5 @@
 const authzedv0 = require('./v0.js');
 const authzedv1 = require('./v1alpha1.js');
-const grpc = require('@grpc/grpc-js');
 
 describe("a check following a write of schema and relationships", () => {
     it("should succeed", (done) => {
