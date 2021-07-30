@@ -1,0 +1,3 @@
+# generated protobufs
+*_pb.js -diff linguist-generated=true
+*Pb.ts -diff linguist-generated=true
