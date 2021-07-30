@@ -8,6 +8,7 @@
   "private": false,
   "scripts": {
     "test": "jasmine --config=jasmine.json"
+    "buf": "./buf.gen.yaml"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.2.8",
