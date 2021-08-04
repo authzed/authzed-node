@@ -1,5 +1,6 @@
 {
   "name": "@authzed/authzed-node",
+  "author": "authzed",
   "version": "0.0.1",
   "description": "authzed client for nodejs",
   "main": "index.js",
