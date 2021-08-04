@@ -41,3 +41,46 @@ If you're interested in examples of a specific version of the API, they can be f
 
 [Protecting Your First App]: https://docs.authzed.com/guides/first-app
 [examples directory]: /examples
+
+### Basic Usage
+
+Instantiate a client with your token (replace `yourtokenhere` with your API token):
+
+```js
+const authzed = require('@authzed/authzed-node/v0');
+const client = new authzed.Client("yourtokenhere");
+```
+
+Create the API request (replace the namespaces, object IDs and relations with those from your [Permissions System]):
+
+```js
+const resourceAndPermission = new authzed.ObjectAndRelation();
+resourceAndPermission.setNamespace("yourtenant/someobjectdef");
+resourceAndPermission.setObjectId("someobjectid");
+resourceAndPermission.setRelation("somepermission");
+
+const subjectReference = new authzed.ObjectAndRelation();
+subjectReference.setNamespace("yourtenant/user");
+subjectReference.setObjectId("someuser");
+subjectReference.setRelation("...");
+
+const user = new authzed.User();
+user.setUserset(subjectReference);
+
+const checkRequest = new authzed.CheckRequest();
+request.setTestUserset(resourceAndPermission);
+request.setUser(user);
+```
+
+Make the API request and output the results:
+
+```js
+client.acl.check(checkRequest, function (err, response) {
+    console.log(response);
+    console.log(err);
+});
+```
+
+See [Full Examples](/examples/) for examples of other API calls.
+
+[Permissions System]: https://docs.authzed.com/concepts/terminology#permissions-system
