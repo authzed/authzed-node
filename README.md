@@ -55,7 +55,7 @@ You will have to provide a your own API Token from the [Authzed dashboard] in pl
 ```js
 const authzed = require('@authzed/authzed-node/v0');
 
-const client = new authzed.Client("t_your_token_here_1234567deadbeef");
+const client = authzed.NewClient("t_your_token_here_1234567deadbeef");
 ```
 
 ### Performing an API call
@@ -83,7 +83,7 @@ request.setUser(emilia);
 request.setTestUserset(readFirstPost);
 
 // Is Emilia in the set of users that can read post #1?
-client.acl.check(checkRequest, function (err, response) {
+client.check(checkRequest, function (err, response) {
     console.log(response);
     console.log(err);
 });

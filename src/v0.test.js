@@ -15,8 +15,8 @@ describe("a check with an unknown namespace", () => {
     request.setTestUserset(testuserset);
     request.setUser(user);
 
-    const client = new authzed.Client("sometoken", "localhost:50051", true);
-    client.acl.check(request, function (err, response) {
+    const client = authzed.NewClient("sometoken", "localhost:50051", true);
+    client.check(request, function (err, response) {
       expect(response).toBe(undefined);
       expect(err.code).toBe(grpc.status.FAILED_PRECONDITION);
       done();

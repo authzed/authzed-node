@@ -1,6 +1,6 @@
 const authzed = require('@authzed/authzed-node/v1alpha1');
 
-const client = new authzed.Client("mytokenhere");
+const client = authzed.NewClient("mytokenhere");
 
 const writeSchemaRequest = new authzed.WriteSchemaRequest();
 writeSchemaRequest.setSchema(`
@@ -13,6 +13,6 @@ writeSchemaRequest.setSchema(`
 `
 );
 
-client.schema.writeSchema(writeSchemaRequest, function (err, response) {
+client.writeSchema(writeSchemaRequest, function (err, response) {
     // Continue onward
 });

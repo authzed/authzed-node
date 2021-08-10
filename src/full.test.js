@@ -4,7 +4,7 @@ const authzedv1 = require('./v1alpha1.js');
 describe("a check following a write of schema and relationships", () => {
     it("should succeed", (done) => {
         // Write the schema.
-        const v1client = new authzedv1.Client("sometoken", "localhost:50051", true);
+        const v1client = authzedv1.NewClient("sometoken", "localhost:50051", true);
 
         const writeSchemaRequest = new authzedv1.WriteSchemaRequest();
         writeSchemaRequest.setSchema(`
@@ -17,11 +17,11 @@ definition test/resource {
 `
         );
 
-        v1client.schema.writeSchema(writeSchemaRequest, function (err, response) {
+        v1client.writeSchema(writeSchemaRequest, function (err, response) {
             expect(err).toBe(null);
             expect(response.getObjectDefinitionsNamesList()).toEqual(['test/user', 'test/resource']);
 
-            const v0client = new authzedv0.Client("sometoken", "localhost:50051", true);
+            const v0client = authzedv0.NewClient("sometoken", "localhost:50051", true);
 
             // Create the relationship between the resource and the user.
             const resourceViewerRelation = new authzedv0.ObjectAndRelation();
@@ -50,7 +50,7 @@ definition test/resource {
             const writeRequest = new authzedv0.WriteRequest();
             writeRequest.addUpdates(update);
 
-            v0client.acl.write(writeRequest, function (err, response) {
+            v0client.write(writeRequest, function (err, response) {
                 expect(err).toBe(null);
                 expect(response).toBeTruthy();
                 const revision = response.getRevision()
@@ -66,7 +66,7 @@ definition test/resource {
                 checkRequest.setUser(user);
                 checkRequest.setAtRevision(revision);
 
-                v0client.acl.check(checkRequest, function (err, response) {
+                v0client.check(checkRequest, function (err, response) {
                     expect(err).toBe(null);
                     expect(response.getMembership()).toBe(authzedv0.CheckResponse.Membership.MEMBER);
                     done();

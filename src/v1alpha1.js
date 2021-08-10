@@ -4,12 +4,13 @@ const schemasvc = require('./authzedapi/authzed/api/v1alpha1/schema_grpc_pb')
 const schemapb = require('./authzedapi/authzed/api/v1alpha1/schema_pb')
 const util = require('./util')
 
-function Client(token, endpoint = util.authzedEndpoint, insecure = false) {
+function NewClient(token, endpoint = util.authzedEndpoint, insecure = false) {
     const creds = util.createClientCreds(token, insecure);
-    this.schema = new schemasvc.SchemaServiceClient(endpoint, creds);
+    const schema = new schemasvc.SchemaServiceClient(endpoint, creds);
+    return schema;
 }
 
 module.exports = {
-    Client: Client,
+    NewClient: NewClient,
     ...schemapb,
 };
