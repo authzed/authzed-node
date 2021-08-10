@@ -1,5 +1,5 @@
 const authzed = require('@authzed/authzed-node/v0');
-const client = new authzed.Client("mytokenhere");
+const client = authzed.NewClient("mytokenhere");
 
 // Create an object that will be protected by Authzed.
 const testuserset = new authzed.ObjectAndRelation();
@@ -19,7 +19,7 @@ const writeRequest = new authzed.WriteRequest();
 request.setTestUserset(testuserset);
 request.setUser(user);
 
-client.acl.write(writeRequest, function (err, response) {
+client.write(writeRequest, function (err, response) {
     // Save the zookie off somewhere for the write.
 });
 
@@ -28,7 +28,7 @@ const checkRequest = new authzed.CheckRequest();
 request.setTestUserset(testuserset);
 request.setUser(user);
 
-client.acl.check(checkRequest, function (err, response) {
+client.check(checkRequest, function (err, response) {
     console.log(response);
     console.log(err);
 });
