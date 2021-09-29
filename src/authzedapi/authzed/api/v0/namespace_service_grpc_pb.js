@@ -7,6 +7,28 @@ var validate_validate_pb = require('../../../validate/validate_pb.js');
 var authzed_api_v0_core_pb = require('../../../authzed/api/v0/core_pb.js');
 var authzed_api_v0_namespace_pb = require('../../../authzed/api/v0/namespace_pb.js');
 
+function serialize_authzed_api_v0_DeleteConfigsRequest(arg) {
+  if (!(arg instanceof authzed_api_v0_namespace_service_pb.DeleteConfigsRequest)) {
+    throw new Error('Expected argument of type authzed.api.v0.DeleteConfigsRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_authzed_api_v0_DeleteConfigsRequest(buffer_arg) {
+  return authzed_api_v0_namespace_service_pb.DeleteConfigsRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_authzed_api_v0_DeleteConfigsResponse(arg) {
+  if (!(arg instanceof authzed_api_v0_namespace_service_pb.DeleteConfigsResponse)) {
+    throw new Error('Expected argument of type authzed.api.v0.DeleteConfigsResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_authzed_api_v0_DeleteConfigsResponse(buffer_arg) {
+  return authzed_api_v0_namespace_service_pb.DeleteConfigsResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_authzed_api_v0_ReadConfigRequest(arg) {
   if (!(arg instanceof authzed_api_v0_namespace_service_pb.ReadConfigRequest)) {
     throw new Error('Expected argument of type authzed.api.v0.ReadConfigRequest');
@@ -74,6 +96,17 @@ var NamespaceServiceService = exports.NamespaceServiceService = {
     requestDeserialize: deserialize_authzed_api_v0_WriteConfigRequest,
     responseSerialize: serialize_authzed_api_v0_WriteConfigResponse,
     responseDeserialize: deserialize_authzed_api_v0_WriteConfigResponse,
+  },
+  deleteConfigs: {
+    path: '/authzed.api.v0.NamespaceService/DeleteConfigs',
+    requestStream: false,
+    responseStream: false,
+    requestType: authzed_api_v0_namespace_service_pb.DeleteConfigsRequest,
+    responseType: authzed_api_v0_namespace_service_pb.DeleteConfigsResponse,
+    requestSerialize: serialize_authzed_api_v0_DeleteConfigsRequest,
+    requestDeserialize: deserialize_authzed_api_v0_DeleteConfigsRequest,
+    responseSerialize: serialize_authzed_api_v0_DeleteConfigsResponse,
+    responseDeserialize: deserialize_authzed_api_v0_DeleteConfigsResponse,
   },
 };
 

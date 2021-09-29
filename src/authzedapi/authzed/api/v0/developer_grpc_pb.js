@@ -28,6 +28,28 @@ function deserialize_authzed_api_v0_EditCheckResponse(buffer_arg) {
   return authzed_api_v0_developer_pb.EditCheckResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_authzed_api_v0_FormatSchemaRequest(arg) {
+  if (!(arg instanceof authzed_api_v0_developer_pb.FormatSchemaRequest)) {
+    throw new Error('Expected argument of type authzed.api.v0.FormatSchemaRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_authzed_api_v0_FormatSchemaRequest(buffer_arg) {
+  return authzed_api_v0_developer_pb.FormatSchemaRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_authzed_api_v0_FormatSchemaResponse(arg) {
+  if (!(arg instanceof authzed_api_v0_developer_pb.FormatSchemaResponse)) {
+    throw new Error('Expected argument of type authzed.api.v0.FormatSchemaResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_authzed_api_v0_FormatSchemaResponse(buffer_arg) {
+  return authzed_api_v0_developer_pb.FormatSchemaResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_authzed_api_v0_LookupShareRequest(arg) {
   if (!(arg instanceof authzed_api_v0_developer_pb.LookupShareRequest)) {
     throw new Error('Expected argument of type authzed.api.v0.LookupShareRequest');
@@ -172,6 +194,17 @@ var DeveloperServiceService = exports.DeveloperServiceService = {
     requestDeserialize: deserialize_authzed_api_v0_UpgradeSchemaRequest,
     responseSerialize: serialize_authzed_api_v0_UpgradeSchemaResponse,
     responseDeserialize: deserialize_authzed_api_v0_UpgradeSchemaResponse,
+  },
+  formatSchema: {
+    path: '/authzed.api.v0.DeveloperService/FormatSchema',
+    requestStream: false,
+    responseStream: false,
+    requestType: authzed_api_v0_developer_pb.FormatSchemaRequest,
+    responseType: authzed_api_v0_developer_pb.FormatSchemaResponse,
+    requestSerialize: serialize_authzed_api_v0_FormatSchemaRequest,
+    requestDeserialize: deserialize_authzed_api_v0_FormatSchemaRequest,
+    responseSerialize: serialize_authzed_api_v0_FormatSchemaResponse,
+    responseDeserialize: deserialize_authzed_api_v0_FormatSchemaResponse,
   },
 };
 

@@ -1,8 +1,6 @@
-#!/usr/bin/env -S buf generate buf.build/authzed/api:b7e7cd9ac92b44638de0d01e03db6ec2 --template
-# To regenerate:
-#   npm install -g grpc-tools
-#   ./buf.gen.yaml
-version: "v1beta1"
+#!/usr/bin/env -S buf generate buf.build/authzed/api:7a18d413329a4f4fb0c4237afb640e8e --template
+---
+version: "v1"
 plugins:
   - name: "js"
     out: "src/authzedapi"
