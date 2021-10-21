@@ -1,5 +1,5 @@
-const authzed = require('./v0.js');
-const grpc = require('@grpc/grpc-js');
+import authzed from "./v0";
+import grpc from "@grpc/grpc-js";
 
 describe("a check with an unknown namespace", () => {
   it("should raise a failed precondition", (done) => {
@@ -22,4 +22,4 @@ describe("a check with an unknown namespace", () => {
       done();
     });
   });
-})
+});

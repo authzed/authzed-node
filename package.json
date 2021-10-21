@@ -3,7 +3,8 @@
   "author": "authzed",
   "version": "0.1.0",
   "description": "authzed client for nodejs",
-  "main": "index.js",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "repository": "https://github.com/authzed/authzed-node",
   "license": "Apache-2.0",
   "private": false,
@@ -11,15 +12,19 @@
     "test": "./scripts/run-and-test.sh",
     "only-run-tests": "jasmine --config=jasmine.json",
     "buf": "./buf.gen.yaml",
-    "lint": "./node_modules/.bin/eslint src"
+    "lint": "./node_modules/.bin/eslint src",
+    "build": "tsc",
+    "postbuild": "copyfiles -u 1 \"src/**/*.d.ts\" dist/src"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.2.8",
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
+    "copyfiles": "^2.4.1",
     "eslint": "^7.31.0",
     "grpc-tools": "^1.10.0",
-    "jasmine": "^3.6.4"
+    "jasmine": "^3.6.4",
+    "typescript": "^4.4.4"
   }
 }
