@@ -14,7 +14,8 @@
     "buf": "./buf.gen.yaml",
     "lint": "./node_modules/.bin/eslint src",
     "build": "tsc",
-    "postbuild": "copyfiles -u 1 \"src/**/*.d.ts\" dist/src"
+    "postbuild": "copyfiles -u 1 \"src/**/*.d.ts\" dist/src",
+    "prepublish": "yarn build"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.2.8",
