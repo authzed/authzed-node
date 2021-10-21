@@ -4,6 +4,12 @@ import * as aclsvc from "./authzedapi/authzed/api/v0/acl_service_grpc_pb";
 import * as nssvc from "./authzedapi/authzed/api/v0/namespace_service_grpc_pb";
 import * as watchsvc from "./authzedapi/authzed/api/v0/watch_service_grpc_pb";
 
+import * as aclpb from "./authzedapi/authzed/api/v0/acl_service_pb";
+import * as corepb from "./authzedapi/authzed/api/v0/core_pb";
+import * as nsdefpb from "./authzedapi/authzed/api/v0/namespace_service_pb";
+import * as nspb from "./authzedapi/authzed/api/v0/namespace_pb";
+import * as watchpb from "./authzedapi/authzed/api/v0/watch_service_pb";
+
 import * as util from "./util";
 
 export function NewClient(
@@ -43,16 +49,15 @@ export * from "./authzedapi/authzed/api/v0/namespace_service_grpc_pb";
 export * from "./authzedapi/authzed/api/v0/watch_service_grpc_pb";
 export * from "./authzedapi/authzed/api/v0/acl_service_pb";
 export * from "./authzedapi/authzed/api/v0/core_pb";
-// export { core_pb };
 export * from "./authzedapi/authzed/api/v0/namespace_pb";
 export * from "./authzedapi/authzed/api/v0/namespace_service_pb";
 export * from "./authzedapi/authzed/api/v0/watch_service_pb";
 
-// export default {
-//   NewClient: NewClient,
-//   ...aclpb,
-//   ...corepb,
-//   ...nsdefpb,
-//   ...nspb,
-//   ...watchpb,
-// };
+export default {
+  NewClient: NewClient,
+  ...aclpb,
+  ...corepb,
+  ...nsdefpb,
+  ...nspb,
+  ...watchpb,
+};

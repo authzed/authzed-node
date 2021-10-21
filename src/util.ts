@@ -1,4 +1,4 @@
-import grpc from "@grpc/grpc-js";
+import * as grpc from "@grpc/grpc-js";
 
 function createClientCreds(token: string, insecure = false) {
   const metadata = new grpc.Metadata();

@@ -14,7 +14,9 @@ function NewClient(
   return schema;
 }
 
+export * from "./authzedapi/authzed/api/v1alpha1/schema_pb";
 export { NewClient };
 export default {
+  NewClient,
   ...schemapb,
 };

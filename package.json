@@ -10,7 +10,7 @@
   "private": false,
   "scripts": {
     "test": "./scripts/run-and-test.sh",
-    "only-run-tests": "jasmine --config=jasmine.json",
+    "only-run-tests": "ts-node node_modules/jasmine/bin/jasmine --config=jasmine.json",
     "buf": "./buf.gen.yaml",
     "lint": "./node_modules/.bin/eslint src",
     "build": "tsc",
@@ -27,6 +27,7 @@
     "eslint": "^7.31.0",
     "grpc-tools": "^1.10.0",
     "jasmine": "^3.6.4",
+    "ts-node": "^10.3.0",
     "typescript": "^4.4.4"
   }
 }
