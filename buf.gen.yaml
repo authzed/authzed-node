@@ -1,13 +1,14 @@
-#!/usr/bin/env -S buf generate buf.build/authzed/api:b7e7cd9ac92b44638de0d01e03db6ec2 --template
+#!/usr/bin/env -S buf generate buf.build/authzed/api:7a18d413329a4f4fb0c4237afb640e8e --template
 # To regenerate:
 #   npm install -g grpc-tools
 #   ./buf.gen.yaml
 version: "v1beta1"
 plugins:
-  - name: "js"
+  - name: "ts"
     out: "src/authzedapi"
-    opt: "import_style=commonjs"
-  - name: "grpc_tools_node_protoc_plugin"
-    out: "src/authzedapi"
-    opt: "grpc_js"
-    path: "grpc_tools_node_protoc_plugin"
+    opt: generate_dependencies,long_type_string,client_grpc1
+    path: ./node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts
+  # - name: "grpc_tools_node_protoc_plugin"
+  #   out: "grpc"
+  #   opt: "client_grpc1" #server_grpc1
+  #   path: "./node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts"

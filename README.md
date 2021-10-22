@@ -57,9 +57,9 @@ Everything required to connect and make API calls is located in a module respect
 You will have to provide a your own API Token from the [Authzed dashboard] in place of `t_your_token_here_1234567deadbeef` in the following example:
 
 ```js
-const authzed = require('@authzed/authzed-node/v0');
+import { v0 } from '@authzed/authzed-node';
 
-const client = authzed.NewClient("t_your_token_here_1234567deadbeef");
+const client = v0.NewClient('t_your_token_here_1234567deadbeef')
 ```
 
 ### Performing an API call
@@ -67,24 +67,35 @@ const client = authzed.NewClient("t_your_token_here_1234567deadbeef");
 Because of the verbosity of these types, we recommend writing your own functions/methods to create these types from your existing application's models.
 
 ```js
+import { v0 } from '@authzed/authzed-node';
+
+const client = v0.NewClient('token')
+
 // Create the user Emilia
-const emilia = new authzed.User();
-const subjectRef = new authzed.ObjectAndRelation();
-subjectReference.setNamespace("blog/user");
-subjectReference.setObjectId("emilia");
-subjectReference.setRelation("...");
-emilia.setUserset(subjectRef);
+const subjectRef = v0.ObjectAndRelation.create({
+    namespace: 'blog/user',
+    objectId: 'emilia',
+    relation: '...'
+})
+const emilia = v0.User.create({
+    userOneof: {
+      userset: subjectRef,
+      oneofKind: "userset",
+    };
+});
 
 // Create the permission "read the first post"
-const readFirstPost = new authzed.ObjectAndRelation();
-resourceAndPermission.setNamespace("blog/post");
-resourceAndPermission.setObjectId("1");
-resourceAndPermission.setRelation("read");
+const readFirstPost = v0.ObjectAndRelation.create({
+    namespace: 'blog/post',
+    objectId: '1',
+    relation: 'read'
+})
 
 // Create a request object
-const checkRequest = new authzed.CheckRequest();
-request.setUser(emilia);
-request.setTestUserset(readFirstPost);
+const checkRequest = v0.CheckRequest.create({
+    user: emilia,
+    testUserset: readFirstPost
+})
 
 // Is Emilia in the set of users that can read post #1?
 client.check(checkRequest, function (err, response) {

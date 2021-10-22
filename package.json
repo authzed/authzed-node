@@ -14,17 +14,18 @@
     "buf": "./buf.gen.yaml",
     "lint": "./node_modules/.bin/eslint src",
     "build": "tsc",
-    "postbuild": "copyfiles -u 1 \"src/**/*.d.ts\" dist/src",
     "prepublish": "yarn build"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.2.8",
+    "@types/jasmine": "^3.10.0",
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
+    "@protobuf-ts/plugin": "^2.0.7",
+    "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
-    "copyfiles": "^2.4.1",
     "eslint": "^7.31.0",
     "grpc-tools": "^1.10.0",
     "jasmine": "^3.6.4",

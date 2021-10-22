@@ -1,6 +1,9 @@
 import * as grpc from "@grpc/grpc-js";
 
-function createClientCreds(token: string, insecure = false) {
+function createClientCreds(
+  token: string,
+  insecure = false
+): grpc.ChannelCredentials {
   const metadata = new grpc.Metadata();
   metadata.set("authorization", "Bearer " + token);
 

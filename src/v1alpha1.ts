@@ -1,7 +1,6 @@
 "use strict";
 
-import schemasvc from "./authzedapi/authzed/api/v1alpha1/schema_grpc_pb";
-import schemapb from "./authzedapi/authzed/api/v1alpha1/schema_pb";
+import { SchemaServiceClient } from "./authzedapi/authzed/api/v1alpha1/schema.grpc-client";
 import util from "./util";
 
 function NewClient(
@@ -10,13 +9,13 @@ function NewClient(
   insecure = false
 ) {
   const creds = util.createClientCreds(token, insecure);
-  const schema = new schemasvc.SchemaServiceClient(endpoint, creds);
+  const schema = new SchemaServiceClient(endpoint, creds);
   return schema;
 }
 
-export * from "./authzedapi/authzed/api/v1alpha1/schema_pb";
+export * from "./authzedapi/authzed/api/v1alpha1/schema";
+
 export { NewClient };
 export default {
   NewClient,
-  ...schemapb,
 };
