@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 "use strict";
 
 import { ACLServiceClient } from "./authzedapi/authzed/api/v0/acl_service.grpc-client";

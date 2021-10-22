@@ -21,7 +21,7 @@ describe("a check with an unknown namespace", () => {
     const client = NewClient("sometoken", "localhost:50051", true);
     client.check(request, function (err, response) {
       expect(response).toBe(undefined);
-      expect(err!.code).toBe(grpc.status.FAILED_PRECONDITION);
+      expect(err?.code).toBe(grpc.status.FAILED_PRECONDITION);
       done();
     });
   });

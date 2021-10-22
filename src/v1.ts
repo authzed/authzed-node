@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 "use strict";
 
 import { PermissionsServiceClient } from "./authzedapi/authzed/api/v1/permission_service.grpc-client";
