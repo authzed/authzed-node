@@ -57,9 +57,9 @@ Everything required to connect and make API calls is located in a module respect
 You will have to provide a your own API Token from the [Authzed dashboard] in place of `t_your_token_here_1234567deadbeef` in the following example:
 
 ```js
-import { v0 } from '@authzed/authzed-node';
+import { v1 } from '@authzed/authzed-node';
 
-const client = v0.NewClient('t_your_token_here_1234567deadbeef')
+const client = v1.NewClient('t_your_token_here_1234567deadbeef')
 ```
 
 ### Performing an API call
@@ -67,38 +67,33 @@ const client = v0.NewClient('t_your_token_here_1234567deadbeef')
 Because of the verbosity of these types, we recommend writing your own functions/methods to create these types from your existing application's models.
 
 ```js
-import { v0 } from '@authzed/authzed-node';
+import { v1 } from '@authzed/authzed-node';
 
-const client = v0.NewClient('token')
+const client = v1.NewClient('token')
 
-// Create the user Emilia
-const subjectRef = v0.ObjectAndRelation.create({
-    namespace: 'blog/user',
-    objectId: 'emilia',
-    relation: '...'
-})
-const emilia = v0.User.create({
-    userOneof: {
-      userset: subjectRef,
-      oneofKind: "userset",
-    };
+// Create the relationship between the resource and the user.
+const firstPost = v1.ObjectReference.create({
+    objectType: "blog/post",
+    objectId: "1",
 });
 
-// Create the permission "read the first post"
-const readFirstPost = v0.ObjectAndRelation.create({
-    namespace: 'blog/post',
-    objectId: '1',
-    relation: 'read'
-})
+// Create the user reference.
+const emilia = v1.ObjectReference.create({
+    objectType: "blog/user",
+    objectId: "emilia",
+});
 
-// Create a request object
-const checkRequest = v0.CheckRequest.create({
-    user: emilia,
-    testUserset: readFirstPost
-})
+const subject = v1.SubjectReference.create({
+    object: userref,
+});
 
-// Is Emilia in the set of users that can read post #1?
-client.check(checkRequest, function (err, response) {
+const checkPermissionRequest = v1.CheckPermissionRequest.create({
+    resource: firstPost,
+    permission: "read",
+    subject,
+});
+
+client.checkPermission(checkPermissionRequest, (err, response) => {
     console.log(response);
     console.log(err);
 });
