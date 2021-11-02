@@ -14,6 +14,7 @@ This repository houses the NodeJS client library for Authzed.
 Developers create a schema that models their permissions requirements and use a client library, such as this one, to apply the schema to the database, insert data into the database, and query the data to efficiently check permissions in their applications.
 
 Supported client API versions:
+- [v1](https://docs.authzed.com/reference/api#authzedapiv1)
 - [v1alpha1](https://docs.authzed.com/reference/api#authzedapiv1alpha1)
 - [v0](https://docs.authzed.com/reference/api#authzedapiv0)
 
