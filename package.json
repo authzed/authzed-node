@@ -3,23 +3,33 @@
   "author": "authzed",
   "version": "0.1.0",
   "description": "authzed client for nodejs",
-  "main": "index.js",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "repository": "https://github.com/authzed/authzed-node",
   "license": "Apache-2.0",
   "private": false,
   "scripts": {
     "test": "./scripts/run-and-test.sh",
-    "only-run-tests": "jasmine --config=jasmine.json",
+    "only-run-tests": "ts-node node_modules/jasmine/bin/jasmine --config=jasmine.json",
     "buf": "./buf.gen.yaml",
-    "lint": "./node_modules/.bin/eslint src"
+    "lint": "./node_modules/.bin/eslint src",
+    "build": "tsc",
+    "prepublish": "yarn build"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.2.8",
+    "@types/jasmine": "^3.10.0",
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
+    "@protobuf-ts/plugin": "^2.0.7",
+    "@types/jest": "^27.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^7.31.0",
     "grpc-tools": "^1.10.0",
-    "jasmine": "^3.6.4"
+    "jasmine": "^3.6.4",
+    "ts-node": "^10.3.0",
+    "typescript": "^4.4.4"
   }
 }

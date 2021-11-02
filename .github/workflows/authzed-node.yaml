@@ -18,9 +18,12 @@ jobs:
   test:
     name: Lint and Test
     runs-on: ubuntu-latest
+    
     steps:
     - uses: actions/checkout@v2
-    - uses: "authzed/action-testserver@main"
+    - uses: "authzed/action-spicedb@v1"
+      with:
+        version: "latest"
     - uses: bahmutov/npm-install@v1
       with:
         working-directory: ./

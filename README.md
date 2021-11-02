@@ -14,6 +14,7 @@ This repository houses the NodeJS client library for Authzed.
 Developers create a schema that models their permissions requirements and use a client library, such as this one, to apply the schema to the database, insert data into the database, and query the data to efficiently check permissions in their applications.
 
 Supported client API versions:
+- [v1](https://docs.authzed.com/reference/api#authzedapiv1)
 - [v1alpha1](https://docs.authzed.com/reference/api#authzedapiv1alpha1)
 - [v0](https://docs.authzed.com/reference/api#authzedapiv0)
 
@@ -57,9 +58,9 @@ Everything required to connect and make API calls is located in a module respect
 You will have to provide a your own API Token from the [Authzed dashboard] in place of `t_your_token_here_1234567deadbeef` in the following example:
 
 ```js
-const authzed = require('@authzed/authzed-node/v0');
+import { v1 } from '@authzed/authzed-node';
 
-const client = authzed.NewClient("t_your_token_here_1234567deadbeef");
+const client = v1.NewClient('t_your_token_here_1234567deadbeef')
 ```
 
 ### Performing an API call
@@ -67,27 +68,33 @@ const client = authzed.NewClient("t_your_token_here_1234567deadbeef");
 Because of the verbosity of these types, we recommend writing your own functions/methods to create these types from your existing application's models.
 
 ```js
-// Create the user Emilia
-const emilia = new authzed.User();
-const subjectRef = new authzed.ObjectAndRelation();
-subjectReference.setNamespace("blog/user");
-subjectReference.setObjectId("emilia");
-subjectReference.setRelation("...");
-emilia.setUserset(subjectRef);
+import { v1 } from '@authzed/authzed-node';
 
-// Create the permission "read the first post"
-const readFirstPost = new authzed.ObjectAndRelation();
-resourceAndPermission.setNamespace("blog/post");
-resourceAndPermission.setObjectId("1");
-resourceAndPermission.setRelation("read");
+const client = v1.NewClient('token')
 
-// Create a request object
-const checkRequest = new authzed.CheckRequest();
-request.setUser(emilia);
-request.setTestUserset(readFirstPost);
+// Create the relationship between the resource and the user.
+const firstPost = v1.ObjectReference.create({
+    objectType: "blog/post",
+    objectId: "1",
+});
 
-// Is Emilia in the set of users that can read post #1?
-client.check(checkRequest, function (err, response) {
+// Create the user reference.
+const emilia = v1.ObjectReference.create({
+    objectType: "blog/user",
+    objectId: "emilia",
+});
+
+const subject = v1.SubjectReference.create({
+    object: userref,
+});
+
+const checkPermissionRequest = v1.CheckPermissionRequest.create({
+    resource: firstPost,
+    permission: "read",
+    subject,
+});
+
+client.checkPermission(checkPermissionRequest, (err, response) => {
     console.log(response);
     console.log(err);
 });
