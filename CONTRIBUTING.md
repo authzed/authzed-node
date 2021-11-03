@@ -114,3 +114,14 @@ You can regenerate the code by executing `buf.gen.yaml`:
 ```sh
 ./buf.gen.yaml
 ```
+
+### Creating a new release
+
+Releases are published to NPM using a GitHub action.
+
+To create a new release:
+1. Use the [yarn version] command to bump the package version.
+1. Create a new [release on GitHub] to initiate the release action.
+
+[yarn version]: https://yarnpkg.com/cli/version
+[release on GitHub]: https://github.com/authzed/authzed-node/releases
