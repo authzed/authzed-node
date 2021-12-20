@@ -42,6 +42,12 @@ export interface ReadSchemaResponse {
      * @generated from protobuf field: repeated string object_definitions = 1;
      */
     objectDefinitions: string[];
+    /**
+     * The computed revision of the returned object definitions.
+     *
+     * @generated from protobuf field: string computed_definitions_revision = 2;
+     */
+    computedDefinitionsRevision: string;
 }
 /**
  * WriteSchemaRequest is the required data used to "upsert" the Schema of a
@@ -57,6 +63,14 @@ export interface WriteSchemaRequest {
      * @generated from protobuf field: string schema = 1;
      */
     schema: string; // 256KiB
+    /**
+     * If specified, the existing revision of object definitions in the schema that must be present for
+     * the write to succeed. If the revision specified differs (i.e. the underlying schema has changed),
+     * the write call will fail with a FAILED_PRECONDITION error.
+     *
+     * @generated from protobuf field: string optional_definitions_revision_precondition = 2;
+     */
+    optionalDefinitionsRevisionPrecondition: string;
 }
 /**
  * WriteSchemaResponse is the resulting data after having written a Schema to
@@ -71,6 +85,12 @@ export interface WriteSchemaResponse {
      * @generated from protobuf field: repeated string object_definitions_names = 1;
      */
     objectDefinitionsNames: string[];
+    /**
+     * The computed revision of the written object definitions.
+     *
+     * @generated from protobuf field: string computed_definitions_revision = 2;
+     */
+    computedDefinitionsRevision: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ReadSchemaRequest$Type extends MessageType<ReadSchemaRequest> {
@@ -123,11 +143,12 @@ export const ReadSchemaRequest = new ReadSchemaRequest$Type();
 class ReadSchemaResponse$Type extends MessageType<ReadSchemaResponse> {
     constructor() {
         super("authzed.api.v1alpha1.ReadSchemaResponse", [
-            { no: 1, name: "object_definitions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "object_definitions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "computed_definitions_revision", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ReadSchemaResponse>): ReadSchemaResponse {
-        const message = { objectDefinitions: [] };
+        const message = { objectDefinitions: [], computedDefinitionsRevision: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadSchemaResponse>(this, message, value);
@@ -140,6 +161,9 @@ class ReadSchemaResponse$Type extends MessageType<ReadSchemaResponse> {
             switch (fieldNo) {
                 case /* repeated string object_definitions */ 1:
                     message.objectDefinitions.push(reader.string());
+                    break;
+                case /* string computed_definitions_revision */ 2:
+                    message.computedDefinitionsRevision = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -156,6 +180,9 @@ class ReadSchemaResponse$Type extends MessageType<ReadSchemaResponse> {
         /* repeated string object_definitions = 1; */
         for (let i = 0; i < message.objectDefinitions.length; i++)
             writer.tag(1, WireType.LengthDelimited).string(message.objectDefinitions[i]);
+        /* string computed_definitions_revision = 2; */
+        if (message.computedDefinitionsRevision !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.computedDefinitionsRevision);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -170,11 +197,12 @@ export const ReadSchemaResponse = new ReadSchemaResponse$Type();
 class WriteSchemaRequest$Type extends MessageType<WriteSchemaRequest> {
     constructor() {
         super("authzed.api.v1alpha1.WriteSchemaRequest", [
-            { no: 1, name: "schema", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "262144" } } } }
+            { no: 1, name: "schema", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "262144" } } } },
+            { no: 2, name: "optional_definitions_revision_precondition", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<WriteSchemaRequest>): WriteSchemaRequest {
-        const message = { schema: "" };
+        const message = { schema: "", optionalDefinitionsRevisionPrecondition: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WriteSchemaRequest>(this, message, value);
@@ -187,6 +215,9 @@ class WriteSchemaRequest$Type extends MessageType<WriteSchemaRequest> {
             switch (fieldNo) {
                 case /* string schema */ 1:
                     message.schema = reader.string();
+                    break;
+                case /* string optional_definitions_revision_precondition */ 2:
+                    message.optionalDefinitionsRevisionPrecondition = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -203,6 +234,9 @@ class WriteSchemaRequest$Type extends MessageType<WriteSchemaRequest> {
         /* string schema = 1; */
         if (message.schema !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.schema);
+        /* string optional_definitions_revision_precondition = 2; */
+        if (message.optionalDefinitionsRevisionPrecondition !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.optionalDefinitionsRevisionPrecondition);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -217,11 +251,12 @@ export const WriteSchemaRequest = new WriteSchemaRequest$Type();
 class WriteSchemaResponse$Type extends MessageType<WriteSchemaResponse> {
     constructor() {
         super("authzed.api.v1alpha1.WriteSchemaResponse", [
-            { no: 1, name: "object_definitions_names", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "object_definitions_names", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "computed_definitions_revision", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<WriteSchemaResponse>): WriteSchemaResponse {
-        const message = { objectDefinitionsNames: [] };
+        const message = { objectDefinitionsNames: [], computedDefinitionsRevision: "" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WriteSchemaResponse>(this, message, value);
@@ -234,6 +269,9 @@ class WriteSchemaResponse$Type extends MessageType<WriteSchemaResponse> {
             switch (fieldNo) {
                 case /* repeated string object_definitions_names */ 1:
                     message.objectDefinitionsNames.push(reader.string());
+                    break;
+                case /* string computed_definitions_revision */ 2:
+                    message.computedDefinitionsRevision = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -250,6 +288,9 @@ class WriteSchemaResponse$Type extends MessageType<WriteSchemaResponse> {
         /* repeated string object_definitions_names = 1; */
         for (let i = 0; i < message.objectDefinitionsNames.length; i++)
             writer.tag(1, WireType.LengthDelimited).string(message.objectDefinitionsNames[i]);
+        /* string computed_definitions_revision = 2; */
+        if (message.computedDefinitionsRevision !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.computedDefinitionsRevision);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -920,8 +920,8 @@ export const ExpandResponse = new ExpandResponse$Type();
 class LookupRequest$Type extends MessageType<LookupRequest> {
     constructor() {
         super("authzed.api.v0.LookupRequest", [
-            { no: 1, name: "object_relation", kind: "message", T: () => RelationReference },
-            { no: 2, name: "user", kind: "message", T: () => ObjectAndRelation },
+            { no: 1, name: "object_relation", kind: "message", T: () => RelationReference, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "user", kind: "message", T: () => ObjectAndRelation, options: { "validate.rules": { message: { required: true } } } },
             { no: 3, name: "at_revision", kind: "message", T: () => Zookie },
             { no: 4, name: "page_reference", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }

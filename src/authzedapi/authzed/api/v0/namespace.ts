@@ -11,7 +11,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { RelationReference } from "./core";
 import { Any } from "../../../google/protobuf/any";
 /**
  * @generated from protobuf message authzed.api.v0.Metadata
@@ -65,9 +64,41 @@ export interface Relation {
  */
 export interface TypeInformation {
     /**
-     * @generated from protobuf field: repeated authzed.api.v0.RelationReference allowed_direct_relations = 1;
+     * @generated from protobuf field: repeated authzed.api.v0.AllowedRelation allowed_direct_relations = 1;
      */
-    allowedDirectRelations: RelationReference[];
+    allowedDirectRelations: AllowedRelation[];
+}
+/**
+ * @generated from protobuf message authzed.api.v0.AllowedRelation
+ */
+export interface AllowedRelation {
+    /**
+     * @generated from protobuf field: string namespace = 1;
+     */
+    namespace: string;
+    /**
+     * @generated from protobuf oneof: relation_or_wildcard
+     */
+    relationOrWildcard: {
+        oneofKind: "relation";
+        /**
+         * @generated from protobuf field: string relation = 3;
+         */
+        relation: string;
+    } | {
+        oneofKind: "publicWildcard";
+        /**
+         * @generated from protobuf field: authzed.api.v0.AllowedRelation.PublicWildcard public_wildcard = 4;
+         */
+        publicWildcard: AllowedRelation_PublicWildcard;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message authzed.api.v0.AllowedRelation.PublicWildcard
+ */
+export interface AllowedRelation_PublicWildcard {
 }
 /**
  * @generated from protobuf message authzed.api.v0.UsersetRewrite
@@ -375,7 +406,7 @@ export const Relation = new Relation$Type();
 class TypeInformation$Type extends MessageType<TypeInformation> {
     constructor() {
         super("authzed.api.v0.TypeInformation", [
-            { no: 1, name: "allowed_direct_relations", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RelationReference }
+            { no: 1, name: "allowed_direct_relations", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => AllowedRelation }
         ]);
     }
     create(value?: PartialMessage<TypeInformation>): TypeInformation {
@@ -390,8 +421,8 @@ class TypeInformation$Type extends MessageType<TypeInformation> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated authzed.api.v0.RelationReference allowed_direct_relations */ 1:
-                    message.allowedDirectRelations.push(RelationReference.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated authzed.api.v0.AllowedRelation allowed_direct_relations */ 1:
+                    message.allowedDirectRelations.push(AllowedRelation.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -405,9 +436,9 @@ class TypeInformation$Type extends MessageType<TypeInformation> {
         return message;
     }
     internalBinaryWrite(message: TypeInformation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated authzed.api.v0.RelationReference allowed_direct_relations = 1; */
+        /* repeated authzed.api.v0.AllowedRelation allowed_direct_relations = 1; */
         for (let i = 0; i < message.allowedDirectRelations.length; i++)
-            RelationReference.internalBinaryWrite(message.allowedDirectRelations[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            AllowedRelation.internalBinaryWrite(message.allowedDirectRelations[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -418,6 +449,99 @@ class TypeInformation$Type extends MessageType<TypeInformation> {
  * @generated MessageType for protobuf message authzed.api.v0.TypeInformation
  */
 export const TypeInformation = new TypeInformation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AllowedRelation$Type extends MessageType<AllowedRelation> {
+    constructor() {
+        super("authzed.api.v0.AllowedRelation", [
+            { no: 1, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
+            { no: 3, name: "relation", kind: "scalar", oneof: "relationOrWildcard", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^(\\.\\.\\.|[a-z][a-z0-9_]{2,62}[a-z0-9])$" } } } },
+            { no: 4, name: "public_wildcard", kind: "message", oneof: "relationOrWildcard", T: () => AllowedRelation_PublicWildcard }
+        ]);
+    }
+    create(value?: PartialMessage<AllowedRelation>): AllowedRelation {
+        const message = { namespace: "", relationOrWildcard: { oneofKind: undefined } };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<AllowedRelation>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AllowedRelation): AllowedRelation {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string namespace */ 1:
+                    message.namespace = reader.string();
+                    break;
+                case /* string relation */ 3:
+                    message.relationOrWildcard = {
+                        oneofKind: "relation",
+                        relation: reader.string()
+                    };
+                    break;
+                case /* authzed.api.v0.AllowedRelation.PublicWildcard public_wildcard */ 4:
+                    message.relationOrWildcard = {
+                        oneofKind: "publicWildcard",
+                        publicWildcard: AllowedRelation_PublicWildcard.internalBinaryRead(reader, reader.uint32(), options, (message.relationOrWildcard as any).publicWildcard)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AllowedRelation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string namespace = 1; */
+        if (message.namespace !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.namespace);
+        /* string relation = 3; */
+        if (message.relationOrWildcard.oneofKind === "relation")
+            writer.tag(3, WireType.LengthDelimited).string(message.relationOrWildcard.relation);
+        /* authzed.api.v0.AllowedRelation.PublicWildcard public_wildcard = 4; */
+        if (message.relationOrWildcard.oneofKind === "publicWildcard")
+            AllowedRelation_PublicWildcard.internalBinaryWrite(message.relationOrWildcard.publicWildcard, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v0.AllowedRelation
+ */
+export const AllowedRelation = new AllowedRelation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AllowedRelation_PublicWildcard$Type extends MessageType<AllowedRelation_PublicWildcard> {
+    constructor() {
+        super("authzed.api.v0.AllowedRelation.PublicWildcard", []);
+    }
+    create(value?: PartialMessage<AllowedRelation_PublicWildcard>): AllowedRelation_PublicWildcard {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<AllowedRelation_PublicWildcard>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AllowedRelation_PublicWildcard): AllowedRelation_PublicWildcard {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: AllowedRelation_PublicWildcard, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v0.AllowedRelation.PublicWildcard
+ */
+export const AllowedRelation_PublicWildcard = new AllowedRelation_PublicWildcard$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UsersetRewrite$Type extends MessageType<UsersetRewrite> {
     constructor() {
