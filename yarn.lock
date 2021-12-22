@@ -136,10 +136,22 @@
   dependencies:
     "@protobuf-ts/runtime" "^2.0.7"
 
+"@protobuf-ts/runtime-rpc@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/runtime-rpc/-/runtime-rpc-2.1.0.tgz#928b1438e1ece017b9d6a5166d96ffebb7588760"
+  integrity sha512-i/q2sV2s3quJ0I+WY5mXKHiiabvkggOuyb+m0sDqN1MQXcJ/S9mZo/KZ0Dc5RcH4SFhg7NiFzsw6O1xOvG7GrQ==
+  dependencies:
+    "@protobuf-ts/runtime" "^2.1.0"
+
 "@protobuf-ts/runtime@^2.0.7":
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@protobuf-ts/runtime/-/runtime-2.0.7.tgz#a1f43407df4ad32b0b35838c19efae4253eb6f3f"
   integrity sha512-jT8FYEX7NkAzxZXVjshIhtCV/ReuZm/3sCH0GWnaa8woy9VG+He0N+dpj2svaJbkdUThSxJE3zwmJcH0/3vEsw==
+
+"@protobuf-ts/runtime@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@protobuf-ts/runtime/-/runtime-2.1.0.tgz#3b75084ccffbb02661ab1e6752ec79ec4be85822"
+  integrity sha512-HZwkgJW9SGiE9+0lWKr1X997tmG01/40j+hr9yBVk+hTQcm7Hsf77XhMNtsDjWUOcspG6GBXu8o3g4i3kD5/zQ==
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
