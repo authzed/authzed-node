@@ -579,7 +579,7 @@ class SubjectFilter$Type extends MessageType<SubjectFilter> {
     constructor() {
         super("authzed.api.v1.SubjectFilter", [
             { no: 1, name: "subject_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
-            { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})?$" } } } },
+            { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})|\\*)?$" } } } },
             { no: 3, name: "optional_relation", kind: "message", T: () => SubjectFilter_RelationFilter }
         ]);
     }
@@ -1409,10 +1409,10 @@ export const LookupResourcesResponse = new LookupResourcesResponse$Type();
  * @generated ServiceType for protobuf service authzed.api.v1.PermissionsService
  */
 export const PermissionsService = new ServiceType("authzed.api.v1.PermissionsService", [
-    { name: "ReadRelationships", serverStreaming: true, options: {}, I: ReadRelationshipsRequest, O: ReadRelationshipsResponse },
-    { name: "WriteRelationships", options: {}, I: WriteRelationshipsRequest, O: WriteRelationshipsResponse },
-    { name: "DeleteRelationships", options: {}, I: DeleteRelationshipsRequest, O: DeleteRelationshipsResponse },
-    { name: "CheckPermission", options: {}, I: CheckPermissionRequest, O: CheckPermissionResponse },
-    { name: "ExpandPermissionTree", options: {}, I: ExpandPermissionTreeRequest, O: ExpandPermissionTreeResponse },
-    { name: "LookupResources", serverStreaming: true, options: {}, I: LookupResourcesRequest, O: LookupResourcesResponse }
+    { name: "ReadRelationships", serverStreaming: true, options: { "google.api.http": { body: "*", post: "/v1/relationships/read" } }, I: ReadRelationshipsRequest, O: ReadRelationshipsResponse },
+    { name: "WriteRelationships", options: { "google.api.http": { body: "*", post: "/v1/relationships/write" } }, I: WriteRelationshipsRequest, O: WriteRelationshipsResponse },
+    { name: "DeleteRelationships", options: { "google.api.http": { body: "*", post: "/v1/relationships/delete" } }, I: DeleteRelationshipsRequest, O: DeleteRelationshipsResponse },
+    { name: "CheckPermission", options: { "google.api.http": { body: "*", post: "/v1/permissions/check" } }, I: CheckPermissionRequest, O: CheckPermissionResponse },
+    { name: "ExpandPermissionTree", options: { "google.api.http": { body: "*", post: "/v1/permissions/expand" } }, I: ExpandPermissionTreeRequest, O: ExpandPermissionTreeResponse },
+    { name: "LookupResources", serverStreaming: true, options: { "google.api.http": { body: "*", post: "/v1/permissions/resources" } }, I: LookupResourcesRequest, O: LookupResourcesResponse }
 ]);

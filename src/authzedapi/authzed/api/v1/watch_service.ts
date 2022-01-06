@@ -23,9 +23,9 @@ import { ZedToken } from "./core";
  */
 export interface WatchRequest {
     /**
-     * @generated from protobuf field: repeated string object_types = 1;
+     * @generated from protobuf field: repeated string optional_object_types = 1;
      */
-    objectTypes: string[];
+    optionalObjectTypes: string[];
     /**
      * @generated from protobuf field: authzed.api.v1.ZedToken optional_start_cursor = 2;
      */
@@ -53,12 +53,12 @@ export interface WatchResponse {
 class WatchRequest$Type extends MessageType<WatchRequest> {
     constructor() {
         super("authzed.api.v1.WatchRequest", [
-            { no: 1, name: "object_types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", items: { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } } } },
+            { no: 1, name: "optional_object_types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "0", items: { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } } } },
             { no: 2, name: "optional_start_cursor", kind: "message", T: () => ZedToken }
         ]);
     }
     create(value?: PartialMessage<WatchRequest>): WatchRequest {
-        const message = { objectTypes: [] };
+        const message = { optionalObjectTypes: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WatchRequest>(this, message, value);
@@ -69,8 +69,8 @@ class WatchRequest$Type extends MessageType<WatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated string object_types */ 1:
-                    message.objectTypes.push(reader.string());
+                case /* repeated string optional_object_types */ 1:
+                    message.optionalObjectTypes.push(reader.string());
                     break;
                 case /* authzed.api.v1.ZedToken optional_start_cursor */ 2:
                     message.optionalStartCursor = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.optionalStartCursor);
@@ -87,9 +87,9 @@ class WatchRequest$Type extends MessageType<WatchRequest> {
         return message;
     }
     internalBinaryWrite(message: WatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated string object_types = 1; */
-        for (let i = 0; i < message.objectTypes.length; i++)
-            writer.tag(1, WireType.LengthDelimited).string(message.objectTypes[i]);
+        /* repeated string optional_object_types = 1; */
+        for (let i = 0; i < message.optionalObjectTypes.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.optionalObjectTypes[i]);
         /* authzed.api.v1.ZedToken optional_start_cursor = 2; */
         if (message.optionalStartCursor)
             ZedToken.internalBinaryWrite(message.optionalStartCursor, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -161,5 +161,5 @@ export const WatchResponse = new WatchResponse$Type();
  * @generated ServiceType for protobuf service authzed.api.v1.WatchService
  */
 export const WatchService = new ServiceType("authzed.api.v1.WatchService", [
-    { name: "Watch", serverStreaming: true, options: {}, I: WatchRequest, O: WatchResponse }
+    { name: "Watch", serverStreaming: true, options: { "google.api.http": { body: "*", post: "/v1/watch" } }, I: WatchRequest, O: WatchResponse }
 ]);
