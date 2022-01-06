@@ -6,13 +6,14 @@ import { SchemaServiceClient } from "./authzedapi/authzed/api/v1/schema.grpc-cli
 import { WatchServiceClient } from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
 
 import * as util from "./util";
+import { ClientSecurity } from "./util";
 
 export function NewClient(
   token: string,
   endpoint = util.authzedEndpoint,
-  insecure = false
+  security: ClientSecurity = ClientSecurity.SECURE
 ) {
-  const creds = util.createClientCreds(token, insecure);
+  const creds = util.createClientCreds(endpoint, token, security);
 
   const acl = new PermissionsServiceClient(endpoint, creds);
   const ns = new SchemaServiceClient(endpoint, creds);
@@ -38,8 +39,8 @@ export function NewClient(
 
   return new Proxy<
     Omit<PermissionsServiceClient, "_binaryOptions"> &
-      Omit<SchemaServiceClient, "_binaryOptions"> &
-      Omit<WatchServiceClient, "_binaryOptions">
+    Omit<SchemaServiceClient, "_binaryOptions"> &
+    Omit<WatchServiceClient, "_binaryOptions">
   >(acl as any, handler);
 }
 

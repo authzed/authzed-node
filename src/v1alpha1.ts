@@ -1,14 +1,14 @@
 "use strict";
 
 import { SchemaServiceClient } from "./authzedapi/authzed/api/v1alpha1/schema.grpc-client";
-import util from "./util";
+import util, { ClientSecurity } from "./util";
 
 function NewClient(
   token: string,
   endpoint = util.authzedEndpoint,
-  insecure = false
+  security: ClientSecurity = ClientSecurity.SECURE
 ) {
-  const creds = util.createClientCreds(token, insecure);
+  const creds = util.createClientCreds(endpoint, token, security);
   const schema = new SchemaServiceClient(endpoint, creds);
   return schema;
 }

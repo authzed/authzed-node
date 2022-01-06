@@ -3,8 +3,16 @@ import {
   NewClient,
   ObjectReference,
   SubjectReference,
+  WriteSchemaRequest,
+  WriteRelationshipsRequest,
+  Relationship,
+  RelationshipUpdate,
+  Consistency,
+  CheckPermissionResponse_Permissionship,
+  RelationshipUpdate_Operation,
 } from "./v1";
 import * as grpc from "@grpc/grpc-js";
+import { ClientSecurity } from "./util";
 
 describe("a check with an unknown namespace", () => {
   it("should raise a failed precondition", (done) => {
@@ -26,11 +34,82 @@ describe("a check with an unknown namespace", () => {
       }),
     });
 
-    const client = NewClient("sometoken", "localhost:50051", true);
+    const client = NewClient("v1-failed-sometoken", "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
     client.checkPermission(checkPermissionRequest, function (err, response) {
       expect(response).toBe(undefined);
       expect(err?.code).toBe(grpc.status.FAILED_PRECONDITION);
       done();
+    });
+  });
+});
+
+
+describe("a check with an known namespace", () => {
+  it("should succeed", (done) => {
+    // Write some schema.
+    const client = NewClient("v1-sometoken", "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+
+    const request = WriteSchemaRequest.create({
+      schema: `definition test/user {}
+
+      definition test/document {
+        relation viewer: test/user
+        permission view = viewer
+      }
+      `,
+    });
+
+    client.writeSchema(request, function (err, response) {
+      expect(err).toBe(null);
+
+      // Write a relationship.
+      const resource = ObjectReference.create({
+        objectType: "test/document",
+        objectId: "somedocument",
+      });
+
+      const testUser = ObjectReference.create({
+        objectType: "test/user",
+        objectId: "someuser",
+      });
+
+      const writeRequest = WriteRelationshipsRequest.create({
+        updates: [RelationshipUpdate.create({
+          relationship: Relationship.create({
+            resource: resource,
+            relation: 'viewer',
+            subject: SubjectReference.create({
+              object: testUser,
+            }),
+          }),
+          operation: RelationshipUpdate_Operation.CREATE,
+        })]
+      });
+
+      client.writeRelationships(writeRequest, function (err, response) {
+        expect(err).toBe(null);
+
+        // Call check.
+        const checkPermissionRequest = CheckPermissionRequest.create({
+          resource,
+          permission: "view",
+          subject: SubjectReference.create({
+            object: testUser,
+          }),
+          consistency: Consistency.create({
+            requirement: {
+              oneofKind: "fullyConsistent",
+              fullyConsistent: true,
+            },
+          })
+        });
+
+        client.checkPermission(checkPermissionRequest, function (err, response) {
+          expect(err).toBe(null);
+          expect(response?.permissionship).toBe(CheckPermissionResponse_Permissionship.HAS_PERMISSION);
+          done();
+        });
+      });
     });
   });
 });
