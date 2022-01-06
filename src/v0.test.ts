@@ -1,5 +1,6 @@
 import { ObjectAndRelation, User, CheckRequest, NewClient } from "./v0";
 import * as grpc from "@grpc/grpc-js";
+import { ClientSecurity } from "./util";
 
 describe("a check with an unknown namespace", () => {
   it("should raise a failed precondition", (done) => {
@@ -18,7 +19,7 @@ describe("a check with an unknown namespace", () => {
     request.testUserset = testuserset;
     request.user = user;
 
-    const client = NewClient("sometoken", "localhost:50051", true);
+    const client = NewClient("sometoken", "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
     client.check(request, function (err, response) {
       expect(response).toBe(undefined);
       expect(err?.code).toBe(grpc.status.FAILED_PRECONDITION);
