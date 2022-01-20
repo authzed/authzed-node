@@ -1,6 +1,4 @@
-import { Client } from "@grpc/grpc-js";
 import { ClientSecurity } from "./util";
-import * as v0 from "./v0";
 import * as v1 from "./v1";
 import { Consistency } from "./v1";
 import * as v1alpha from "./v1alpha1";
