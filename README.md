@@ -99,3 +99,10 @@ client.checkPermission(checkPermissionRequest, (err, response) => {
     console.log(err);
 });
 ```
+
+## Requirements
+
+Supported Node.js versions: 14, 16, 17
+
+Minimum TypeScript version 3.8
+
