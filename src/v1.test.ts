@@ -61,6 +61,7 @@ describe("a check with an known namespace", () => {
 
     client.writeSchema(request, function (err, response) {
       expect(err).toBe(null);
+      expect(response).toBeTruthy();
 
       // Write a relationship.
       const resource = ObjectReference.create({
@@ -88,6 +89,7 @@ describe("a check with an known namespace", () => {
 
       client.writeRelationships(writeRequest, function (err, response) {
         expect(err).toBe(null);
+        expect(response).toBeTruthy();
 
         // Call check.
         const checkPermissionRequest = CheckPermissionRequest.create({
