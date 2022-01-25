@@ -8,7 +8,7 @@ on:
     - .github/workflows/authzed-node.yaml
   push:
     branches:
-    - master
+    - main
     paths:
     - src/**
     - .github/workflows/authzed-node.yaml
@@ -51,6 +51,59 @@ jobs:
           node-version: 14
       - run: npm install
       - run: npm test
+      - uses: battila7/get-version-action@v2
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: ${{ steps.get_version.outputs.version }}
+          access: public
+  build-js-client:
+    name: Build and Test JS client
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14, 16, 17]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: "authzed/action-spicedb@v1"
+        with:
+          version: "latest"
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: ./
+      - name: Run build
+        run: yarn build-js-client
+        working-directory: ./
+      - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: ./js-dist
+      - name: Run Yarn tests
+        run: CI=true yarn only-run-tests
+        working-directory: ./js-dist
+      - uses: actions/upload-artifact@v2
+        with:
+          name: js-client
+          path: |
+            js-dist/**
+            !js-dist/node_modules/**
+  publish-js-client-npm:
+    name: Publish JS client to NPM
+    needs: build-js-client
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    steps:
+      - name: Download js client build
+        uses: actions/download-artifact@v2
+        with:
+          name: js-client
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - run: npm install
       - uses: battila7/get-version-action@v2
       - uses: JS-DevTools/npm-publish@v1
         with:
