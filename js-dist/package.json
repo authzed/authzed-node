@@ -1,7 +1,7 @@
 {
   "name": "@authzed/authzed-js-node",
   "author": "authzed",
-  "version": "0.0.1",
+  "version": "0.4.0",
   "description": "authzed js client for nodejs",
   "main": "src/index.js",
   "repository": "https://github.com/authzed/authzed-node",
