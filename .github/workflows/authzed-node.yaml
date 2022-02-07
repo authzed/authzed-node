@@ -12,6 +12,8 @@ on:
     paths:
     - src/**
     - .github/workflows/authzed-node.yaml
+    - package.json
+    - js-dist/package.json
   release:
     types: [published]
 jobs:
