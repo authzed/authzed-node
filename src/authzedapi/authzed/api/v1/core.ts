@@ -225,7 +225,7 @@ class Relationship$Type extends MessageType<Relationship> {
     constructor() {
         super("authzed.api.v1.Relationship", [
             { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
+            { no: 2, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 3, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
@@ -286,7 +286,7 @@ class SubjectReference$Type extends MessageType<SubjectReference> {
     constructor() {
         super("authzed.api.v1.SubjectReference", [
             { no: 1, name: "object", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9])?$" } } } }
+            { no: 2, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
         ]);
     }
     create(value?: PartialMessage<SubjectReference>): SubjectReference {
@@ -339,8 +339,8 @@ export const SubjectReference = new SubjectReference$Type();
 class ObjectReference$Type extends MessageType<ObjectReference> {
     constructor() {
         super("authzed.api.v1.ObjectReference", [
-            { no: 1, name: "object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
-            { no: 2, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})|\\*$" } } } }
+            { no: 1, name: "object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 2, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})|\\*)$" } } } }
         ]);
     }
     create(value?: PartialMessage<ObjectReference>): ObjectReference {

@@ -123,8 +123,8 @@ export interface WatchResourcesResponse {
 class WatchResourcesRequest$Type extends MessageType<WatchResourcesRequest> {
     constructor() {
         super("authzed.api.v1alpha1.WatchResourcesRequest", [
-            { no: 1, name: "resource_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
-            { no: 2, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
+            { no: 1, name: "resource_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 2, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 3, name: "subject_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "optional_subject_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "optional_start_cursor", kind: "message", T: () => ZedToken }

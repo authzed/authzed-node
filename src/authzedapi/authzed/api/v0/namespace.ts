@@ -277,7 +277,7 @@ export const Metadata = new Metadata$Type();
 class NamespaceDefinition$Type extends MessageType<NamespaceDefinition> {
     constructor() {
         super("authzed.api.v0.NamespaceDefinition", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 2, name: "relation", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relation },
             { no: 3, name: "metadata", kind: "message", T: () => Metadata }
         ]);
@@ -338,7 +338,7 @@ export const NamespaceDefinition = new NamespaceDefinition$Type();
 class Relation$Type extends MessageType<Relation> {
     constructor() {
         super("authzed.api.v0.Relation", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 2, name: "userset_rewrite", kind: "message", T: () => UsersetRewrite },
             { no: 3, name: "type_information", kind: "message", T: () => TypeInformation },
             { no: 4, name: "metadata", kind: "message", T: () => Metadata }
@@ -453,8 +453,8 @@ export const TypeInformation = new TypeInformation$Type();
 class AllowedRelation$Type extends MessageType<AllowedRelation> {
     constructor() {
         super("authzed.api.v0.AllowedRelation", [
-            { no: 1, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
-            { no: 3, name: "relation", kind: "scalar", oneof: "relationOrWildcard", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^(\\.\\.\\.|[a-z][a-z0-9_]{2,62}[a-z0-9])$" } } } },
+            { no: 1, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 3, name: "relation", kind: "scalar", oneof: "relationOrWildcard", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^(\\.\\.\\.|[a-z][a-z0-9_]{1,62}[a-z0-9])$" } } } },
             { no: 4, name: "public_wildcard", kind: "message", oneof: "relationOrWildcard", T: () => AllowedRelation_PublicWildcard }
         ]);
     }
@@ -823,7 +823,7 @@ export const TupleToUserset = new TupleToUserset$Type();
 class TupleToUserset_Tupleset$Type extends MessageType<TupleToUserset_Tupleset> {
     constructor() {
         super("authzed.api.v0.TupleToUserset.Tupleset", [
-            { no: 1, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } }
+            { no: 1, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } }
         ]);
     }
     create(value?: PartialMessage<TupleToUserset_Tupleset>): TupleToUserset_Tupleset {
@@ -871,7 +871,7 @@ class ComputedUserset$Type extends MessageType<ComputedUserset> {
     constructor() {
         super("authzed.api.v0.ComputedUserset", [
             { no: 1, name: "object", kind: "enum", T: () => ["authzed.api.v0.ComputedUserset.Object", ComputedUserset_Object], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 2, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } }
+            { no: 2, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } }
         ]);
     }
     create(value?: PartialMessage<ComputedUserset>): ComputedUserset {
