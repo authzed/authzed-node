@@ -5,6 +5,7 @@ on:
     - '*'
     paths:
     - src/**
+    - package.json
     - .github/workflows/authzed-node.yaml
   push:
     branches:
