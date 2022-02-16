@@ -96,7 +96,7 @@ export interface WriteSchemaResponse {
 class ReadSchemaRequest$Type extends MessageType<ReadSchemaRequest> {
     constructor() {
         super("authzed.api.v1alpha1.ReadSchemaRequest", [
-            { no: 1, name: "object_definitions_names", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } } } }
+            { no: 1, name: "object_definitions_names", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { items: { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } } } }
         ]);
     }
     create(value?: PartialMessage<ReadSchemaRequest>): ReadSchemaRequest {

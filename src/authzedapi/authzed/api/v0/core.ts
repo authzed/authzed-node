@@ -254,9 +254,9 @@ export const RelationTuple = new RelationTuple$Type();
 class ObjectAndRelation$Type extends MessageType<ObjectAndRelation> {
     constructor() {
         super("authzed.api.v0.ObjectAndRelation", [
-            { no: 1, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
-            { no: 2, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})|\\*$" } } } },
-            { no: 3, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^(\\.\\.\\.|[a-z][a-z0-9_]{2,62}[a-z0-9])$" } } } }
+            { no: 1, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 2, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})|\\*)$" } } } },
+            { no: 3, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^(\\.\\.\\.|[a-z][a-z0-9_]{1,62}[a-z0-9])$" } } } }
         ]);
     }
     create(value?: PartialMessage<ObjectAndRelation>): ObjectAndRelation {
@@ -315,8 +315,8 @@ export const ObjectAndRelation = new ObjectAndRelation$Type();
 class RelationReference$Type extends MessageType<RelationReference> {
     constructor() {
         super("authzed.api.v0.RelationReference", [
-            { no: 1, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
-            { no: 3, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^(\\.\\.\\.|[a-z][a-z0-9_]{2,62}[a-z0-9])$" } } } }
+            { no: 1, name: "namespace", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 3, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^(\\.\\.\\.|[a-z][a-z0-9_]{1,62}[a-z0-9])$" } } } }
         ]);
     }
     create(value?: PartialMessage<RelationReference>): RelationReference {

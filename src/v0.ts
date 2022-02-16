@@ -1,4 +1,5 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+// @deprecated
 "use strict";
 
 import { ACLServiceClient } from "./authzedapi/authzed/api/v0/acl_service.grpc-client";
@@ -8,6 +9,7 @@ import { WatchServiceClient } from "./authzedapi/authzed/api/v0/watch_service.gr
 import * as util from "./util";
 import { ClientSecurity } from "./util";
 
+// @deprecated
 export function NewClient(
   token: string,
   endpoint = util.authzedEndpoint,

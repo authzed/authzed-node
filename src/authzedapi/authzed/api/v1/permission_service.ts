@@ -510,9 +510,9 @@ export const Consistency = new Consistency$Type();
 class RelationshipFilter$Type extends MessageType<RelationshipFilter> {
     constructor() {
         super("authzed.api.v1.RelationshipFilter", [
-            { no: 1, name: "resource_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
+            { no: 1, name: "resource_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 2, name: "optional_resource_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})?$" } } } },
-            { no: 3, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9])?$" } } } },
+            { no: 3, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
             { no: 4, name: "optional_subject_filter", kind: "message", T: () => SubjectFilter }
         ]);
     }
@@ -578,7 +578,7 @@ export const RelationshipFilter = new RelationshipFilter$Type();
 class SubjectFilter$Type extends MessageType<SubjectFilter> {
     constructor() {
         super("authzed.api.v1.SubjectFilter", [
-            { no: 1, name: "subject_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
+            { no: 1, name: "subject_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})|\\*)?$" } } } },
             { no: 3, name: "optional_relation", kind: "message", T: () => SubjectFilter_RelationFilter }
         ]);
@@ -639,7 +639,7 @@ export const SubjectFilter = new SubjectFilter$Type();
 class SubjectFilter_RelationFilter$Type extends MessageType<SubjectFilter_RelationFilter> {
     constructor() {
         super("authzed.api.v1.SubjectFilter.RelationFilter", [
-            { no: 1, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9])?$" } } } }
+            { no: 1, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
         ]);
     }
     create(value?: PartialMessage<SubjectFilter_RelationFilter>): SubjectFilter_RelationFilter {
@@ -1052,7 +1052,7 @@ class CheckPermissionRequest$Type extends MessageType<CheckPermissionRequest> {
         super("authzed.api.v1.CheckPermissionRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
             { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9])?$" } } } },
+            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
             { no: 4, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
@@ -1174,7 +1174,7 @@ class ExpandPermissionTreeRequest$Type extends MessageType<ExpandPermissionTreeR
         super("authzed.api.v1.ExpandPermissionTreeRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
             { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{2,62}[a-z0-9])?$" } } } }
+            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
         ]);
     }
     create(value?: PartialMessage<ExpandPermissionTreeRequest>): ExpandPermissionTreeRequest {
@@ -1288,8 +1288,8 @@ class LookupResourcesRequest$Type extends MessageType<LookupResourcesRequest> {
     constructor() {
         super("authzed.api.v1.LookupResourcesRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "resource_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{2,61}[a-z0-9]/)?[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
-            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{2,62}[a-z0-9]$" } } } },
+            { no: 2, name: "resource_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 4, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
