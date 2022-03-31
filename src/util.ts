@@ -76,12 +76,25 @@ export enum ClientSecurity {
 function createClientCreds(
   endpoint: string,
   token: string,
-  security: ClientSecurity = ClientSecurity.SECURE
+  security: ClientSecurity | Buffer = ClientSecurity.SECURE
 ): grpc.ChannelCredentials {
   const metadata = new grpc.Metadata();
   metadata.set("authorization", "Bearer " + token);
 
   const creds = [];
+
+  let rootCert: Buffer | undefined;
+  switch(security)
+  {
+    case ClientSecurity.SECURE:
+    case ClientSecurity.INSECURE_LOCALHOST_ALLOWED:
+    case ClientSecurity.INSECURE_PLAINTEXT_CREDENTIALS:
+      break;
+    default: // security is a Buffer
+      rootCert = security;
+      security = ClientSecurity.SECURE;
+      break;
+  }
 
   if (security === ClientSecurity.SECURE ||
     security === ClientSecurity.INSECURE_PLAINTEXT_CREDENTIALS ||
@@ -94,7 +107,7 @@ function createClientCreds(
   }
 
   return grpc.credentials.combineChannelCredentials(
-    security === ClientSecurity.SECURE ? grpc.credentials.createSsl() : new KnownInsecureChannelCredentialsImpl(),
+    security === ClientSecurity.SECURE ? grpc.credentials.createSsl(rootCert) : new KnownInsecureChannelCredentialsImpl(),
     ...creds
   );
 }

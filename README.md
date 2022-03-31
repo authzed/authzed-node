@@ -60,7 +60,17 @@ You will have to provide a your own API Token from the [Authzed dashboard] in pl
 ```js
 import { v1 } from '@authzed/authzed-node';
 
-const client = v1.NewClient('t_your_token_here_1234567deadbeef')
+const client = v1.NewClient('t_your_token_here_1234567deadbeef');
+```
+
+Or to use a custom certificate authority, load the CA certificate.
+```js
+import { v1 } from '@authzed/authzed-node';
+import fs from 'fs';
+
+const endpoint = 'localhost:50051';
+const cert = fs.readFileSync('path/to/cert.pem');
+const client = v1.NewClient('t_your_token_here_1234567deadbeef', endpoint, cert);
 ```
 
 ### Performing an API call

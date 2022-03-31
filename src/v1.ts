@@ -11,7 +11,7 @@ import { ClientSecurity } from "./util";
 export function NewClient(
   token: string,
   endpoint = util.authzedEndpoint,
-  security: ClientSecurity = ClientSecurity.SECURE
+  security: ClientSecurity | Buffer = ClientSecurity.SECURE
 ) {
   const creds = util.createClientCreds(endpoint, token, security);
 
