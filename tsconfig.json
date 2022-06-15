@@ -13,8 +13,7 @@
     "esModuleInterop": true,
     "strict": true,
     "typeRoots": [
-      "node_modules/@types",
-      "src/authzedapi/authzed/api/v0"
+      "node_modules/@types"
     ]
   },
   "include": [
