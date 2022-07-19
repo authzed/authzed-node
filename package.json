@@ -1,8 +1,17 @@
 {
   "name": "@authzed/authzed-node",
   "author": "authzed",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "authzed client for nodejs",
+  "keywords": [
+    "authorization",
+    "authzed",
+    "fine-grained-authorization",
+    "open-source",
+    "permissions",
+    "spicedb",
+    "zanzibar"
+  ],
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "repository": "https://github.com/authzed/authzed-node",
