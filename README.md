@@ -66,6 +66,8 @@ const client = v1.NewClient('t_your_token_here_1234567deadbeef')
 
 Because of the verbosity of these types, we recommend writing your own functions/methods to create these types from your existing application's models.
 
+The `create` method on generated classes takes attributes as input and defaults unspecified attributes to their empty value. This allows you to create request messages, for example, by specifying only relevant fields and leaves optional fields empty.
+
 ```js
 import { v1 } from '@authzed/authzed-node';
 
