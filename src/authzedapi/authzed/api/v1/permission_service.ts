@@ -511,7 +511,7 @@ class RelationshipFilter$Type extends MessageType<RelationshipFilter> {
     constructor() {
         super("authzed.api.v1.RelationshipFilter", [
             { no: 1, name: "resource_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 2, name: "optional_resource_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})?$" } } } },
+            { no: 2, name: "optional_resource_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_|-]{0,127})?$" } } } },
             { no: 3, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
             { no: 4, name: "optional_subject_filter", kind: "message", T: () => SubjectFilter }
         ]);
@@ -579,7 +579,7 @@ class SubjectFilter$Type extends MessageType<SubjectFilter> {
     constructor() {
         super("authzed.api.v1.SubjectFilter", [
             { no: 1, name: "subject_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-zA-Z0-9_][a-zA-Z0-9/_-]{0,127})|\\*)?$" } } } },
+            { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-zA-Z0-9_][a-zA-Z0-9/_|-]{0,127})|\\*)?$" } } } },
             { no: 3, name: "optional_relation", kind: "message", T: () => SubjectFilter_RelationFilter }
         ]);
     }
