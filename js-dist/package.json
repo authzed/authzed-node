@@ -1,8 +1,17 @@
 {
   "name": "@authzed/authzed-js-node",
   "author": "authzed",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "description": "authzed js client for nodejs",
+  "keywords": [
+    "authorization",
+    "authzed",
+    "fine-grained-authorization",
+    "open-source",
+    "permissions",
+    "spicedb",
+    "zanzibar"
+  ],
   "main": "src/index.js",
   "repository": "https://github.com/authzed/authzed-node",
   "license": "Apache-2.0",
@@ -16,7 +25,7 @@
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
-    "grpc-tools": "^1.10.0",
+    "grpc-tools": "^1.11.2",
     "jasmine": "^3.6.4"
   }
 }

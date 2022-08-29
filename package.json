@@ -1,7 +1,7 @@
 {
   "name": "@authzed/authzed-node",
   "author": "authzed",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "authzed client for nodejs",
   "keywords": [
     "authorization",
@@ -39,7 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^7.31.0",
-    "grpc-tools": "^1.10.0",
+    "grpc-tools": "^1.11.2",
     "jasmine": "^3.6.4",
     "ts-node": "^10.3.0",
     "typescript": "^3.8"

@@ -18,8 +18,8 @@ import type { ReadRelationshipsResponse } from "./permission_service";
 import type { ReadRelationshipsRequest } from "./permission_service";
 import * as grpc from "@grpc/grpc-js";
 /**
- * PermissionsService is used to perform permissions and relationship
- * operations.
+ * PermissionsService implements a set of RPCs that perform operations on
+ * relationships and permissions.
  *
  * @generated from protobuf service authzed.api.v1.PermissionsService
  */
@@ -33,9 +33,9 @@ export interface IPermissionsServiceClient {
     readRelationships(input: ReadRelationshipsRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<ReadRelationshipsResponse>;
     readRelationships(input: ReadRelationshipsRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<ReadRelationshipsResponse>;
     /**
-     * WriteRelationships writes and/or deletes a set of specified relationships,
-     * with an optional set of precondition relationships that must exist before
-     * the operation can commit.
+     * WriteRelationships atomically writes and/or deletes a set of specified
+     * relationships. An optional set of preconditions can be provided that must
+     * be satisfied for the operation to commit.
      *
      * @generated from protobuf rpc: WriteRelationships(authzed.api.v1.WriteRelationshipsRequest) returns (authzed.api.v1.WriteRelationshipsResponse);
      */
@@ -44,8 +44,9 @@ export interface IPermissionsServiceClient {
     writeRelationships(input: WriteRelationshipsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: WriteRelationshipsResponse) => void): grpc.ClientUnaryCall;
     writeRelationships(input: WriteRelationshipsRequest, callback: (err: grpc.ServiceError | null, value?: WriteRelationshipsResponse) => void): grpc.ClientUnaryCall;
     /**
-     * DeleteRelationships deletes relationships matching one or more filters, in
-     * bulk.
+     * DeleteRelationships atomically bulk deletes relationships matching one or
+     * more filters. An optional set of preconditions can be provided that must
+     * be satisfied for the operation to commit.
      *
      * @generated from protobuf rpc: DeleteRelationships(authzed.api.v1.DeleteRelationshipsRequest) returns (authzed.api.v1.DeleteRelationshipsResponse);
      */
@@ -54,8 +55,8 @@ export interface IPermissionsServiceClient {
     deleteRelationships(input: DeleteRelationshipsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DeleteRelationshipsResponse) => void): grpc.ClientUnaryCall;
     deleteRelationships(input: DeleteRelationshipsRequest, callback: (err: grpc.ServiceError | null, value?: DeleteRelationshipsResponse) => void): grpc.ClientUnaryCall;
     /**
-     * CheckPermission checks whether a subject has a particular permission or is
-     * a member of a particular relation, on a given resource.
+     * CheckPermission determines for a given resource whether a subject computes
+     * to having a permission or is a direct member of a particular relation.
      *
      * @generated from protobuf rpc: CheckPermission(authzed.api.v1.CheckPermissionRequest) returns (authzed.api.v1.CheckPermissionResponse);
      */
@@ -64,8 +65,9 @@ export interface IPermissionsServiceClient {
     checkPermission(input: CheckPermissionRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: CheckPermissionResponse) => void): grpc.ClientUnaryCall;
     checkPermission(input: CheckPermissionRequest, callback: (err: grpc.ServiceError | null, value?: CheckPermissionResponse) => void): grpc.ClientUnaryCall;
     /**
-     * ExpandPermissionTree expands the relationships reachable from a particular
-     * permission or relation of a given resource.
+     * ExpandPermissionTree reveals the graph structure for a resource's
+     * permission or relation. This RPC does not recurse infinitely deep and may
+     * require multiple calls to fully unnest a deeply nested graph.
      *
      * @generated from protobuf rpc: ExpandPermissionTree(authzed.api.v1.ExpandPermissionTreeRequest) returns (authzed.api.v1.ExpandPermissionTreeResponse);
      */
@@ -74,9 +76,8 @@ export interface IPermissionsServiceClient {
     expandPermissionTree(input: ExpandPermissionTreeRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExpandPermissionTreeResponse) => void): grpc.ClientUnaryCall;
     expandPermissionTree(input: ExpandPermissionTreeRequest, callback: (err: grpc.ServiceError | null, value?: ExpandPermissionTreeResponse) => void): grpc.ClientUnaryCall;
     /**
-     * LookupResources returns the IDs of all resources on which the specified
-     * subject has permission or on which the specified subject is a member of the
-     * relation.
+     * LookupResources returns all the resources of a given type that a subject
+     * can access whether via a computed permission or relation membership.
      *
      * @generated from protobuf rpc: LookupResources(authzed.api.v1.LookupResourcesRequest) returns (stream authzed.api.v1.LookupResourcesResponse);
      */
@@ -84,8 +85,8 @@ export interface IPermissionsServiceClient {
     lookupResources(input: LookupResourcesRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupResourcesResponse>;
 }
 /**
- * PermissionsService is used to perform permissions and relationship
- * operations.
+ * PermissionsService implements a set of RPCs that perform operations on
+ * relationships and permissions.
  *
  * @generated from protobuf service authzed.api.v1.PermissionsService
  */
@@ -106,9 +107,9 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
         return this.makeServerStreamRequest<ReadRelationshipsRequest, ReadRelationshipsResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: ReadRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReadRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
     /**
-     * WriteRelationships writes and/or deletes a set of specified relationships,
-     * with an optional set of precondition relationships that must exist before
-     * the operation can commit.
+     * WriteRelationships atomically writes and/or deletes a set of specified
+     * relationships. An optional set of preconditions can be provided that must
+     * be satisfied for the operation to commit.
      *
      * @generated from protobuf rpc: WriteRelationships(authzed.api.v1.WriteRelationshipsRequest) returns (authzed.api.v1.WriteRelationshipsResponse);
      */
@@ -117,8 +118,9 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
         return this.makeUnaryRequest<WriteRelationshipsRequest, WriteRelationshipsResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: WriteRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): WriteRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * DeleteRelationships deletes relationships matching one or more filters, in
-     * bulk.
+     * DeleteRelationships atomically bulk deletes relationships matching one or
+     * more filters. An optional set of preconditions can be provided that must
+     * be satisfied for the operation to commit.
      *
      * @generated from protobuf rpc: DeleteRelationships(authzed.api.v1.DeleteRelationshipsRequest) returns (authzed.api.v1.DeleteRelationshipsResponse);
      */
@@ -127,8 +129,8 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
         return this.makeUnaryRequest<DeleteRelationshipsRequest, DeleteRelationshipsResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: DeleteRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DeleteRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * CheckPermission checks whether a subject has a particular permission or is
-     * a member of a particular relation, on a given resource.
+     * CheckPermission determines for a given resource whether a subject computes
+     * to having a permission or is a direct member of a particular relation.
      *
      * @generated from protobuf rpc: CheckPermission(authzed.api.v1.CheckPermissionRequest) returns (authzed.api.v1.CheckPermissionResponse);
      */
@@ -137,8 +139,9 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
         return this.makeUnaryRequest<CheckPermissionRequest, CheckPermissionResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: CheckPermissionRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CheckPermissionResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * ExpandPermissionTree expands the relationships reachable from a particular
-     * permission or relation of a given resource.
+     * ExpandPermissionTree reveals the graph structure for a resource's
+     * permission or relation. This RPC does not recurse infinitely deep and may
+     * require multiple calls to fully unnest a deeply nested graph.
      *
      * @generated from protobuf rpc: ExpandPermissionTree(authzed.api.v1.ExpandPermissionTreeRequest) returns (authzed.api.v1.ExpandPermissionTreeResponse);
      */
@@ -147,9 +150,8 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
         return this.makeUnaryRequest<ExpandPermissionTreeRequest, ExpandPermissionTreeResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: ExpandPermissionTreeRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExpandPermissionTreeResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * LookupResources returns the IDs of all resources on which the specified
-     * subject has permission or on which the specified subject is a member of the
-     * relation.
+     * LookupResources returns all the resources of a given type that a subject
+     * can access whether via a computed permission or relation membership.
      *
      * @generated from protobuf rpc: LookupResources(authzed.api.v1.LookupResourcesRequest) returns (stream authzed.api.v1.LookupResourcesResponse);
      */
