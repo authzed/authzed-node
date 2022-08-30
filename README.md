@@ -63,7 +63,7 @@ import { v1 } from '@authzed/authzed-node';
 const client = v1.NewClient('t_your_token_here_1234567deadbeef');
 ```
 
-Or to use a custom certificate authority, load the CA certificate.
+Or to use a custom certificate authority, load the CA certificate and pass the file reference to `NewClient`.
 ```js
 import { v1 } from '@authzed/authzed-node';
 import fs from 'fs';
