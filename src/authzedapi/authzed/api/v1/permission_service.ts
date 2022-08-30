@@ -426,6 +426,73 @@ export interface LookupResourcesResponse {
      */
     resourceObjectId: string;
 }
+/**
+ * LookupSubjectsRequest performs a lookup of all subjects of a particular
+ * kind for which the subject has the specified permission or the relation in
+ * which the subject exists, streaming back the IDs of those subjects.
+ *
+ * @generated from protobuf message authzed.api.v1.LookupSubjectsRequest
+ */
+export interface LookupSubjectsRequest {
+    /**
+     * @generated from protobuf field: authzed.api.v1.Consistency consistency = 1;
+     */
+    consistency?: Consistency;
+    /**
+     * resource is the resource for which all matching subjects for the permission
+     * or relation will be returned.
+     *
+     * @generated from protobuf field: authzed.api.v1.ObjectReference resource = 2;
+     */
+    resource?: ObjectReference;
+    /**
+     * permission is the name of the permission (or relation) for which to find
+     * the subjects.
+     *
+     * @generated from protobuf field: string permission = 3;
+     */
+    permission: string;
+    /**
+     * subject_object_type is the type of subject object for which the IDs will
+     * be returned.
+     *
+     * @generated from protobuf field: string subject_object_type = 4;
+     */
+    subjectObjectType: string;
+    /**
+     * optional_subject_relation is the optional relation for the subject.
+     *
+     * @generated from protobuf field: string optional_subject_relation = 5;
+     */
+    optionalSubjectRelation: string;
+}
+/**
+ * LookupSubjectsResponse contains a single matching subject object ID for the
+ * requested subject object type on the permission or relation.
+ *
+ * @generated from protobuf message authzed.api.v1.LookupSubjectsResponse
+ */
+export interface LookupSubjectsResponse {
+    /**
+     * @generated from protobuf field: authzed.api.v1.ZedToken looked_up_at = 1;
+     */
+    lookedUpAt?: ZedToken;
+    /**
+     * subject_object_id is the Object ID of the subject found. May be a `*` if
+     * a wildcard was found.
+     *
+     * @generated from protobuf field: string subject_object_id = 2;
+     */
+    subjectObjectId: string;
+    /**
+     * excluded_subject_ids are the Object IDs of the subjects excluded. This list
+     * will only contain object IDs if `subject_object_id` is a wildcard (`*`) and
+     * will only be populated if exclusions exist from the wildcard.
+     *
+     * @generated from protobuf field: repeated string excluded_subject_ids = 3;
+     */
+    excludedSubjectIds: string[];
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Consistency$Type extends MessageType<Consistency> {
     constructor() {
@@ -1405,6 +1472,142 @@ class LookupResourcesResponse$Type extends MessageType<LookupResourcesResponse> 
  * @generated MessageType for protobuf message authzed.api.v1.LookupResourcesResponse
  */
 export const LookupResourcesResponse = new LookupResourcesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LookupSubjectsRequest$Type extends MessageType<LookupSubjectsRequest> {
+    constructor() {
+        super("authzed.api.v1.LookupSubjectsRequest", [
+            { no: 1, name: "consistency", kind: "message", T: () => Consistency },
+            { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 4, name: "subject_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 5, name: "optional_subject_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<LookupSubjectsRequest>): LookupSubjectsRequest {
+        const message = { permission: "", subjectObjectType: "", optionalSubjectRelation: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<LookupSubjectsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LookupSubjectsRequest): LookupSubjectsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.Consistency consistency */ 1:
+                    message.consistency = Consistency.internalBinaryRead(reader, reader.uint32(), options, message.consistency);
+                    break;
+                case /* authzed.api.v1.ObjectReference resource */ 2:
+                    message.resource = ObjectReference.internalBinaryRead(reader, reader.uint32(), options, message.resource);
+                    break;
+                case /* string permission */ 3:
+                    message.permission = reader.string();
+                    break;
+                case /* string subject_object_type */ 4:
+                    message.subjectObjectType = reader.string();
+                    break;
+                case /* string optional_subject_relation */ 5:
+                    message.optionalSubjectRelation = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LookupSubjectsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.Consistency consistency = 1; */
+        if (message.consistency)
+            Consistency.internalBinaryWrite(message.consistency, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ObjectReference resource = 2; */
+        if (message.resource)
+            ObjectReference.internalBinaryWrite(message.resource, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string permission = 3; */
+        if (message.permission !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.permission);
+        /* string subject_object_type = 4; */
+        if (message.subjectObjectType !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.subjectObjectType);
+        /* string optional_subject_relation = 5; */
+        if (message.optionalSubjectRelation !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.optionalSubjectRelation);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.LookupSubjectsRequest
+ */
+export const LookupSubjectsRequest = new LookupSubjectsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
+    constructor() {
+        super("authzed.api.v1.LookupSubjectsResponse", [
+            { no: 1, name: "looked_up_at", kind: "message", T: () => ZedToken },
+            { no: 2, name: "subject_object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "excluded_subject_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<LookupSubjectsResponse>): LookupSubjectsResponse {
+        const message = { subjectObjectId: "", excludedSubjectIds: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<LookupSubjectsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LookupSubjectsResponse): LookupSubjectsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.ZedToken looked_up_at */ 1:
+                    message.lookedUpAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.lookedUpAt);
+                    break;
+                case /* string subject_object_id */ 2:
+                    message.subjectObjectId = reader.string();
+                    break;
+                case /* repeated string excluded_subject_ids */ 3:
+                    message.excludedSubjectIds.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LookupSubjectsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.ZedToken looked_up_at = 1; */
+        if (message.lookedUpAt)
+            ZedToken.internalBinaryWrite(message.lookedUpAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string subject_object_id = 2; */
+        if (message.subjectObjectId !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.subjectObjectId);
+        /* repeated string excluded_subject_ids = 3; */
+        for (let i = 0; i < message.excludedSubjectIds.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.excludedSubjectIds[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.LookupSubjectsResponse
+ */
+export const LookupSubjectsResponse = new LookupSubjectsResponse$Type();
 /**
  * @generated ServiceType for protobuf service authzed.api.v1.PermissionsService
  */
@@ -1414,5 +1617,6 @@ export const PermissionsService = new ServiceType("authzed.api.v1.PermissionsSer
     { name: "DeleteRelationships", options: { "google.api.http": { body: "*", post: "/v1/relationships/delete" } }, I: DeleteRelationshipsRequest, O: DeleteRelationshipsResponse },
     { name: "CheckPermission", options: { "google.api.http": { body: "*", post: "/v1/permissions/check" } }, I: CheckPermissionRequest, O: CheckPermissionResponse },
     { name: "ExpandPermissionTree", options: { "google.api.http": { body: "*", post: "/v1/permissions/expand" } }, I: ExpandPermissionTreeRequest, O: ExpandPermissionTreeResponse },
-    { name: "LookupResources", serverStreaming: true, options: { "google.api.http": { body: "*", post: "/v1/permissions/resources" } }, I: LookupResourcesRequest, O: LookupResourcesResponse }
+    { name: "LookupResources", serverStreaming: true, options: { "google.api.http": { body: "*", post: "/v1/permissions/resources" } }, I: LookupResourcesRequest, O: LookupResourcesResponse },
+    { name: "LookupSubjects", serverStreaming: true, options: { "google.api.http": { body: "*", post: "/v1/permissions/subjects" } }, I: LookupSubjectsRequest, O: LookupSubjectsResponse }
 ]);
