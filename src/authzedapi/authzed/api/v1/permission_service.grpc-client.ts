@@ -4,6 +4,8 @@
 import { PermissionsService } from "./permission_service";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
+import type { LookupSubjectsResponse } from "./permission_service";
+import type { LookupSubjectsRequest } from "./permission_service";
 import type { LookupResourcesResponse } from "./permission_service";
 import type { LookupResourcesRequest } from "./permission_service";
 import type { ExpandPermissionTreeResponse } from "./permission_service";
@@ -44,8 +46,9 @@ export interface IPermissionsServiceClient {
     writeRelationships(input: WriteRelationshipsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: WriteRelationshipsResponse) => void): grpc.ClientUnaryCall;
     writeRelationships(input: WriteRelationshipsRequest, callback: (err: grpc.ServiceError | null, value?: WriteRelationshipsResponse) => void): grpc.ClientUnaryCall;
     /**
-     * DeleteRelationships atomically bulk deletes relationships matching one or
-     * more filters. An optional set of preconditions can be provided that must
+     * DeleteRelationships atomically bulk deletes all relationships matching the
+     * provided filter. If no relationships match, none will be deleted and the
+     * operation will succeed. An optional set of preconditions can be provided that must
      * be satisfied for the operation to commit.
      *
      * @generated from protobuf rpc: DeleteRelationships(authzed.api.v1.DeleteRelationshipsRequest) returns (authzed.api.v1.DeleteRelationshipsResponse);
@@ -83,6 +86,14 @@ export interface IPermissionsServiceClient {
      */
     lookupResources(input: LookupResourcesRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupResourcesResponse>;
     lookupResources(input: LookupResourcesRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupResourcesResponse>;
+    /**
+     * LookupSubjects returns all the subjects of a given type that
+     * have access whether via a computed permission or relation membership.
+     *
+     * @generated from protobuf rpc: LookupSubjects(authzed.api.v1.LookupSubjectsRequest) returns (stream authzed.api.v1.LookupSubjectsResponse);
+     */
+    lookupSubjects(input: LookupSubjectsRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupSubjectsResponse>;
+    lookupSubjects(input: LookupSubjectsRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupSubjectsResponse>;
 }
 /**
  * PermissionsService implements a set of RPCs that perform operations on
@@ -118,8 +129,9 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
         return this.makeUnaryRequest<WriteRelationshipsRequest, WriteRelationshipsResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: WriteRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): WriteRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * DeleteRelationships atomically bulk deletes relationships matching one or
-     * more filters. An optional set of preconditions can be provided that must
+     * DeleteRelationships atomically bulk deletes all relationships matching the
+     * provided filter. If no relationships match, none will be deleted and the
+     * operation will succeed. An optional set of preconditions can be provided that must
      * be satisfied for the operation to commit.
      *
      * @generated from protobuf rpc: DeleteRelationships(authzed.api.v1.DeleteRelationshipsRequest) returns (authzed.api.v1.DeleteRelationshipsResponse);
@@ -158,5 +170,15 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
     lookupResources(input: LookupResourcesRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupResourcesResponse> {
         const method = PermissionsService.methods[5];
         return this.makeServerStreamRequest<LookupResourcesRequest, LookupResourcesResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: LookupResourcesRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): LookupResourcesResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
+    }
+    /**
+     * LookupSubjects returns all the subjects of a given type that
+     * have access whether via a computed permission or relation membership.
+     *
+     * @generated from protobuf rpc: LookupSubjects(authzed.api.v1.LookupSubjectsRequest) returns (stream authzed.api.v1.LookupSubjectsResponse);
+     */
+    lookupSubjects(input: LookupSubjectsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupSubjectsResponse> {
+        const method = PermissionsService.methods[6];
+        return this.makeServerStreamRequest<LookupSubjectsRequest, LookupSubjectsResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: LookupSubjectsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): LookupSubjectsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
 }
