@@ -76,25 +76,12 @@ export enum ClientSecurity {
 function createClientCreds(
   endpoint: string,
   token: string,
-  security: ClientSecurity | Buffer = ClientSecurity.SECURE
+  security: ClientSecurity = ClientSecurity.SECURE
 ): grpc.ChannelCredentials {
   const metadata = new grpc.Metadata();
   metadata.set("authorization", "Bearer " + token);
 
   const creds = [];
-
-  let rootCert: Buffer | undefined;
-  switch(security)
-  {
-    case ClientSecurity.SECURE:
-    case ClientSecurity.INSECURE_LOCALHOST_ALLOWED:
-    case ClientSecurity.INSECURE_PLAINTEXT_CREDENTIALS:
-      break;
-    default: // security is a Buffer
-      rootCert = security;
-      security = ClientSecurity.SECURE;
-      break;
-  }
 
   if (security === ClientSecurity.SECURE ||
     security === ClientSecurity.INSECURE_PLAINTEXT_CREDENTIALS ||
@@ -107,12 +94,33 @@ function createClientCreds(
   }
 
   return grpc.credentials.combineChannelCredentials(
-    security === ClientSecurity.SECURE ? grpc.credentials.createSsl(rootCert) : new KnownInsecureChannelCredentialsImpl(),
+    security === ClientSecurity.SECURE ? grpc.credentials.createSsl() : new KnownInsecureChannelCredentialsImpl(),
+    ...creds
+  );
+}
+
+function createClientCredsWithCustomCert(
+  token: string,
+  certificate:  Buffer
+): grpc.ChannelCredentials {
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + token);
+
+  const creds = [];
+
+  creds.push(
+    grpc.credentials.createFromMetadataGenerator((_, callback) => {
+        callback(null, metadata);
+    })
+  );
+
+  return grpc.credentials.combineChannelCredentials(
+    grpc.credentials.createSsl(certificate),
     ...creds
   );
 }
 
 const authzedEndpoint = "grpc.authzed.com:443";
 
-export { createClientCreds, authzedEndpoint };
-export default { createClientCreds, authzedEndpoint };
+export { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint };
+export default { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint };
