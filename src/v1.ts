@@ -9,6 +9,13 @@ import { WatchServiceClient } from "./authzedapi/authzed/api/v1/watch_service.gr
 import * as util from "./util";
 import { ClientSecurity } from "./util";
 
+/**
+ * NewClient creates a new client for calling Authzed APIs.
+ * @param token Secret token for authentication.
+ * @param endpoint Uri for communicating with Authzed.
+ * @param security Security level for the connection.
+ * @returns Client for calling Authzed APIs.
+ */
 export function NewClient(
   token: string,
   endpoint = util.authzedEndpoint,
@@ -18,6 +25,13 @@ export function NewClient(
   return NewClientWithChannelCredentials(endpoint, creds);
 }
 
+/**
+ * NewClientWithCustomCert creates a new client for calling Authzed APIs using a custom TLS certificate.
+ * @param token Secret token for authentication.
+ * @param endpoint Uri for communicating with Authzed.
+ * @param certificate Buffer read from certificate file.
+ * @returns Client for calling Authzed APIs.
+ */
 export function NewClientWithCustomCert(
   token: string,
   endpoint = util.authzedEndpoint,
@@ -27,6 +41,12 @@ export function NewClientWithCustomCert(
   return NewClientWithChannelCredentials(endpoint, creds);
 }
 
+/**
+ * NewClientWithChannelCredentials creates a new client for calling Authzed APIs using custom grpc ChannelCredentials.
+ * @param endpoint Uri for communicating with Authzed.
+ * @param creds ChannelCredentials used for grpc.
+ * @returns Client for calling Authzed APIs.
+ */
 export function NewClientWithChannelCredentials(
   endpoint = util.authzedEndpoint,
   creds: ChannelCredentials
