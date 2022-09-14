@@ -150,6 +150,16 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
         const method = PermissionsService.methods[3];
         return this.makeUnaryRequest<CheckPermissionRequest, CheckPermissionResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: CheckPermissionRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): CheckPermissionResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
+
+    checkPermissionPromise(request: CheckPermissionRequest) {
+      return new Promise((resolve, reject) => {
+        this.checkPermission(request, (err: Error, response: CheckPermissionResponse) => {
+          if (err != null) reject(err);
+          else resolve(response);
+        });
+      });
+    }
+
     /**
      * ExpandPermissionTree reveals the graph structure for a resource's
      * permission or relation. This RPC does not recurse infinitely deep and may
@@ -171,6 +181,25 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
         const method = PermissionsService.methods[5];
         return this.makeServerStreamRequest<LookupResourcesRequest, LookupResourcesResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: LookupResourcesRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): LookupResourcesResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
+
+    lookupResourcesPromise(request: LookupResourcesRequest) {
+        return new Promise((resolve, reject) => {
+          const lookupResourcesResponseStream = this.lookupResources(request);
+          const results: any = [];
+  
+          lookupResourcesResponseStream.on('data', (response: any) => {
+            results.push(response);
+          });
+  
+          lookupResourcesResponseStream.on('end', () => {
+            resolve(results);
+          });
+        
+          lookupResourcesResponseStream.on('error', (err: Error) => {
+            reject(err);
+          });
+        });
+      }
     /**
      * LookupSubjects returns all the subjects of a given type that
      * have access whether via a computed permission or relation membership.
