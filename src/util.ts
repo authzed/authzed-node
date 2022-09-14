@@ -99,7 +99,28 @@ function createClientCreds(
   );
 }
 
+function createClientCredsWithCustomCert(
+  token: string,
+  certificate:  Buffer
+): grpc.ChannelCredentials {
+  const metadata = new grpc.Metadata();
+  metadata.set("authorization", "Bearer " + token);
+
+  const creds = [];
+
+  creds.push(
+    grpc.credentials.createFromMetadataGenerator((_, callback) => {
+        callback(null, metadata);
+    })
+  );
+
+  return grpc.credentials.combineChannelCredentials(
+    grpc.credentials.createSsl(certificate),
+    ...creds
+  );
+}
+
 const authzedEndpoint = "grpc.authzed.com:443";
 
-export { createClientCreds, authzedEndpoint };
-export default { createClientCreds, authzedEndpoint };
+export { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint };
+export default { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint };
