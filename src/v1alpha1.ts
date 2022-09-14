@@ -14,6 +14,7 @@ function NewClient(
 }
 
 export * from "./authzedapi/authzed/api/v1alpha1/schema";
+export { ClientSecurity } from './util';
 
 export { NewClient };
 export default {
