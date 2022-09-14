@@ -87,6 +87,7 @@ export * from "./authzedapi/authzed/api/v1/watch_service";
 export * from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
 export * from "./authzedapi/authzed/api/v1/permission_service.grpc-client";
 export * from "./authzedapi/authzed/api/v1/schema.grpc-client";
+export { ClientSecurity } from './util';
 
 export default {
   NewClient: NewClient,
