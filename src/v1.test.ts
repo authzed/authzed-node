@@ -1,5 +1,6 @@
 import {
   CheckPermissionRequest,
+  ClientSecurity,
   NewClient,
   ObjectReference,
   SubjectReference,
@@ -14,7 +15,6 @@ import {
   WriteRelationshipsResponse,
 } from "./v1";
 import * as grpc from "@grpc/grpc-js";
-import { ClientSecurity } from "./util";
 
 describe("a check with an unknown namespace", () => {
   it("should raise a failed precondition", (done) => {

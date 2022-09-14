@@ -1,5 +1,4 @@
-import { ClientSecurity } from "./util";
-import authzed, { WriteSchemaRequest } from "./v1alpha1";
+import authzed, { ClientSecurity, WriteSchemaRequest } from "./v1alpha1";
 
 describe("a write", () => {
   it("should succeed", (done) => {
