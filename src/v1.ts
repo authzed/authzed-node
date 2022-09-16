@@ -1,13 +1,14 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-"use strict";
+'use strict';
 
-import { ChannelCredentials } from "@grpc/grpc-js";
-import { PermissionsServiceClient } from "./authzedapi/authzed/api/v1/permission_service.grpc-client";
-import { SchemaServiceClient } from "./authzedapi/authzed/api/v1/schema.grpc-client";
-import { WatchServiceClient } from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
+import { ChannelCredentials } from '@grpc/grpc-js';
+import { promisify as utilPromisify } from 'util';
+import { PermissionsServiceClient } from './authzedapi/authzed/api/v1/permission_service.grpc-client';
+import { SchemaServiceClient } from './authzedapi/authzed/api/v1/schema.grpc-client';
+import { WatchServiceClient } from './authzedapi/authzed/api/v1/watch_service.grpc-client';
 
-import * as util from "./util";
-import { ClientSecurity } from "./util";
+import * as util from './util';
+import { ClientSecurity } from './util';
 
 /**
  * NewClient creates a new client for calling Authzed APIs.
@@ -74,19 +75,51 @@ export function NewClientWithChannelCredentials(
   };
 
   return new Proxy<
-    Omit<PermissionsServiceClient, "_binaryOptions"> &
-    Omit<SchemaServiceClient, "_binaryOptions"> &
-    Omit<WatchServiceClient, "_binaryOptions">
+    Omit<PermissionsServiceClient, '_binaryOptions'> &
+      Omit<SchemaServiceClient, '_binaryOptions'> &
+      Omit<WatchServiceClient, '_binaryOptions'>
   >(acl as any, handler);
 }
 
-export * from "./authzedapi/authzed/api/v1/core";
-export * from "./authzedapi/authzed/api/v1/permission_service";
-export * from "./authzedapi/authzed/api/v1/schema";
-export * from "./authzedapi/authzed/api/v1/watch_service";
-export * from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
-export * from "./authzedapi/authzed/api/v1/permission_service.grpc-client";
-export * from "./authzedapi/authzed/api/v1/schema.grpc-client";
+type V1Client = Omit<PermissionsServiceClient, '_binaryOptions'> &
+  Omit<SchemaServiceClient, '_binaryOptions'> &
+  Omit<WatchServiceClient, '_binaryOptions'>;
+
+function promisifyStreamApi<TInput, TResult>(
+  fn: (input: TInput) => TResult
+): (input: TInput) => Promise<TResult> {
+  return (input) => {
+    return new Promise((resolve) => resolve(fn(input)));
+  };
+}
+
+/**
+ * Promisify converts the APIs in the input client to return promises.
+ * @param client is a V1 API grpc client instance.
+ * @returns A V1 grpc client that returns promisess.
+ */
+export function Promisify(client: V1Client) {
+  return {
+    writeRelationships: utilPromisify(client.writeRelationships),
+    deleteRelationships: utilPromisify(client.deleteRelationships),
+    expandPermissionTree: utilPromisify(client.expandPermissionTree),
+    checkPermission: utilPromisify(client.checkPermission),
+    readSchema: utilPromisify(client.readSchema),
+    writeSchema: utilPromisify(client.writeSchema),
+    readRelationships: promisifyStreamApi(client.readRelationships),
+    lookupResources: promisifyStreamApi(client.lookupResources),
+    lookupSubjects: promisifyStreamApi(client.lookupSubjects),
+    watch: promisifyStreamApi(client.watch),
+  };
+}
+
+export * from './authzedapi/authzed/api/v1/core';
+export * from './authzedapi/authzed/api/v1/permission_service';
+export * from './authzedapi/authzed/api/v1/schema';
+export * from './authzedapi/authzed/api/v1/watch_service';
+export * from './authzedapi/authzed/api/v1/watch_service.grpc-client';
+export * from './authzedapi/authzed/api/v1/permission_service.grpc-client';
+export * from './authzedapi/authzed/api/v1/schema.grpc-client';
 export { ClientSecurity } from './util';
 
 export default {
