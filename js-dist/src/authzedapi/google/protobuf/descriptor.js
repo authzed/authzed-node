@@ -1461,6 +1461,7 @@ class FieldOptions$Type extends runtime_5.MessageType {
             { no: 2, name: "packed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "jstype", kind: "enum", opt: true, T: () => ["google.protobuf.FieldOptions.JSType", FieldOptions_JSType] },
             { no: 5, name: "lazy", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 15, name: "unverified_lazy", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "deprecated", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "weak", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => exports.UninterpretedOption }
@@ -1489,6 +1490,9 @@ class FieldOptions$Type extends runtime_5.MessageType {
                     break;
                 case /* optional bool lazy */ 5:
                     message.lazy = reader.bool();
+                    break;
+                case /* optional bool unverified_lazy */ 15:
+                    message.unverifiedLazy = reader.bool();
                     break;
                 case /* optional bool deprecated */ 3:
                     message.deprecated = reader.bool();
@@ -1523,6 +1527,9 @@ class FieldOptions$Type extends runtime_5.MessageType {
         /* optional bool lazy = 5; */
         if (message.lazy !== undefined)
             writer.tag(5, runtime_1.WireType.Varint).bool(message.lazy);
+        /* optional bool unverified_lazy = 15; */
+        if (message.unverifiedLazy !== undefined)
+            writer.tag(15, runtime_1.WireType.Varint).bool(message.unverifiedLazy);
         /* optional bool deprecated = 3; */
         if (message.deprecated !== undefined)
             writer.tag(3, runtime_1.WireType.Varint).bool(message.deprecated);
