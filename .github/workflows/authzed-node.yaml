@@ -85,7 +85,7 @@ jobs:
         with:
           working-directory: ./js-dist
       - name: Run Yarn tests
-        run: CI=true yarn only-run-tests
+        run: CI=true yarn test
         working-directory: ./js-dist
       - uses: actions/upload-artifact@v2
         with:
