@@ -57,7 +57,7 @@ describe('a check with an known namespace', () => {
   it('should succeed', (done) => {
     // Write some schema.
     const client = NewClient(
-      'v1-sometoken',
+      `v1-namespace-${Math.floor(Math.random() * 1000)}`,
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );

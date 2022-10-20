@@ -1,13 +1,37 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 "use strict";
 
-import { ChannelCredentials } from "@grpc/grpc-js";
+import { promisify } from 'util'
+
 import { PermissionsServiceClient } from "./authzedapi/authzed/api/v1/permission_service.grpc-client";
-import { SchemaServiceClient } from "./authzedapi/authzed/api/v1/schema.grpc-client";
+import { SchemaServiceClient } from "./authzedapi/authzed/api/v1/schema_service.grpc-client";
 import { WatchServiceClient } from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
+import * as grpc from "@grpc/grpc-js";
+
 
 import * as util from "./util";
-import { ClientSecurity } from "./util";
+import { ClientSecurity, promisifyStream } from "./util";
+
+type IZedClient = Omit<PermissionsServiceClient, "_binaryOptions"> &
+  Omit<SchemaServiceClient, "_binaryOptions"> &
+  Omit<WatchServiceClient, "_binaryOptions">;
+
+type IZedPromiseClient = {
+  [P in keyof IZedClient]:
+  IZedClient[P] extends (p1: infer P1, p2?: infer P2, p3?: infer P3) => grpc.ClientReadableStream<infer TResult> ? (p1: P1, p2?: P2, p3?: P3) => Promise<TResult[]> :
+  IZedClient[P] extends (p1: infer P1, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1) => Promise<TResponse> :
+  IZedClient[P] extends (p1: infer P1, p2: infer P2, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1, p2: P2) => Promise<TResponse> :
+  IZedClient[P] extends (p1: infer P1, p2: infer P2, p3: infer P3, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1, p2: P2, p3: P3) => Promise<TResponse> :
+  never;
+}
+
+type ICombinedClient = IZedClient & { promises: IZedPromiseClient}
+
+const streamMethods = new Set([
+  'readRelationships',
+  'lookupResources',
+  'lookupSubjects'
+])
 
 /**
  * NewClient creates a new client for calling Authzed APIs.
@@ -43,17 +67,47 @@ export function NewClientWithCustomCert(
 
 /**
  * NewClientWithChannelCredentials creates a new client for calling Authzed APIs using custom grpc ChannelCredentials.
+ * 
+ * The combined client exposes all service-level methods at the root which directly call grpc1-generated methods
+ * while also exposing a `promises` object containing all promise-wrapped methods.
+ * 
  * @param endpoint Uri for communicating with Authzed.
  * @param creds ChannelCredentials used for grpc.
  * @returns Client for calling Authzed APIs.
  */
 export function NewClientWithChannelCredentials(
   endpoint = util.authzedEndpoint,
-  creds: ChannelCredentials
-) {
+  creds: grpc.ChannelCredentials
+): ICombinedClient {
+  const proxy = createClient(endpoint, creds)
+  const promiseClient = createPromiseClient(proxy)
+
+  const fullHandler = {
+    get(target: object, name: string | symbol) {
+      if (name === 'promises') {
+        return promiseClient
+      }
+
+      return (proxy as any)[name as string]
+    }
+  }
+
+  return new Proxy({}, fullHandler) as ICombinedClient
+}
+
+/**
+ * Creates the standard client_grpc1 (via @grpc/grpc-js) that will correctly
+ * proxy the namespaced methods to the correct service client.
+ * 
+ * @param endpoint The grpc endpoing
+ * @param creds The channel credentials
+ * @returns A default grpc1 client
+ */
+function createClient(endpoint: string, creds: grpc.ChannelCredentials): IZedClient {
   const acl = new PermissionsServiceClient(endpoint, creds);
   const ns = new SchemaServiceClient(endpoint, creds);
   const watch = new WatchServiceClient(endpoint, creds);
+
 
   const handler = {
     get(target: object, name: string | symbol) {
@@ -73,20 +127,47 @@ export function NewClientWithChannelCredentials(
     },
   };
 
-  return new Proxy<
-    Omit<PermissionsServiceClient, "_binaryOptions"> &
-    Omit<SchemaServiceClient, "_binaryOptions"> &
-    Omit<WatchServiceClient, "_binaryOptions">
-  >(acl as any, handler);
+  return new Proxy<IZedClient>({} as IZedClient, handler)
+}
+
+/**
+ * Proxies all methods from the {@link IZedClient} to return promises
+ * in order to support async/await for {@link ClientUnaryCall} and {@link ClientReadableStream}
+ * responses.
+ * 
+ * @param client The default grpc1 client
+ * @returns A promise-wrapped grpc1 client
+ */
+function createPromiseClient(client: IZedClient): IZedPromiseClient {
+  const handler = {
+    get(target: object, name: string | symbol) {
+      if ((client as any)[name as string]) {
+        if (streamMethods.has(name as string)) {
+          return promisifyStream((client as any)[name as string], client)
+        }
+  
+        if (typeof (client as any)[name as string] === 'function') {
+          return promisify((client as any)[name as string]).bind(client);
+        }
+  
+        return (client as any)[name as string]
+      }
+
+      return undefined
+    },
+  };
+
+  return new Proxy<IZedPromiseClient>({} as any, handler);
 }
 
 export * from "./authzedapi/authzed/api/v1/core";
 export * from "./authzedapi/authzed/api/v1/permission_service";
-export * from "./authzedapi/authzed/api/v1/schema";
+export * from "./authzedapi/authzed/api/v1/schema_service";
 export * from "./authzedapi/authzed/api/v1/watch_service";
 export * from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
 export * from "./authzedapi/authzed/api/v1/permission_service.grpc-client";
-export * from "./authzedapi/authzed/api/v1/schema.grpc-client";
+export * from "./authzedapi/authzed/api/v1/schema_service.grpc-client";
+
 export { ClientSecurity } from './util';
 
 export default {

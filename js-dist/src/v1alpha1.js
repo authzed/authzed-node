@@ -32,6 +32,8 @@ function NewClient(token, endpoint = util_1.default.authzedEndpoint, security = 
 }
 exports.NewClient = NewClient;
 __exportStar(require("./authzedapi/authzed/api/v1alpha1/schema"), exports);
+var util_2 = require("./util");
+Object.defineProperty(exports, "ClientSecurity", { enumerable: true, get: function () { return util_2.ClientSecurity; } });
 exports.default = {
     NewClient,
 };

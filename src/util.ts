@@ -120,7 +120,34 @@ function createClientCredsWithCustomCert(
   );
 }
 
+function promisifyStream<P1, P2, P3>(fn: (req: P1) => grpc.ClientReadableStream<P2>, bind: P3): (req: P1) => Promise<P2[]> {
+  return (req: P1) => {
+    return new Promise((resolve, reject) => {
+      const results: P2[] = []
+      const stream = fn.bind(bind)(req)
+      stream.on('data', function (response: P2) {
+        results.push(response)
+      });
+  
+      stream.on('error', function (e) {
+        return reject(e)
+      });
+
+      stream.on('end', function () {
+        return resolve(results)
+      });
+  
+      stream.on('status', function (status) {
+        if (status.code !== grpc.status.OK) {
+          return reject(status)
+        }
+      });
+    }) 
+  }
+}
+
 const authzedEndpoint = "grpc.authzed.com:443";
 
-export { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint };
-export default { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint };
+
+export { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint, promisifyStream };
+export default { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint, promisifyStream };
