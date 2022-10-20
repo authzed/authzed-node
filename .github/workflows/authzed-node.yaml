@@ -39,7 +39,7 @@ jobs:
       run: CI=true yarn lint
       working-directory: ./
     - name: Run Yarn tests
-      run: CI=true yarn only-run-tests
+      run: CI=true yarn test
       working-directory: ./
   publish-npm:
     name: Publish to NPM
