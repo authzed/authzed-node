@@ -1,0 +1,31 @@
+{
+  "name": "@authzed/authzed-js-node",
+  "author": "authzed",
+  "version": "0.8.0",
+  "description": "authzed js client for nodejs",
+  "keywords": [
+    "authorization",
+    "authzed",
+    "fine-grained-authorization",
+    "open-source",
+    "permissions",
+    "spicedb",
+    "zanzibar"
+  ],
+  "main": "src/index.js",
+  "repository": "https://github.com/authzed/authzed-node",
+  "license": "Apache-2.0",
+  "private": false,
+  "scripts": {
+    "test": "../scripts/run-and-test.sh",
+    "only-run-tests": "jasmine --config=jasmine.json"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.2.8",
+    "google-protobuf": "^3.15.3"
+  },
+  "devDependencies": {
+    "grpc-tools": "^1.11.2",
+    "jasmine": "^3.6.4"
+  }
+}
