@@ -37,7 +37,7 @@ describe('a check with an unknown namespace', () => {
     });
 
     const { promises: client } = NewClient(
-      'v1-failed-sometoken',
+      `v1-fulltest-sometoken-${Math.floor(Math.random() * 1000)}`,
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
