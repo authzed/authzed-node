@@ -243,6 +243,12 @@ describe('Lookup APIs', () => {
       }),
       permission: 'view',
       subjectObjectType: 'test/user',
+      consistency: Consistency.create({
+        requirement: {
+          oneofKind: 'fullyConsistent',
+          fullyConsistent: true,
+        },
+      }),
     });
 
     const resStream = client.lookupSubjects(request);
@@ -280,6 +286,12 @@ describe('Lookup APIs', () => {
       }),
       permission: 'view',
       resourceObjectType: 'test/document',
+      consistency: Consistency.create({
+        requirement: {
+          oneofKind: 'fullyConsistent',
+          fullyConsistent: true,
+        },
+      }),
     });
 
     const resStream = client.lookupResources(request);
