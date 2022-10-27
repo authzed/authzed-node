@@ -62,7 +62,7 @@ exports.NewClientWithCustomCert = NewClientWithCustomCert;
 /**
  * NewClientWithChannelCredentials creates a new client for calling Authzed APIs using custom grpc ChannelCredentials.
  *
- * The combined client exposes all service-level methods at the root which directly call grpc1-generated methods
+ * The combined client exposes all service-level methods at the root which directly call grpc-generated methods
  * while also exposing a `promises` object containing all promise-wrapped methods.
  *
  * @param endpoint Uri for communicating with Authzed.
@@ -112,7 +112,7 @@ function createClient(endpoint, creds) {
     return new Proxy({}, handler);
 }
 /**
- * Proxies all methods from the {@link IZedClient} to return promises
+ * Proxies all methods from the {@link ZedClientInterface} to return promises
  * in order to support async/await for {@link ClientUnaryCall} and {@link ClientReadableStream}
  * responses.
  *

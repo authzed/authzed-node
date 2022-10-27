@@ -1,5 +1,5 @@
 services:
-  zed-testserver:
+  spicedb-servetesting:
     image: quay.io/authzed/spicedb:latest
     ports: ['50051:50051']
     command: serve-testing

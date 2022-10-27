@@ -12,20 +12,20 @@ import * as grpc from "@grpc/grpc-js";
 import * as util from "./util";
 import { ClientSecurity, promisifyStream } from "./util";
 
-type IZedClient = Omit<PermissionsServiceClient, "_binaryOptions"> &
+type ZedClientInterface = Omit<PermissionsServiceClient, "_binaryOptions"> &
   Omit<SchemaServiceClient, "_binaryOptions"> &
   Omit<WatchServiceClient, "_binaryOptions">;
 
-type IZedPromiseClient = {
-  [P in keyof IZedClient]:
-  IZedClient[P] extends (p1: infer P1, p2?: infer P2, p3?: infer P3) => grpc.ClientReadableStream<infer TResult> ? (p1: P1, p2?: P2, p3?: P3) => Promise<TResult[]> :
-  IZedClient[P] extends (p1: infer P1, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1) => Promise<TResponse> :
-  IZedClient[P] extends (p1: infer P1, p2: infer P2, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1, p2: P2) => Promise<TResponse> :
-  IZedClient[P] extends (p1: infer P1, p2: infer P2, p3: infer P3, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1, p2: P2, p3: P3) => Promise<TResponse> :
+type ZedPromiseClientInterface = {
+  [P in keyof ZedClientInterface]:
+  ZedClientInterface[P] extends (p1: infer P1, p2?: infer P2, p3?: infer P3) => grpc.ClientReadableStream<infer TResult> ? (p1: P1, p2?: P2, p3?: P3) => Promise<TResult[]> :
+  ZedClientInterface[P] extends (p1: infer P1, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1) => Promise<TResponse> :
+  ZedClientInterface[P] extends (p1: infer P1, p2: infer P2, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1, p2: P2) => Promise<TResponse> :
+  ZedClientInterface[P] extends (p1: infer P1, p2: infer P2, p3: infer P3, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1, p2: P2, p3: P3) => Promise<TResponse> :
   never;
 }
 
-type ICombinedClient = IZedClient & { promises: IZedPromiseClient}
+type ICombinedClient = ZedClientInterface & { promises: ZedPromiseClientInterface}
 
 const streamMethods = new Set([
   'readRelationships',
@@ -68,8 +68,10 @@ export function NewClientWithCustomCert(
 /**
  * NewClientWithChannelCredentials creates a new client for calling Authzed APIs using custom grpc ChannelCredentials.
  * 
- * The combined client exposes all service-level methods at the root which directly call grpc1-generated methods
- * while also exposing a `promises` object containing all promise-wrapped methods.
+ * The combined client exposes all service-level methods at the root which directly call grpc-generated methods
+ * while also exposing a `promises` object containing all promise-wrapped methods. For all methods that 
+ * return a {@link ClientReadableStream}, the promise-wrapped method will return an array of the resulting responses
+ * after the stream has been closed.
  * 
  * @param endpoint Uri for communicating with Authzed.
  * @param creds ChannelCredentials used for grpc.
@@ -103,7 +105,7 @@ export function NewClientWithChannelCredentials(
  * @param creds The channel credentials
  * @returns A default grpc1 client
  */
-function createClient(endpoint: string, creds: grpc.ChannelCredentials): IZedClient {
+function createClient(endpoint: string, creds: grpc.ChannelCredentials): ZedClientInterface {
   const acl = new PermissionsServiceClient(endpoint, creds);
   const ns = new SchemaServiceClient(endpoint, creds);
   const watch = new WatchServiceClient(endpoint, creds);
@@ -127,18 +129,18 @@ function createClient(endpoint: string, creds: grpc.ChannelCredentials): IZedCli
     },
   };
 
-  return new Proxy<IZedClient>({} as IZedClient, handler)
+  return new Proxy<ZedClientInterface>({} as ZedClientInterface, handler)
 }
 
 /**
- * Proxies all methods from the {@link IZedClient} to return promises
+ * Proxies all methods from the {@link ZedClientInterface} to return promises
  * in order to support async/await for {@link ClientUnaryCall} and {@link ClientReadableStream}
  * responses.
  * 
  * @param client The default grpc1 client
  * @returns A promise-wrapped grpc1 client
  */
-function createPromiseClient(client: IZedClient): IZedPromiseClient {
+function createPromiseClient(client: ZedClientInterface): ZedPromiseClientInterface {
   const handler = {
     get(target: object, name: string | symbol) {
       if ((client as any)[name as string]) {
@@ -157,7 +159,7 @@ function createPromiseClient(client: IZedClient): IZedPromiseClient {
     },
   };
 
-  return new Proxy<IZedPromiseClient>({} as any, handler);
+  return new Proxy<ZedPromiseClientInterface>({} as any, handler);
 }
 
 export * from "./authzedapi/authzed/api/v1/core";
