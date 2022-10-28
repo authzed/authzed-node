@@ -2,11 +2,12 @@ import { ClientSecurity } from "./util";
 import * as v1 from "./v1";
 import { Consistency } from "./v1";
 import * as v1alpha from "./v1alpha1";
+import { generateTestToken } from './__utils__/helpers'
 
 describe("a check following a write of schema and relationships", () => {
   it("should succeed", (done) => {
     // Write the schema.
-    const token = `fulltest-sometoken-${Math.floor(Math.random() * 1000)}`
+    const token = generateTestToken('full-test')
     const alphaClient = v1alpha.NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
     const v1client = v1.NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
 

@@ -15,6 +15,7 @@ import {
   LookupResourcesRequest,
 } from './v1';
 import * as grpc from '@grpc/grpc-js';
+import { generateTestToken } from './__utils__/helpers'
 
 describe('a check with an unknown namespace', () => {
   it('should raise a failed precondition', async () => {
@@ -37,7 +38,7 @@ describe('a check with an unknown namespace', () => {
     });
 
     const { promises: client } = NewClient(
-      `v1-fulltest-sometoken-${Math.floor(Math.random() * 1000)}`,
+      generateTestToken('v1-promise-test-unknown'),
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
@@ -54,7 +55,7 @@ describe('a check with an known namespace', () => {
   it('should succeed', async () => {
     // Write some schema.
     const { promises: client } = NewClient(
-      `v1-namespace-${Math.floor(Math.random() * 1000)}`,
+      generateTestToken('v1-promise-namespace'),
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
@@ -125,7 +126,7 @@ describe('Lookup APIs', () => {
   let token: string;
 
   beforeEach(async () => {
-    token = `v1-lookupsubject-${Math.floor(Math.random() * 1000)}`;
+    token = generateTestToken('v1-promise-lookup');
     const { promises: client } = NewClient(
       token,
       'localhost:50051',
