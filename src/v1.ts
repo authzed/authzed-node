@@ -25,10 +25,10 @@ type ZedPromiseClientInterface = {
   never;
 }
 
-type ICombinedClient = ZedClientInterface & { promises: ZedPromiseClientInterface}
+type CombinedClientInterface = ZedClientInterface & { promises: ZedPromiseClientInterface}
 
 /**
- * A standard client_grpc1 (via @grpc/grpc-js) that will correctly
+ * A standard client (via @grpc/grpc-js) that will correctly
  * proxy the namespaced methods to the correct service client.
  */
 class ZedClient implements ProxyHandler<ZedClientInterface> {
@@ -188,7 +188,7 @@ export function NewClientWithCustomCert(
 export function NewClientWithChannelCredentials(
   endpoint = util.authzedEndpoint,
   creds: grpc.ChannelCredentials
-): ICombinedClient {
+): CombinedClientInterface {
   return ZedCombinedClient.create(endpoint, creds)
 }
 
