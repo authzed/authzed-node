@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Scopes = exports.SecurityRequirement_SecurityRequirementValue = exports.SecurityRequirement = exports.SecurityScheme = exports.SecurityDefinitions = exports.Tag = exports.JSONSchema = exports.Schema = exports.ExternalDocumentation = exports.License = exports.Contact = exports.Info = exports.Response = exports.Header = exports.Operation = exports.Swagger = exports.Scheme = exports.SecurityScheme_Flow = exports.SecurityScheme_In = exports.SecurityScheme_Type = exports.JSONSchema_JSONSchemaSimpleTypes = void 0;
+exports.Scopes = exports.SecurityRequirement_SecurityRequirementValue = exports.SecurityRequirement = exports.SecurityScheme = exports.SecurityDefinitions = exports.Tag = exports.JSONSchema_FieldConfiguration = exports.JSONSchema = exports.Schema = exports.ExternalDocumentation = exports.License = exports.Contact = exports.Info = exports.Response = exports.Header = exports.Operation = exports.Swagger = exports.Scheme = exports.SecurityScheme_Flow = exports.SecurityScheme_In = exports.SecurityScheme_Type = exports.JSONSchema_JSONSchemaSimpleTypes = void 0;
 const runtime_1 = require("@protobuf-ts/runtime");
 const runtime_2 = require("@protobuf-ts/runtime");
 const runtime_3 = require("@protobuf-ts/runtime");
@@ -1078,11 +1078,13 @@ class JSONSchema$Type extends runtime_5.MessageType {
             { no: 34, name: "array", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 35, name: "type", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["grpc.gateway.protoc_gen_openapiv2.options.JSONSchema.JSONSchemaSimpleTypes", JSONSchema_JSONSchemaSimpleTypes] },
             { no: 36, name: "format", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 46, name: "enum", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 46, name: "enum", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 1001, name: "field_configuration", kind: "message", T: () => exports.JSONSchema_FieldConfiguration },
+            { no: 48, name: "extensions", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => struct_1.Value } }
         ]);
     }
     create(value) {
-        const message = { ref: "", title: "", description: "", default: "", readOnly: false, example: "", multipleOf: 0, maximum: 0, exclusiveMaximum: false, minimum: 0, exclusiveMinimum: false, maxLength: "0", minLength: "0", pattern: "", maxItems: "0", minItems: "0", uniqueItems: false, maxProperties: "0", minProperties: "0", required: [], array: [], type: [], format: "", enum: [] };
+        const message = { ref: "", title: "", description: "", default: "", readOnly: false, example: "", multipleOf: 0, maximum: 0, exclusiveMaximum: false, minimum: 0, exclusiveMinimum: false, maxLength: "0", minLength: "0", pattern: "", maxItems: "0", minItems: "0", uniqueItems: false, maxProperties: "0", minProperties: "0", required: [], array: [], type: [], format: "", enum: [], extensions: {} };
         globalThis.Object.defineProperty(message, runtime_4.MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             runtime_3.reflectionMergePartial(this, message, value);
@@ -1169,6 +1171,12 @@ class JSONSchema$Type extends runtime_5.MessageType {
                 case /* repeated string enum */ 46:
                     message.enum.push(reader.string());
                     break;
+                case /* grpc.gateway.protoc_gen_openapiv2.options.JSONSchema.FieldConfiguration field_configuration */ 1001:
+                    message.fieldConfiguration = exports.JSONSchema_FieldConfiguration.internalBinaryRead(reader, reader.uint32(), options, message.fieldConfiguration);
+                    break;
+                case /* map<string, google.protobuf.Value> extensions */ 48:
+                    this.binaryReadMap48(message.extensions, reader, options);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1179,6 +1187,22 @@ class JSONSchema$Type extends runtime_5.MessageType {
             }
         }
         return message;
+    }
+    binaryReadMap48(map, reader, options) {
+        let len = reader.uint32(), end = reader.pos + len, key, val;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = struct_1.Value.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field grpc.gateway.protoc_gen_openapiv2.options.JSONSchema.extensions");
+            }
+        }
+        map[key !== null && key !== void 0 ? key : ""] = val !== null && val !== void 0 ? val : struct_1.Value.create();
     }
     internalBinaryWrite(message, writer, options) {
         /* string ref = 3; */
@@ -1257,6 +1281,16 @@ class JSONSchema$Type extends runtime_5.MessageType {
         /* repeated string enum = 46; */
         for (let i = 0; i < message.enum.length; i++)
             writer.tag(46, runtime_2.WireType.LengthDelimited).string(message.enum[i]);
+        /* grpc.gateway.protoc_gen_openapiv2.options.JSONSchema.FieldConfiguration field_configuration = 1001; */
+        if (message.fieldConfiguration)
+            exports.JSONSchema_FieldConfiguration.internalBinaryWrite(message.fieldConfiguration, writer.tag(1001, runtime_2.WireType.LengthDelimited).fork(), options).join();
+        /* map<string, google.protobuf.Value> extensions = 48; */
+        for (let k of Object.keys(message.extensions)) {
+            writer.tag(48, runtime_2.WireType.LengthDelimited).fork().tag(1, runtime_2.WireType.LengthDelimited).string(k);
+            writer.tag(2, runtime_2.WireType.LengthDelimited).fork();
+            struct_1.Value.internalBinaryWrite(message.extensions[k], writer, options);
+            writer.join().join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? runtime_1.UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1267,6 +1301,53 @@ class JSONSchema$Type extends runtime_5.MessageType {
  * @generated MessageType for protobuf message grpc.gateway.protoc_gen_openapiv2.options.JSONSchema
  */
 exports.JSONSchema = new JSONSchema$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JSONSchema_FieldConfiguration$Type extends runtime_5.MessageType {
+    constructor() {
+        super("grpc.gateway.protoc_gen_openapiv2.options.JSONSchema.FieldConfiguration", [
+            { no: 47, name: "path_param_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value) {
+        const message = { pathParamName: "" };
+        globalThis.Object.defineProperty(message, runtime_4.MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            runtime_3.reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        let message = target !== null && target !== void 0 ? target : this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string path_param_name */ 47:
+                    message.pathParamName = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? runtime_1.UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message, writer, options) {
+        /* string path_param_name = 47; */
+        if (message.pathParamName !== "")
+            writer.tag(47, runtime_2.WireType.LengthDelimited).string(message.pathParamName);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? runtime_1.UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message grpc.gateway.protoc_gen_openapiv2.options.JSONSchema.FieldConfiguration
+ */
+exports.JSONSchema_FieldConfiguration = new JSONSchema_FieldConfiguration$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Tag$Type extends runtime_5.MessageType {
     constructor() {

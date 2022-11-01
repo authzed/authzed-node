@@ -1,15 +1,15 @@
 import { ClientSecurity } from "./util";
 import * as v1 from "./v1";
 import { Consistency } from "./v1";
-import * as v1alpha from "./v1alpha1";
+import { generateTestToken } from './__utils__/helpers'
 
 describe("a check following a write of schema and relationships", () => {
   it("should succeed", (done) => {
     // Write the schema.
-    const alphaClient = v1alpha.NewClient("fulltest-sometoken", "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
-    const v1client = v1.NewClient("fulltest-sometoken", "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+    const token = generateTestToken('full-test')
+    const v1client = v1.NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
 
-    const writeSchemaRequest = v1alpha.WriteSchemaRequest.create({
+    const writeSchemaRequest = v1.WriteSchemaRequest.create({
       schema: `
   definition test/user {}
   
@@ -20,7 +20,7 @@ describe("a check following a write of schema and relationships", () => {
   `,
     });
 
-    alphaClient.writeSchema(writeSchemaRequest, function (err) {
+    v1client.writeSchema(writeSchemaRequest, function (err) {
       expect(err).toBe(null);
 
       // Create the relationship between the resource and the user.

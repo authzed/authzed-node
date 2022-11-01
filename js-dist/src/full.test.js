@@ -22,13 +22,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = require("./util");
 const v1 = __importStar(require("./v1"));
 const v1_1 = require("./v1");
-const v1alpha = __importStar(require("./v1alpha1"));
+const helpers_1 = require("./__utils__/helpers");
 describe("a check following a write of schema and relationships", () => {
     it("should succeed", (done) => {
         // Write the schema.
-        const alphaClient = v1alpha.NewClient("fulltest-sometoken", "localhost:50051", util_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
-        const v1client = v1.NewClient("fulltest-sometoken", "localhost:50051", util_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
-        const writeSchemaRequest = v1alpha.WriteSchemaRequest.create({
+        const token = helpers_1.generateTestToken('full-test');
+        const v1client = v1.NewClient(token, "localhost:50051", util_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+        const writeSchemaRequest = v1.WriteSchemaRequest.create({
             schema: `
   definition test/user {}
   
@@ -38,7 +38,7 @@ describe("a check following a write of schema and relationships", () => {
   }
   `,
         });
-        alphaClient.writeSchema(writeSchemaRequest, function (err) {
+        v1client.writeSchema(writeSchemaRequest, function (err) {
             expect(err).toBe(null);
             // Create the relationship between the resource and the user.
             const resource = v1.ObjectReference.create({

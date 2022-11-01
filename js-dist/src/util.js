@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authzedEndpoint = exports.createClientCreds = exports.ClientSecurity = void 0;
+exports.promisifyStream = exports.authzedEndpoint = exports.createClientCredsWithCustomCert = exports.createClientCreds = exports.ClientSecurity = void 0;
 const grpc = __importStar(require("@grpc/grpc-js"));
 // NOTE: Copied from channel-credentials.ts in gRPC Node package because its not exported:
 // https://github.com/grpc/grpc-node/blob/3106057f5ad8f79a71d2ae411e116ad308a2e835/packages/grpc-js/src/call-credentials.ts#L143
@@ -91,7 +91,40 @@ function createClientCreds(endpoint, token, security = ClientSecurity.SECURE) {
     return grpc.credentials.combineChannelCredentials(security === ClientSecurity.SECURE ? grpc.credentials.createSsl() : new KnownInsecureChannelCredentialsImpl(), ...creds);
 }
 exports.createClientCreds = createClientCreds;
+function createClientCredsWithCustomCert(token, certificate) {
+    const metadata = new grpc.Metadata();
+    metadata.set("authorization", "Bearer " + token);
+    const creds = [];
+    creds.push(grpc.credentials.createFromMetadataGenerator((_, callback) => {
+        callback(null, metadata);
+    }));
+    return grpc.credentials.combineChannelCredentials(grpc.credentials.createSsl(certificate), ...creds);
+}
+exports.createClientCredsWithCustomCert = createClientCredsWithCustomCert;
+function promisifyStream(fn, bind) {
+    return (req) => {
+        return new Promise((resolve, reject) => {
+            const results = [];
+            const stream = fn.bind(bind)(req);
+            stream.on('data', function (response) {
+                results.push(response);
+            });
+            stream.on('error', function (e) {
+                return reject(e);
+            });
+            stream.on('end', function () {
+                return resolve(results);
+            });
+            stream.on('status', function (status) {
+                if (status.code !== grpc.status.OK) {
+                    return reject(status);
+                }
+            });
+        });
+    };
+}
+exports.promisifyStream = promisifyStream;
 const authzedEndpoint = "grpc.authzed.com:443";
 exports.authzedEndpoint = authzedEndpoint;
-exports.default = { createClientCreds, authzedEndpoint };
+exports.default = { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint, promisifyStream };
 //# sourceMappingURL=util.js.map

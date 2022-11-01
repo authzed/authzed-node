@@ -111,6 +111,33 @@ client.checkPermission(checkPermissionRequest, (err, response) => {
 });
 ```
 
+### Promises (async/await) support
+
+Each method available in the client has an associated promise-style method in place of callbacks, that can be accessed at the `.promises` property on the client.
+
+```js
+import { v1 } from '@authzed/authzed-node';
+
+const client = v1.NewClient('token');
+const { promises: promiseClient } = client; // access client.promises
+
+const checkPermissionRequest = /** from above **/;
+
+const result = await promiseClient.checkPermission(checkPermissionRequest);
+```
+
+For stream-returning methods, including `client.readRelationships()`, `client.lookupResources()` and `client.lookupSubjects()`, the promise-style method will result in an array of response objects once the stream has been closed.
+
+```js
+import { v1 } from '@authzed/authzed-node';
+
+const client = v1.NewClient('token');
+const { promises: promiseClient } = client; // access client.promises
+
+const results = await promiseClient.readRelationships(/** req **/);
+console.log(results[0]); // first ReadRelationship result
+```
+
 ## Requirements
 
 Supported Node.js versions: 14, 16, 17

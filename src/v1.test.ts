@@ -19,6 +19,7 @@ import {
   LookupResourcesResponse,
 } from './v1';
 import * as grpc from '@grpc/grpc-js';
+import { generateTestToken } from './__utils__/helpers'
 
 describe('a check with an unknown namespace', () => {
   it('should raise a failed precondition', (done) => {
@@ -41,7 +42,7 @@ describe('a check with an unknown namespace', () => {
     });
 
     const client = NewClient(
-      'v1-failed-sometoken',
+      generateTestToken('v1-test-unknown'),
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
@@ -57,7 +58,7 @@ describe('a check with an known namespace', () => {
   it('should succeed', (done) => {
     // Write some schema.
     const client = NewClient(
-      'v1-sometoken',
+      generateTestToken('v1-namespace'),
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
@@ -161,7 +162,7 @@ describe('a check with an known namespace', () => {
 describe('Lookup APIs', () => {
   let token: string;
   beforeEach(async () => {
-    token = `v1-lookupsubject-${Math.floor(Math.random() * 1000)}`;
+    token = generateTestToken('v1-lookup');
     const client = NewClient(
       token,
       'localhost:50051',
@@ -243,6 +244,12 @@ describe('Lookup APIs', () => {
       }),
       permission: 'view',
       subjectObjectType: 'test/user',
+      consistency: Consistency.create({
+        requirement: {
+          oneofKind: 'fullyConsistent',
+          fullyConsistent: true,
+        },
+      }),
     });
 
     const resStream = client.lookupSubjects(request);
@@ -280,6 +287,12 @@ describe('Lookup APIs', () => {
       }),
       permission: 'view',
       resourceObjectType: 'test/document',
+      consistency: Consistency.create({
+        requirement: {
+          oneofKind: 'fullyConsistent',
+          fullyConsistent: true,
+        },
+      }),
     });
 
     const resStream = client.lookupResources(request);

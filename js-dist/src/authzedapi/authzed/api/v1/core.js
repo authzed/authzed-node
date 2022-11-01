@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DirectSubjectSet = exports.AlgebraicSubjectSet = exports.PermissionRelationshipTree = exports.RelationshipUpdate = exports.ZedToken = exports.ObjectReference = exports.SubjectReference = exports.Relationship = exports.AlgebraicSubjectSet_Operation = exports.RelationshipUpdate_Operation = void 0;
+exports.DirectSubjectSet = exports.AlgebraicSubjectSet = exports.PermissionRelationshipTree = exports.RelationshipUpdate = exports.ZedToken = exports.ObjectReference = exports.SubjectReference = exports.ContextualizedCaveat = exports.Relationship = exports.AlgebraicSubjectSet_Operation = exports.RelationshipUpdate_Operation = void 0;
 const runtime_1 = require("@protobuf-ts/runtime");
 const runtime_2 = require("@protobuf-ts/runtime");
 const runtime_3 = require("@protobuf-ts/runtime");
 const runtime_4 = require("@protobuf-ts/runtime");
 const runtime_5 = require("@protobuf-ts/runtime");
+const struct_1 = require("../../../google/protobuf/struct");
 /**
  * @generated from protobuf enum authzed.api.v1.RelationshipUpdate.Operation
  */
@@ -56,7 +57,8 @@ class Relationship$Type extends runtime_5.MessageType {
         super("authzed.api.v1.Relationship", [
             { no: 1, name: "resource", kind: "message", T: () => exports.ObjectReference, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 3, name: "subject", kind: "message", T: () => exports.SubjectReference, options: { "validate.rules": { message: { required: true } } } }
+            { no: 3, name: "subject", kind: "message", T: () => exports.SubjectReference, options: { "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "optional_caveat", kind: "message", T: () => exports.ContextualizedCaveat, options: { "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value) {
@@ -80,6 +82,9 @@ class Relationship$Type extends runtime_5.MessageType {
                 case /* authzed.api.v1.SubjectReference subject */ 3:
                     message.subject = exports.SubjectReference.internalBinaryRead(reader, reader.uint32(), options, message.subject);
                     break;
+                case /* authzed.api.v1.ContextualizedCaveat optional_caveat */ 4:
+                    message.optionalCaveat = exports.ContextualizedCaveat.internalBinaryRead(reader, reader.uint32(), options, message.optionalCaveat);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -101,6 +106,9 @@ class Relationship$Type extends runtime_5.MessageType {
         /* authzed.api.v1.SubjectReference subject = 3; */
         if (message.subject)
             exports.SubjectReference.internalBinaryWrite(message.subject, writer.tag(3, runtime_1.WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ContextualizedCaveat optional_caveat = 4; */
+        if (message.optionalCaveat)
+            exports.ContextualizedCaveat.internalBinaryWrite(message.optionalCaveat, writer.tag(4, runtime_1.WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? runtime_2.UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -111,6 +119,60 @@ class Relationship$Type extends runtime_5.MessageType {
  * @generated MessageType for protobuf message authzed.api.v1.Relationship
  */
 exports.Relationship = new Relationship$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ContextualizedCaveat$Type extends runtime_5.MessageType {
+    constructor() {
+        super("authzed.api.v1.ContextualizedCaveat", [
+            { no: 1, name: "caveat_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_|-]{0,127})$" } } } },
+            { no: 2, name: "context", kind: "message", T: () => struct_1.Struct, options: { "validate.rules": { message: { required: false } } } }
+        ]);
+    }
+    create(value) {
+        const message = { caveatName: "" };
+        globalThis.Object.defineProperty(message, runtime_4.MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            runtime_3.reflectionMergePartial(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader, length, options, target) {
+        let message = target !== null && target !== void 0 ? target : this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string caveat_name */ 1:
+                    message.caveatName = reader.string();
+                    break;
+                case /* google.protobuf.Struct context */ 2:
+                    message.context = struct_1.Struct.internalBinaryRead(reader, reader.uint32(), options, message.context);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? runtime_2.UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message, writer, options) {
+        /* string caveat_name = 1; */
+        if (message.caveatName !== "")
+            writer.tag(1, runtime_1.WireType.LengthDelimited).string(message.caveatName);
+        /* google.protobuf.Struct context = 2; */
+        if (message.context)
+            struct_1.Struct.internalBinaryWrite(message.context, writer.tag(2, runtime_1.WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? runtime_2.UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ContextualizedCaveat
+ */
+exports.ContextualizedCaveat = new ContextualizedCaveat$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SubjectReference$Type extends runtime_5.MessageType {
     constructor() {

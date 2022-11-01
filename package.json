@@ -28,12 +28,12 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.2.8",
-    "@protobuf-ts/runtime": "^2.1.0",
-    "@protobuf-ts/runtime-rpc": "^2.1.0",
+    "@protobuf-ts/runtime": "^2.8.1",
+    "@protobuf-ts/runtime-rpc": "^2.8.1",
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
-    "@protobuf-ts/plugin": "^2.0.7",
+    "@protobuf-ts/plugin": "^2.8.1",
     "@types/jasmine": "^3.10.0",
     "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
