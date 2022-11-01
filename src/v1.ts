@@ -7,31 +7,27 @@ import { PermissionsServiceClient } from "./authzedapi/authzed/api/v1/permission
 import { SchemaServiceClient } from "./authzedapi/authzed/api/v1/schema_service.grpc-client";
 import { WatchServiceClient } from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
 import * as grpc from "@grpc/grpc-js";
-
-
 import * as util from "./util";
 import { ClientSecurity, promisifyStream } from "./util";
 
-type ZedClientInterface = Omit<PermissionsServiceClient, "_binaryOptions"> &
-  Omit<SchemaServiceClient, "_binaryOptions"> &
-  Omit<WatchServiceClient, "_binaryOptions">;
+import type { PromisifiedClient, OmitBaseMethods } from './types';
 
-type ZedPromiseClientInterface = {
-  [P in keyof ZedClientInterface]:
-  ZedClientInterface[P] extends (p1: infer P1, p2?: infer P2, p3?: infer P3) => grpc.ClientReadableStream<infer TResult> ? (p1: P1, p2?: P2, p3?: P3) => Promise<TResult[]> :
-  ZedClientInterface[P] extends (p1: infer P1, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1) => Promise<TResponse> :
-  ZedClientInterface[P] extends (p1: infer P1, p2: infer P2, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1, p2: P2) => Promise<TResponse> :
-  ZedClientInterface[P] extends (p1: infer P1, p2: infer P2, p3: infer P3, callback: (err: grpc.ServiceError | null, value?: infer TResponse) => void) => grpc.ClientUnaryCall  ? (p1: P1, p2: P2, p3: P3) => Promise<TResponse> :
-  never;
-}
+// A merge of the three generated gRPC clients, with their base methods omitted
+export type ZedDefaultClientInterface = OmitBaseMethods<PermissionsServiceClient, grpc.Client> &
+  OmitBaseMethods<SchemaServiceClient, grpc.Client> &
+  OmitBaseMethods<WatchServiceClient, grpc.Client>;
 
-type CombinedClientInterface = ZedClientInterface & { promises: ZedPromiseClientInterface}
+// The promisified version of the interface
+export type ZedPromiseClientInterface = PromisifiedClient<PermissionsServiceClient> & PromisifiedClient<SchemaServiceClient> & PromisifiedClient<WatchServiceClient>
+
+// A combined client containing the root gRPC client methods and a promisified set at a "promises" key
+export type ZedClientInterface = ZedDefaultClientInterface & { promises: ZedPromiseClientInterface}
 
 /**
  * A standard client (via @grpc/grpc-js) that will correctly
  * proxy the namespaced methods to the correct service client.
  */
-class ZedClient implements ProxyHandler<ZedClientInterface> {
+class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
   private acl: PermissionsServiceClient
   private ns: SchemaServiceClient
   private watch: WatchServiceClient
@@ -64,7 +60,7 @@ class ZedClient implements ProxyHandler<ZedClientInterface> {
 }
 
 /**
- * Proxies all methods from the {@link ZedClientInterface} to return promises
+ * Proxies all methods from the {@link ZedDefaultClientInterface} to return promises
  * in order to support async/await for {@link ClientUnaryCall} and {@link ClientReadableStream}
  * responses. Methods that normally return an instance of stream, will instead return an 
  * array of objects collected while the stream was open.
@@ -73,7 +69,7 @@ class ZedClient implements ProxyHandler<ZedClientInterface> {
  * @returns A promise-wrapped grpc1 client
  */
 class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface>{
-  private client: ZedClientInterface
+  private client: ZedDefaultClientInterface
   private promiseCache: Record<string, any> = {}
   private streamMethods = new Set([
     'readRelationships',
@@ -81,11 +77,11 @@ class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface>{
     'lookupSubjects'
   ])
 
-  constructor(client: ZedClientInterface) {
+  constructor(client: ZedDefaultClientInterface) {
     this.client = client
   }
 
-  static create(client: ZedClientInterface) {
+  static create(client: ZedDefaultClientInterface) {
     return new Proxy({} as any, new ZedPromiseClient(client))
   }
 
@@ -115,10 +111,10 @@ class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface>{
  * methods.
  */
 class ZedCombinedClient implements ProxyHandler<ZedCombinedClient>{
-  private client: ZedClientInterface
+  private client: ZedDefaultClientInterface
   private promiseClient: ZedPromiseClientInterface
 
-  constructor(client: ZedClientInterface, promiseClient: ZedPromiseClientInterface) {
+  constructor(client: ZedDefaultClientInterface, promiseClient: ZedPromiseClientInterface) {
     this.client = client
     this.promiseClient = promiseClient
   }
@@ -188,7 +184,7 @@ export function NewClientWithCustomCert(
 export function NewClientWithChannelCredentials(
   endpoint = util.authzedEndpoint,
   creds: grpc.ChannelCredentials
-): CombinedClientInterface {
+): ZedClientInterface {
   return ZedCombinedClient.create(endpoint, creds)
 }
 

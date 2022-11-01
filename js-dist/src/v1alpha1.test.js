@@ -20,9 +20,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const v1alpha1_1 = __importStar(require("./v1alpha1"));
+const helpers_1 = require("./__utils__/helpers");
 describe("a write", () => {
     it("should succeed", (done) => {
-        const client = v1alpha1_1.default.NewClient("v1alpha1sometoken", "localhost:50051", v1alpha1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+        const client = v1alpha1_1.default.NewClient(helpers_1.generateTestToken("v1-alpha1"), "localhost:50051", v1alpha1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
         const request = v1alpha1_1.WriteSchemaRequest.create({
             schema: "definition test/something {}",
         });

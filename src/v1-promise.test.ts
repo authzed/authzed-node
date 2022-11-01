@@ -52,78 +52,128 @@ describe('a check with an unknown namespace', () => {
 });
 
 describe('a check with an known namespace', () => {
+  const schemaRequest = WriteSchemaRequest.create({
+    schema: `definition test/user {}
+
+    definition test/document {
+      relation viewer: test/user
+      permission view = viewer
+    }
+    `,
+  });
+
+  const resource = ObjectReference.create({
+    objectType: 'test/document',
+    objectId: 'somedocument',
+  });
+
+  const testUser = ObjectReference.create({
+    objectType: 'test/user',
+    objectId: 'someuser',
+  });
+
+  const writeRequest = WriteRelationshipsRequest.create({
+    updates: [
+      RelationshipUpdate.create({
+        relationship: Relationship.create({
+          resource: resource,
+          relation: 'viewer',
+          subject: SubjectReference.create({
+            object: testUser,
+          }),
+        }),
+        operation: RelationshipUpdate_Operation.CREATE,
+      }),
+    ],
+  });
+
+  const checkPermissionRequest = CheckPermissionRequest.create({
+    resource,
+    permission: 'view',
+    subject: SubjectReference.create({
+      object: testUser,
+    }),
+    consistency: Consistency.create({
+      requirement: {
+        oneofKind: 'fullyConsistent',
+        fullyConsistent: true,
+      },
+    }),
+  });
+
   it('should succeed', async () => {
-    // Write some schema.
     const { promises: client } = NewClient(
       generateTestToken('v1-promise-namespace'),
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
 
-    const request = WriteSchemaRequest.create({
-      schema: `definition test/user {}
-
-      definition test/document {
-        relation viewer: test/user
-        permission view = viewer
-      }
-      `,
-    });
-
-    const schemaResponse = await client.writeSchema(request)
+    const schemaResponse = await client.writeSchema(schemaRequest)
     expect(schemaResponse).toBeTruthy();
-
-    const resource = ObjectReference.create({
-      objectType: 'test/document',
-      objectId: 'somedocument',
-    });
-
-    const testUser = ObjectReference.create({
-      objectType: 'test/user',
-      objectId: 'someuser',
-    });
-
-    const writeRequest = WriteRelationshipsRequest.create({
-      updates: [
-        RelationshipUpdate.create({
-          relationship: Relationship.create({
-            resource: resource,
-            relation: 'viewer',
-            subject: SubjectReference.create({
-              object: testUser,
-            }),
-          }),
-          operation: RelationshipUpdate_Operation.CREATE,
-        }),
-      ],
-    });
 
     const response = await client.writeRelationships(writeRequest)
     expect(response).toBeTruthy();
-
-    const checkPermissionRequest = CheckPermissionRequest.create({
-      resource,
-      permission: 'view',
-      subject: SubjectReference.create({
-        object: testUser,
-      }),
-      consistency: Consistency.create({
-        requirement: {
-          oneofKind: 'fullyConsistent',
-          fullyConsistent: true,
-        },
-      }),
-    });
 
     const checkResponse = await client.checkPermission(checkPermissionRequest)
     expect(checkResponse?.permissionship).toBe(
       CheckPermissionResponse_Permissionship.HAS_PERMISSION
     );
   });
+
+  it('should succeed with full signatures', async () => {
+    const { promises: client } = NewClient(
+      generateTestToken('v1-promise-namespace'),
+      'localhost:50051',
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+    );
+
+    const schemaResponse = await client.writeSchema(schemaRequest, new grpc.Metadata(), {} as grpc.CallOptions)
+    expect(schemaResponse).toBeTruthy();
+
+    const response = await client.writeRelationships(writeRequest, new grpc.Metadata(), {} as grpc.CallOptions)
+    expect(response).toBeTruthy();
+
+    const checkResponse = await client.checkPermission(checkPermissionRequest, new grpc.Metadata(), {} as grpc.CallOptions)
+    expect(checkResponse?.permissionship).toBe(
+      CheckPermissionResponse_Permissionship.HAS_PERMISSION
+    );
+  })
 });
 
 describe('Lookup APIs', () => {
   let token: string;
+
+  const lookupSubjectRequest = LookupSubjectsRequest.create({
+    resource: ObjectReference.create({
+      objectType: 'test/document',
+      objectId: 'somedocument',
+    }),
+    permission: 'view',
+    subjectObjectType: 'test/user',
+    consistency: Consistency.create({
+      requirement: {
+        oneofKind: 'fullyConsistent',
+        fullyConsistent: true,
+      },
+    }),
+  });
+
+  const lookupResourceRequest = LookupResourcesRequest.create({
+    subject: SubjectReference.create({
+      object: ObjectReference.create({
+        objectType: 'test/user',
+        objectId: 'someuser',
+      }),
+    }),
+    permission: 'view',
+    resourceObjectType: 'test/document',
+    consistency: Consistency.create({
+      requirement: {
+        oneofKind: 'fullyConsistent',
+        fullyConsistent: true,
+      },
+    }),
+  });
 
   beforeEach(async () => {
     token = generateTestToken('v1-promise-lookup');
@@ -191,22 +241,7 @@ describe('Lookup APIs', () => {
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
 
-    const request = LookupSubjectsRequest.create({
-      resource: ObjectReference.create({
-        objectType: 'test/document',
-        objectId: 'somedocument',
-      }),
-      permission: 'view',
-      subjectObjectType: 'test/user',
-      consistency: Consistency.create({
-        requirement: {
-          oneofKind: 'fullyConsistent',
-          fullyConsistent: true,
-        },
-      }),
-    });
-
-    const result = await client.lookupSubjects(request)
+    const result = await client.lookupSubjects(lookupSubjectRequest)
     expect(['someuser', 'someuser2']).toContain(result[0].subjectObjectId);
   });
 
@@ -217,24 +252,21 @@ describe('Lookup APIs', () => {
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
 
-    const request = LookupResourcesRequest.create({
-      subject: SubjectReference.create({
-        object: ObjectReference.create({
-          objectType: 'test/user',
-          objectId: 'someuser',
-        }),
-      }),
-      permission: 'view',
-      resourceObjectType: 'test/document',
-      consistency: Consistency.create({
-        requirement: {
-          oneofKind: 'fullyConsistent',
-          fullyConsistent: true,
-        },
-      }),
-    });
-
-    const resStream = await client.lookupResources(request)
+    const resStream = await client.lookupResources(lookupResourceRequest)
     expect(resStream[0].resourceObjectId).toEqual('somedocument');
   });
+
+  it('can lookup using full signatures', async () => {
+    const { promises: client } = NewClient(
+      token,
+      'localhost:50051',
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+    );
+
+    const result = await client.lookupSubjects(lookupSubjectRequest, new grpc.Metadata(), {} as grpc.CallOptions)
+    expect(['someuser', 'someuser2']).toContain(result[0].subjectObjectId);
+
+    const resStream = await client.lookupResources(lookupResourceRequest, new grpc.Metadata(), {} as grpc.CallOptions)
+    expect(resStream[0].resourceObjectId).toEqual('somedocument');
+  })
 });

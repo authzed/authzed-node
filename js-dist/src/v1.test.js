@@ -21,6 +21,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const v1_1 = require("./v1");
 const grpc = __importStar(require("@grpc/grpc-js"));
+const helpers_1 = require("./__utils__/helpers");
 describe('a check with an unknown namespace', () => {
     it('should raise a failed precondition', (done) => {
         const resource = v1_1.ObjectReference.create({
@@ -38,7 +39,7 @@ describe('a check with an unknown namespace', () => {
                 object: testUser,
             }),
         });
-        const client = v1_1.NewClient('v1-failed-sometoken', 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+        const client = v1_1.NewClient(helpers_1.generateTestToken('v1-test-unknown'), 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
         client.checkPermission(checkPermissionRequest, function (err, response) {
             expect(response).toBe(undefined);
             expect(err === null || err === void 0 ? void 0 : err.code).toBe(grpc.status.FAILED_PRECONDITION);
@@ -49,7 +50,7 @@ describe('a check with an unknown namespace', () => {
 describe('a check with an known namespace', () => {
     it('should succeed', (done) => {
         // Write some schema.
-        const client = v1_1.NewClient(`v1-namespace-${Math.floor(Math.random() * 1000)}`, 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+        const client = v1_1.NewClient(helpers_1.generateTestToken('v1-namespace'), 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
         const request = v1_1.WriteSchemaRequest.create({
             schema: `definition test/user {}
 
@@ -131,7 +132,7 @@ describe('a check with an known namespace', () => {
 describe('Lookup APIs', () => {
     let token;
     beforeEach(async () => {
-        token = `v1-lookupsubject-${Math.floor(Math.random() * 1000)}`;
+        token = helpers_1.generateTestToken('v1-lookup');
         const client = v1_1.NewClient(token, 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
         const request = v1_1.WriteSchemaRequest.create({
             schema: `definition test/user {}
@@ -198,6 +199,12 @@ describe('Lookup APIs', () => {
             }),
             permission: 'view',
             subjectObjectType: 'test/user',
+            consistency: v1_1.Consistency.create({
+                requirement: {
+                    oneofKind: 'fullyConsistent',
+                    fullyConsistent: true,
+                },
+            }),
         });
         const resStream = client.lookupSubjects(request);
         resStream.on('data', function (subject) {
@@ -224,6 +231,12 @@ describe('Lookup APIs', () => {
             }),
             permission: 'view',
             resourceObjectType: 'test/document',
+            consistency: v1_1.Consistency.create({
+                requirement: {
+                    oneofKind: 'fullyConsistent',
+                    fullyConsistent: true,
+                },
+            }),
         });
         const resStream = client.lookupResources(request);
         resStream.on('data', function (response) {

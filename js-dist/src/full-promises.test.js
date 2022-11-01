@@ -22,14 +22,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = require("./util");
 const v1 = __importStar(require("./v1"));
 const v1_1 = require("./v1");
-const v1alpha = __importStar(require("./v1alpha1"));
+const helpers_1 = require("./__utils__/helpers");
 describe("a check following a write of schema and relationships", () => {
-    it("should succeed", async (done) => {
+    it("should succeed", async () => {
         // Write the schema.
-        const token = `fulltest-sometoken-${Math.floor(Math.random() * 1000)}`;
-        const alphaClient = v1alpha.NewClient(token, "localhost:50051", util_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+        const token = helpers_1.generateTestToken('full-promises');
         const { promises: v1client } = v1.NewClient(token, "localhost:50051", util_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
-        const writeSchemaRequest = v1alpha.WriteSchemaRequest.create({
+        const writeSchemaRequest = v1.WriteSchemaRequest.create({
             schema: `
   definition test/user {}
   
@@ -39,51 +38,48 @@ describe("a check following a write of schema and relationships", () => {
   }
   `,
         });
-        alphaClient.writeSchema(writeSchemaRequest, async function (err) {
-            expect(err).toBe(null);
-            // Create the relationship between the resource and the user.
-            const resource = v1.ObjectReference.create({
-                objectType: "test/resource",
-                objectId: "someresource",
-            });
-            // Create the user reference.
-            const userref = v1.ObjectReference.create({
-                objectType: "test/user",
-                objectId: "someuser",
-            });
-            const user = v1.SubjectReference.create({
-                object: userref,
-            });
-            const relationship = v1.Relationship.create({
-                resource,
-                relation: "viewer",
-                subject: user,
-            });
-            const update = v1.RelationshipUpdate.create({
-                operation: v1.RelationshipUpdate_Operation.CREATE,
-                relationship: relationship,
-            });
-            // Write the relationship.
-            const writeRequest = v1.WriteRelationshipsRequest.create({
-                updates: [update],
-            });
-            const response = await v1client.writeRelationships(writeRequest);
-            expect(response).toBeTruthy();
-            const checkPermissionRequest = v1.CheckPermissionRequest.create({
-                resource,
-                permission: "view",
-                subject: user,
-                consistency: v1_1.Consistency.create({
-                    requirement: {
-                        oneofKind: "fullyConsistent",
-                        fullyConsistent: true,
-                    },
-                })
-            });
-            const permissionResponse = await v1client.checkPermission(checkPermissionRequest);
-            expect(permissionResponse === null || permissionResponse === void 0 ? void 0 : permissionResponse.permissionship).toBe(v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION);
-            done();
+        await v1client.writeSchema(writeSchemaRequest);
+        // Create the relationship between the resource and the user.
+        const resource = v1.ObjectReference.create({
+            objectType: "test/resource",
+            objectId: "someresource",
         });
+        // Create the user reference.
+        const userref = v1.ObjectReference.create({
+            objectType: "test/user",
+            objectId: "someuser",
+        });
+        const user = v1.SubjectReference.create({
+            object: userref,
+        });
+        const relationship = v1.Relationship.create({
+            resource,
+            relation: "viewer",
+            subject: user,
+        });
+        const update = v1.RelationshipUpdate.create({
+            operation: v1.RelationshipUpdate_Operation.CREATE,
+            relationship: relationship,
+        });
+        // Write the relationship.
+        const writeRequest = v1.WriteRelationshipsRequest.create({
+            updates: [update],
+        });
+        const response = await v1client.writeRelationships(writeRequest);
+        expect(response).toBeTruthy();
+        const checkPermissionRequest = v1.CheckPermissionRequest.create({
+            resource,
+            permission: "view",
+            subject: user,
+            consistency: v1_1.Consistency.create({
+                requirement: {
+                    oneofKind: "fullyConsistent",
+                    fullyConsistent: true,
+                },
+            })
+        });
+        const permissionResponse = await v1client.checkPermission(checkPermissionRequest);
+        expect(permissionResponse === null || permissionResponse === void 0 ? void 0 : permissionResponse.permissionship).toBe(v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION);
     });
 });
 //# sourceMappingURL=full-promises.test.js.map

@@ -4,7 +4,7 @@ import { Consistency } from "./v1";
 import { generateTestToken } from './__utils__/helpers' 
 
 describe("a check following a write of schema and relationships", () => {
-  it("should succeed", async (done) => {
+  it("should succeed", async () => {
     // Write the schema.
     const token = generateTestToken('full-promises')
     const { promises: v1client } = v1.NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
@@ -72,7 +72,5 @@ describe("a check following a write of schema and relationships", () => {
     expect(permissionResponse?.permissionship).toBe(
       v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION
     );
-
-    done()
   });
 });

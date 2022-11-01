@@ -1,7 +1,6 @@
 import * as grpc from "@grpc/grpc-js";
 import { ConnectionOptions } from 'tls';
 
-
 // NOTE: Copied from channel-credentials.ts in gRPC Node package because its not exported:
 // https://github.com/grpc/grpc-node/blob/3106057f5ad8f79a71d2ae411e116ad308a2e835/packages/grpc-js/src/call-credentials.ts#L143
 class ComposedChannelCredentials extends grpc.ChannelCredentials {

@@ -30,11 +30,96 @@ const schema_service_grpc_client_1 = require("./authzedapi/authzed/api/v1/schema
 const watch_service_grpc_client_1 = require("./authzedapi/authzed/api/v1/watch_service.grpc-client");
 const util = __importStar(require("./util"));
 const util_2 = require("./util");
-const streamMethods = new Set([
-    'readRelationships',
-    'lookupResources',
-    'lookupSubjects'
-]);
+/**
+ * A standard client (via @grpc/grpc-js) that will correctly
+ * proxy the namespaced methods to the correct service client.
+ */
+class ZedClient {
+    constructor(endpoint, creds) {
+        this.acl = new permission_service_grpc_client_1.PermissionsServiceClient(endpoint, creds);
+        this.ns = new schema_service_grpc_client_1.SchemaServiceClient(endpoint, creds);
+        this.watch = new watch_service_grpc_client_1.WatchServiceClient(endpoint, creds);
+    }
+    static create(endpoint, creds) {
+        return new Proxy({}, new ZedClient(endpoint, creds));
+    }
+    get(_target, name) {
+        if (this.acl[name]) {
+            return this.acl[name];
+        }
+        if (this.ns[name]) {
+            return this.ns[name];
+        }
+        if (this.watch[name]) {
+            return this.watch[name];
+        }
+        return undefined;
+    }
+}
+/**
+ * Proxies all methods from the {@link ZedDefaultClientInterface} to return promises
+ * in order to support async/await for {@link ClientUnaryCall} and {@link ClientReadableStream}
+ * responses. Methods that normally return an instance of stream, will instead return an
+ * array of objects collected while the stream was open.
+ *
+ * @param client The default grpc1 client
+ * @returns A promise-wrapped grpc1 client
+ */
+class ZedPromiseClient {
+    constructor(client) {
+        this.promiseCache = {};
+        this.streamMethods = new Set([
+            'readRelationships',
+            'lookupResources',
+            'lookupSubjects'
+        ]);
+        this.client = client;
+    }
+    static create(client) {
+        return new Proxy({}, new ZedPromiseClient(client));
+    }
+    get(_target, name) {
+        if (!(name in this.promiseCache)) {
+            const clientMethod = this.client[name];
+            if (clientMethod !== undefined) {
+                if (this.streamMethods.has(name)) {
+                    this.promiseCache[name] = util_2.promisifyStream(clientMethod, this.client);
+                }
+                else if (typeof clientMethod === 'function') {
+                    this.promiseCache[name] = util_1.promisify(this.client[name]).bind(this.client);
+                }
+                else {
+                    return clientMethod;
+                }
+            }
+        }
+        return this.promiseCache[name];
+    }
+}
+/**
+ * The {@link ZedCombinedClient} proxies both callback/promise-style methods to the underlying
+ * {@link ZedClient} and {@link ZedPromiseClient} instances. Direct method calls on the combined
+ * client will result in calling the underlying callback methods (the generated gRPC methods) while
+ * the same methods accessed at a sub-path `.promises.<method>` will result in the promise-wrapped
+ * methods.
+ */
+class ZedCombinedClient {
+    constructor(client, promiseClient) {
+        this.client = client;
+        this.promiseClient = promiseClient;
+    }
+    static create(endpoint, creds) {
+        const client = ZedClient.create(endpoint, creds);
+        const promiseClient = ZedPromiseClient.create(client);
+        return new Proxy({}, new ZedCombinedClient(client, promiseClient));
+    }
+    get(_target, name) {
+        if (name === 'promises') {
+            return this.promiseClient;
+        }
+        return this.client[name];
+    }
+}
 /**
  * NewClient creates a new client for calling Authzed APIs.
  * @param token Secret token for authentication.
@@ -62,80 +147,21 @@ exports.NewClientWithCustomCert = NewClientWithCustomCert;
 /**
  * NewClientWithChannelCredentials creates a new client for calling Authzed APIs using custom grpc ChannelCredentials.
  *
- * The combined client exposes all service-level methods at the root which directly call grpc-generated methods
- * while also exposing a `promises` object containing all promise-wrapped methods.
+ The {@link ZedCombinedClient} proxies both callback/promise-style methods to the underlying
+ * {@link ZedClient} and {@link ZedPromiseClient} instances. Direct method calls on the combined
+ * client will result in calling the underlying callback methods (the generated gRPC methods) while
+ * the same methods accessed at a sub-path `.promises.<method>` will result in the promise-wrapped
+ * methods. For all methods that return a {@link ClientReadableStream}, the promise-wrapped method
+ * will return an array of the resulting responses after the stream has been closed.
  *
  * @param endpoint Uri for communicating with Authzed.
  * @param creds ChannelCredentials used for grpc.
  * @returns Client for calling Authzed APIs.
  */
 function NewClientWithChannelCredentials(endpoint = util.authzedEndpoint, creds) {
-    const proxy = createClient(endpoint, creds);
-    const promiseClient = createPromiseClient(proxy);
-    const fullHandler = {
-        get(target, name) {
-            if (name === 'promises') {
-                return promiseClient;
-            }
-            return proxy[name];
-        }
-    };
-    return new Proxy({}, fullHandler);
+    return ZedCombinedClient.create(endpoint, creds);
 }
 exports.NewClientWithChannelCredentials = NewClientWithChannelCredentials;
-/**
- * Creates the standard client_grpc1 (via @grpc/grpc-js) that will correctly
- * proxy the namespaced methods to the correct service client.
- *
- * @param endpoint The grpc endpoing
- * @param creds The channel credentials
- * @returns A default grpc1 client
- */
-function createClient(endpoint, creds) {
-    const acl = new permission_service_grpc_client_1.PermissionsServiceClient(endpoint, creds);
-    const ns = new schema_service_grpc_client_1.SchemaServiceClient(endpoint, creds);
-    const watch = new watch_service_grpc_client_1.WatchServiceClient(endpoint, creds);
-    const handler = {
-        get(target, name) {
-            if (acl[name]) {
-                return acl[name];
-            }
-            if (ns[name]) {
-                return ns[name];
-            }
-            if (watch[name]) {
-                return watch[name];
-            }
-            return undefined;
-        },
-    };
-    return new Proxy({}, handler);
-}
-/**
- * Proxies all methods from the {@link ZedClientInterface} to return promises
- * in order to support async/await for {@link ClientUnaryCall} and {@link ClientReadableStream}
- * responses.
- *
- * @param client The default grpc1 client
- * @returns A promise-wrapped grpc1 client
- */
-function createPromiseClient(client) {
-    const handler = {
-        get(target, name) {
-            if (client[name]) {
-                if (streamMethods.has(name)) {
-                    return util_2.promisifyStream(client[name], client);
-                }
-                if (typeof client[name] === 'function') {
-                    return util_1.promisify(client[name]).bind(client);
-                }
-                return client[name];
-            }
-            return undefined;
-        },
-    };
-    return new Proxy({}, handler);
-}
 __exportStar(require("./authzedapi/authzed/api/v1/core"), exports);
 __exportStar(require("./authzedapi/authzed/api/v1/permission_service"), exports);
 __exportStar(require("./authzedapi/authzed/api/v1/schema_service"), exports);
