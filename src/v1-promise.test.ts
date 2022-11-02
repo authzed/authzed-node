@@ -47,6 +47,7 @@ describe('a check with an unknown namespace', () => {
       throw new Error('Error should be thrown')
     } catch (err) {
       expect((err as grpc.ServiceError)?.code).toBe(grpc.status.FAILED_PRECONDITION);
+      client.close()
     }
   });
 });
@@ -118,6 +119,8 @@ describe('a check with an known namespace', () => {
     expect(checkResponse?.permissionship).toBe(
       CheckPermissionResponse_Permissionship.HAS_PERMISSION
     );
+
+    client.close()
   });
 
   it('should succeed with full signatures', async () => {
@@ -137,6 +140,8 @@ describe('a check with an known namespace', () => {
     expect(checkResponse?.permissionship).toBe(
       CheckPermissionResponse_Permissionship.HAS_PERMISSION
     );
+
+    client.close()
   })
 });
 
@@ -231,7 +236,8 @@ describe('Lookup APIs', () => {
       ],
     });
 
-    return client.writeRelationships(writeRequest)
+    await client.writeRelationships(writeRequest)
+    client.close()
   });
 
   it('can lookup subjects', async () => {
@@ -243,6 +249,7 @@ describe('Lookup APIs', () => {
 
     const result = await client.lookupSubjects(lookupSubjectRequest)
     expect(['someuser', 'someuser2']).toContain(result[0].subjectObjectId);
+    client.close()
   });
 
   it('can lookup resources', async () => {
@@ -254,6 +261,8 @@ describe('Lookup APIs', () => {
 
     const resStream = await client.lookupResources(lookupResourceRequest)
     expect(resStream[0].resourceObjectId).toEqual('somedocument');
+
+    client.close()
   });
 
   it('can lookup using full signatures', async () => {
@@ -268,5 +277,7 @@ describe('Lookup APIs', () => {
 
     const resStream = await client.lookupResources(lookupResourceRequest, new grpc.Metadata(), {} as grpc.CallOptions)
     expect(resStream[0].resourceObjectId).toEqual('somedocument');
+
+    client.close()
   })
 });

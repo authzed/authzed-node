@@ -49,6 +49,7 @@ describe('a check with an unknown namespace', () => {
     client.checkPermission(checkPermissionRequest, function (err, response) {
       expect(response).toBe(undefined);
       expect(err?.code).toBe(grpc.status.FAILED_PRECONDITION);
+      client.close()
       done();
     });
   });
@@ -154,6 +155,7 @@ describe('a check with an known namespace', () => {
           CheckPermissionResponse_Permissionship.HAS_PERMISSION
         );
 
+        client.close()
         done();
       });
   });
@@ -259,10 +261,12 @@ describe('Lookup APIs', () => {
     });
 
     resStream.on('end', function () {
+      client.close()
       done();
     });
 
     resStream.on('error', function (e) {
+      client.close()
       done.fail(e);
     });
 
@@ -302,10 +306,12 @@ describe('Lookup APIs', () => {
     });
 
     resStream.on('end', function () {
+      client.close()
       done();
     });
 
     resStream.on('error', function (e) {
+      client.close()
       done.fail(e);
     });
 
