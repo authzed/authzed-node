@@ -1,7 +1,7 @@
 {
   "name": "@authzed/authzed-js-node",
   "author": "authzed",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "authzed js client for nodejs",
   "keywords": [
     "authorization",
