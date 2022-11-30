@@ -202,9 +202,9 @@ class CheckDebugTrace$Type extends MessageType<CheckDebugTrace> {
         super("authzed.api.v1.CheckDebugTrace", [
             { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "permission_type", kind: "enum", T: () => ["authzed.api.v1.CheckDebugTrace.PermissionType", CheckDebugTrace_PermissionType, "PERMISSION_TYPE_"] },
+            { no: 3, name: "permission_type", kind: "enum", T: () => ["authzed.api.v1.CheckDebugTrace.PermissionType", CheckDebugTrace_PermissionType, "PERMISSION_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 4, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 5, name: "result", kind: "enum", T: () => ["authzed.api.v1.CheckDebugTrace.Permissionship", CheckDebugTrace_Permissionship, "PERMISSIONSHIP_"] },
+            { no: 5, name: "result", kind: "enum", T: () => ["authzed.api.v1.CheckDebugTrace.Permissionship", CheckDebugTrace_Permissionship, "PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 6, name: "was_cached_result", kind: "scalar", oneof: "resolution", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "sub_problems", kind: "message", oneof: "resolution", T: () => CheckDebugTrace_SubProblems }
         ]);

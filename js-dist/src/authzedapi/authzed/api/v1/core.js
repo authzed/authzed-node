@@ -332,7 +332,7 @@ exports.ZedToken = new ZedToken$Type();
 class RelationshipUpdate$Type extends runtime_5.MessageType {
     constructor() {
         super("authzed.api.v1.RelationshipUpdate", [
-            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.RelationshipUpdate.Operation", RelationshipUpdate_Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.RelationshipUpdate.Operation", RelationshipUpdate_Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 2, name: "relationship", kind: "message", T: () => exports.Relationship, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
@@ -460,8 +460,8 @@ exports.PermissionRelationshipTree = new PermissionRelationshipTree$Type();
 class AlgebraicSubjectSet$Type extends runtime_5.MessageType {
     constructor() {
         super("authzed.api.v1.AlgebraicSubjectSet", [
-            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.AlgebraicSubjectSet.Operation", AlgebraicSubjectSet_Operation, "OPERATION_"] },
-            { no: 2, name: "children", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => exports.PermissionRelationshipTree }
+            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.AlgebraicSubjectSet.Operation", AlgebraicSubjectSet_Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 2, name: "children", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => exports.PermissionRelationshipTree, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
         ]);
     }
     create(value) {

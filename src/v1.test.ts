@@ -17,9 +17,11 @@ import {
   LookupSubjectsResponse,
   LookupResourcesRequest,
   LookupResourcesResponse,
+  ContextualizedCaveat,
 } from './v1';
 import * as grpc from '@grpc/grpc-js';
-import { generateTestToken } from './__utils__/helpers'
+import { generateTestToken } from './__utils__/helpers';
+import { Struct } from './authzedapi/google/protobuf/struct';
 
 describe('a check with an unknown namespace', () => {
   it('should raise a failed precondition', (done) => {
@@ -49,7 +51,7 @@ describe('a check with an unknown namespace', () => {
     client.checkPermission(checkPermissionRequest, function (err, response) {
       expect(response).toBe(undefined);
       expect(err?.code).toBe(grpc.status.FAILED_PRECONDITION);
-      client.close()
+      client.close();
       done();
     });
   });
@@ -155,9 +157,124 @@ describe('a check with an known namespace', () => {
           CheckPermissionResponse_Permissionship.HAS_PERMISSION
         );
 
-        client.close()
+        client.close();
         done();
       });
+  });
+
+  describe('with caveated relations', () => {
+    it('should succeed', (done) => {
+      // Write some schema.
+      const client = NewClient(
+        generateTestToken('v1-namespace-caveats'),
+        'localhost:50051',
+        ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      );
+
+      const request = WriteSchemaRequest.create({
+        schema: `definition test/user {}
+
+          caveat has_special_attribute(special bool) {
+            special == true
+          }
+
+          definition test/document {
+            relation viewer: test/user
+            relation caveated_viewer: test/user with has_special_attribute
+            permission view = viewer + caveated_viewer
+          }
+      `,
+      });
+
+      new Promise((resolve) => {
+        client.writeSchema(request, function (err, response) {
+          expect(err).toBe(null);
+          resolve(response);
+        });
+      })
+        .then((schemaResponse) => {
+          expect(schemaResponse).toBeTruthy();
+
+          return new Promise((resolve) => {
+            // Write a relationship.
+            const resource = ObjectReference.create({
+              objectType: 'test/document',
+              objectId: 'somedocument',
+            });
+
+            const testUser = ObjectReference.create({
+              objectType: 'test/user',
+              objectId: 'specialuser',
+            });
+
+            const writeRequest = WriteRelationshipsRequest.create({
+              updates: [
+                RelationshipUpdate.create({
+                  relationship: Relationship.create({
+                    resource: resource,
+                    relation: 'caveated_viewer',
+                    subject: SubjectReference.create({
+                      object: testUser,
+                    }),
+                    optionalCaveat: ContextualizedCaveat.create({
+                      caveatName: 'has_special_attribute',
+                    }),
+                  }),
+                  operation: RelationshipUpdate_Operation.CREATE,
+                }),
+              ],
+            });
+
+            client.writeRelationships(writeRequest, function (err, response) {
+              expect(err).toBe(null);
+              resolve({ response, resource, testUser });
+            });
+          });
+        })
+        .then((vals) => {
+          const { response, resource, testUser } = vals as {
+            response: WriteRelationshipsResponse;
+            resource: ObjectReference;
+            testUser: ObjectReference;
+          };
+          expect(response).toBeTruthy();
+
+          return new Promise((resolve) => {
+            // Call check when user has special attribute.
+            const checkPermissionRequest = CheckPermissionRequest.create({
+              resource,
+              permission: 'view',
+              subject: SubjectReference.create({
+                object: testUser,
+              }),
+              consistency: Consistency.create({
+                requirement: {
+                  oneofKind: 'fullyConsistent',
+                  fullyConsistent: true,
+                },
+              }),
+              context: Struct.fromJson({ special: true }),
+            });
+
+            client.checkPermission(
+              checkPermissionRequest,
+              function (err, response) {
+                expect(err).toBe(null);
+                resolve(response);
+              }
+            );
+          });
+        })
+        .then((response) => {
+          const checkResponse = response as CheckPermissionResponse;
+          expect(checkResponse?.permissionship).toBe(
+            CheckPermissionResponse_Permissionship.HAS_PERMISSION
+          );
+
+          client.close();
+          done();
+        });
+    });
   });
 });
 

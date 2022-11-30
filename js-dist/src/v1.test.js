@@ -22,6 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const v1_1 = require("./v1");
 const grpc = __importStar(require("@grpc/grpc-js"));
 const helpers_1 = require("./__utils__/helpers");
+const struct_1 = require("./authzedapi/google/protobuf/struct");
 describe('a check with an unknown namespace', () => {
     it('should raise a failed precondition', (done) => {
         const resource = v1_1.ObjectReference.create({
@@ -43,6 +44,7 @@ describe('a check with an unknown namespace', () => {
         client.checkPermission(checkPermissionRequest, function (err, response) {
             expect(response).toBe(undefined);
             expect(err === null || err === void 0 ? void 0 : err.code).toBe(grpc.status.FAILED_PRECONDITION);
+            client.close();
             done();
         });
     });
@@ -125,7 +127,100 @@ describe('a check with an known namespace', () => {
             .then((response) => {
             const checkResponse = response;
             expect(checkResponse === null || checkResponse === void 0 ? void 0 : checkResponse.permissionship).toBe(v1_1.CheckPermissionResponse_Permissionship.HAS_PERMISSION);
+            client.close();
             done();
+        });
+    });
+    describe('with caveated relations', () => {
+        it('should succeed', (done) => {
+            // Write some schema.
+            const client = v1_1.NewClient(helpers_1.generateTestToken('v1-namespace-caveats'), 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+            const request = v1_1.WriteSchemaRequest.create({
+                schema: `definition test/user {}
+
+          caveat has_special_attribute(special bool) {
+            special == true
+          }
+
+          definition test/document {
+            relation viewer: test/user
+            relation caveated_viewer: test/user with has_special_attribute
+            permission view = viewer + caveated_viewer
+          }
+      `,
+            });
+            new Promise((resolve) => {
+                client.writeSchema(request, function (err, response) {
+                    expect(err).toBe(null);
+                    resolve(response);
+                });
+            })
+                .then((schemaResponse) => {
+                expect(schemaResponse).toBeTruthy();
+                return new Promise((resolve) => {
+                    // Write a relationship.
+                    const resource = v1_1.ObjectReference.create({
+                        objectType: 'test/document',
+                        objectId: 'somedocument',
+                    });
+                    const testUser = v1_1.ObjectReference.create({
+                        objectType: 'test/user',
+                        objectId: 'specialuser',
+                    });
+                    const writeRequest = v1_1.WriteRelationshipsRequest.create({
+                        updates: [
+                            v1_1.RelationshipUpdate.create({
+                                relationship: v1_1.Relationship.create({
+                                    resource: resource,
+                                    relation: 'caveated_viewer',
+                                    subject: v1_1.SubjectReference.create({
+                                        object: testUser,
+                                    }),
+                                    optionalCaveat: v1_1.ContextualizedCaveat.create({
+                                        caveatName: 'has_special_attribute',
+                                    }),
+                                }),
+                                operation: v1_1.RelationshipUpdate_Operation.CREATE,
+                            }),
+                        ],
+                    });
+                    client.writeRelationships(writeRequest, function (err, response) {
+                        expect(err).toBe(null);
+                        resolve({ response, resource, testUser });
+                    });
+                });
+            })
+                .then((vals) => {
+                const { response, resource, testUser } = vals;
+                expect(response).toBeTruthy();
+                return new Promise((resolve) => {
+                    // Call check when user has special attribute.
+                    const checkPermissionRequest = v1_1.CheckPermissionRequest.create({
+                        resource,
+                        permission: 'view',
+                        subject: v1_1.SubjectReference.create({
+                            object: testUser,
+                        }),
+                        consistency: v1_1.Consistency.create({
+                            requirement: {
+                                oneofKind: 'fullyConsistent',
+                                fullyConsistent: true,
+                            },
+                        }),
+                        context: struct_1.Struct.fromJson({ special: true }),
+                    });
+                    client.checkPermission(checkPermissionRequest, function (err, response) {
+                        expect(err).toBe(null);
+                        resolve(response);
+                    });
+                });
+            })
+                .then((response) => {
+                const checkResponse = response;
+                expect(checkResponse === null || checkResponse === void 0 ? void 0 : checkResponse.permissionship).toBe(v1_1.CheckPermissionResponse_Permissionship.HAS_PERMISSION);
+                client.close();
+                done();
+            });
         });
     });
 });
@@ -211,9 +306,11 @@ describe('Lookup APIs', () => {
             expect(['someuser', 'someuser2']).toContain(subject.subjectObjectId);
         });
         resStream.on('end', function () {
+            client.close();
             done();
         });
         resStream.on('error', function (e) {
+            client.close();
             done.fail(e);
         });
         resStream.on('status', function (status) {
@@ -243,9 +340,11 @@ describe('Lookup APIs', () => {
             expect(response.resourceObjectId).toEqual('somedocument');
         });
         resStream.on('end', function () {
+            client.close();
             done();
         });
         resStream.on('error', function (e) {
+            client.close();
             done.fail(e);
         });
         resStream.on('status', function (status) {

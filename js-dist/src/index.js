@@ -20,5 +20,4 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.v1 = __importStar(require("./v1"));
-exports.v1alpha1 = __importStar(require("./v1alpha1"));
 //# sourceMappingURL=index.js.map

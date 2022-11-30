@@ -536,28 +536,76 @@ export interface LookupSubjectsResponse {
     /**
      * subject_object_id is the Object ID of the subject found. May be a `*` if
      * a wildcard was found.
+     * deprecated: use `subject`
      *
-     * @generated from protobuf field: string subject_object_id = 2;
+     * @deprecated
+     * @generated from protobuf field: string subject_object_id = 2 [deprecated = true];
      */
     subjectObjectId: string;
     /**
      * excluded_subject_ids are the Object IDs of the subjects excluded. This list
      * will only contain object IDs if `subject_object_id` is a wildcard (`*`) and
      * will only be populated if exclusions exist from the wildcard.
+     * deprecated: use `excluded_subjects`
      *
-     * @generated from protobuf field: repeated string excluded_subject_ids = 3;
+     * @deprecated
+     * @generated from protobuf field: repeated string excluded_subject_ids = 3 [deprecated = true];
      */
     excludedSubjectIds: string[];
     /**
      * permissionship indicates whether the response was partially evaluated or not
+     * deprecated: use `subject.permissionship`
      *
-     * @generated from protobuf field: authzed.api.v1.LookupPermissionship permissionship = 4;
+     * @deprecated
+     * @generated from protobuf field: authzed.api.v1.LookupPermissionship permissionship = 4 [deprecated = true];
+     */
+    permissionship: LookupPermissionship;
+    /**
+     * partial_caveat_info holds information of a partially-evaluated caveated response
+     * deprecated: use `subject.partial_caveat_info`
+     *
+     * @deprecated
+     * @generated from protobuf field: authzed.api.v1.PartialCaveatInfo partial_caveat_info = 5 [deprecated = true];
+     */
+    partialCaveatInfo?: PartialCaveatInfo;
+    /**
+     * subject is the subject found, along with its permissionship.
+     *
+     * @generated from protobuf field: authzed.api.v1.ResolvedSubject subject = 6;
+     */
+    subject?: ResolvedSubject;
+    /**
+     * excluded_subjects are the subjects excluded. This list
+     * will only contain subjects if `subject.subject_object_id` is a wildcard (`*`) and
+     * will only be populated if exclusions exist from the wildcard.
+     *
+     * @generated from protobuf field: repeated authzed.api.v1.ResolvedSubject excluded_subjects = 7;
+     */
+    excludedSubjects: ResolvedSubject[];
+}
+/**
+ * ResolvedSubject is a single subject resolved within LookupSubjects.
+ *
+ * @generated from protobuf message authzed.api.v1.ResolvedSubject
+ */
+export interface ResolvedSubject {
+    /**
+     * subject_object_id is the Object ID of the subject found. May be a `*` if
+     * a wildcard was found.
+     *
+     * @generated from protobuf field: string subject_object_id = 1;
+     */
+    subjectObjectId: string;
+    /**
+     * permissionship indicates whether the response was partially evaluated or not
+     *
+     * @generated from protobuf field: authzed.api.v1.LookupPermissionship permissionship = 2;
      */
     permissionship: LookupPermissionship;
     /**
      * partial_caveat_info holds information of a partially-evaluated caveated response
      *
-     * @generated from protobuf field: authzed.api.v1.PartialCaveatInfo partial_caveat_info = 5;
+     * @generated from protobuf field: authzed.api.v1.PartialCaveatInfo partial_caveat_info = 3;
      */
     partialCaveatInfo?: PartialCaveatInfo;
 }
@@ -894,8 +942,8 @@ export const ReadRelationshipsRequest = new ReadRelationshipsRequest$Type();
 class ReadRelationshipsResponse$Type extends MessageType<ReadRelationshipsResponse> {
     constructor() {
         super("authzed.api.v1.ReadRelationshipsResponse", [
-            { no: 1, name: "read_at", kind: "message", T: () => ZedToken },
-            { no: 2, name: "relationship", kind: "message", T: () => Relationship }
+            { no: 1, name: "read_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "relationship", kind: "message", T: () => Relationship, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<ReadRelationshipsResponse>): ReadRelationshipsResponse {
@@ -948,7 +996,7 @@ export const ReadRelationshipsResponse = new ReadRelationshipsResponse$Type();
 class Precondition$Type extends MessageType<Precondition> {
     constructor() {
         super("authzed.api.v1.Precondition", [
-            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.Precondition.Operation", Precondition_Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.Precondition.Operation", Precondition_Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 2, name: "filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
@@ -1326,8 +1374,8 @@ export const PartialCaveatInfo = new PartialCaveatInfo$Type();
 class CheckPermissionResponse$Type extends MessageType<CheckPermissionResponse> {
     constructor() {
         super("authzed.api.v1.CheckPermissionResponse", [
-            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken },
-            { no: 2, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"] },
+            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: false } } } },
+            { no: 2, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 3, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } }
         ]);
     }
@@ -1579,7 +1627,7 @@ class LookupResourcesResponse$Type extends MessageType<LookupResourcesResponse> 
         super("authzed.api.v1.LookupResourcesResponse", [
             { no: 1, name: "looked_up_at", kind: "message", T: () => ZedToken },
             { no: 2, name: "resource_object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 3, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 4, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } }
         ]);
     }
@@ -1730,12 +1778,14 @@ class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
             { no: 1, name: "looked_up_at", kind: "message", T: () => ZedToken },
             { no: 2, name: "subject_object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "excluded_subject_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 5, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } }
+            { no: 4, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 5, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
+            { no: 6, name: "subject", kind: "message", T: () => ResolvedSubject },
+            { no: 7, name: "excluded_subjects", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ResolvedSubject }
         ]);
     }
     create(value?: PartialMessage<LookupSubjectsResponse>): LookupSubjectsResponse {
-        const message = { subjectObjectId: "", excludedSubjectIds: [], permissionship: 0 };
+        const message = { subjectObjectId: "", excludedSubjectIds: [], permissionship: 0, excludedSubjects: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<LookupSubjectsResponse>(this, message, value);
@@ -1749,17 +1799,23 @@ class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
                 case /* authzed.api.v1.ZedToken looked_up_at */ 1:
                     message.lookedUpAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.lookedUpAt);
                     break;
-                case /* string subject_object_id */ 2:
+                case /* string subject_object_id = 2 [deprecated = true];*/ 2:
                     message.subjectObjectId = reader.string();
                     break;
-                case /* repeated string excluded_subject_ids */ 3:
+                case /* repeated string excluded_subject_ids = 3 [deprecated = true];*/ 3:
                     message.excludedSubjectIds.push(reader.string());
                     break;
-                case /* authzed.api.v1.LookupPermissionship permissionship */ 4:
+                case /* authzed.api.v1.LookupPermissionship permissionship = 4 [deprecated = true];*/ 4:
                     message.permissionship = reader.int32();
                     break;
-                case /* authzed.api.v1.PartialCaveatInfo partial_caveat_info */ 5:
+                case /* authzed.api.v1.PartialCaveatInfo partial_caveat_info = 5 [deprecated = true];*/ 5:
                     message.partialCaveatInfo = PartialCaveatInfo.internalBinaryRead(reader, reader.uint32(), options, message.partialCaveatInfo);
+                    break;
+                case /* authzed.api.v1.ResolvedSubject subject */ 6:
+                    message.subject = ResolvedSubject.internalBinaryRead(reader, reader.uint32(), options, message.subject);
+                    break;
+                case /* repeated authzed.api.v1.ResolvedSubject excluded_subjects */ 7:
+                    message.excludedSubjects.push(ResolvedSubject.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1776,18 +1832,24 @@ class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
         /* authzed.api.v1.ZedToken looked_up_at = 1; */
         if (message.lookedUpAt)
             ZedToken.internalBinaryWrite(message.lookedUpAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string subject_object_id = 2; */
+        /* string subject_object_id = 2 [deprecated = true]; */
         if (message.subjectObjectId !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.subjectObjectId);
-        /* repeated string excluded_subject_ids = 3; */
+        /* repeated string excluded_subject_ids = 3 [deprecated = true]; */
         for (let i = 0; i < message.excludedSubjectIds.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.excludedSubjectIds[i]);
-        /* authzed.api.v1.LookupPermissionship permissionship = 4; */
+        /* authzed.api.v1.LookupPermissionship permissionship = 4 [deprecated = true]; */
         if (message.permissionship !== 0)
             writer.tag(4, WireType.Varint).int32(message.permissionship);
-        /* authzed.api.v1.PartialCaveatInfo partial_caveat_info = 5; */
+        /* authzed.api.v1.PartialCaveatInfo partial_caveat_info = 5 [deprecated = true]; */
         if (message.partialCaveatInfo)
             PartialCaveatInfo.internalBinaryWrite(message.partialCaveatInfo, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ResolvedSubject subject = 6; */
+        if (message.subject)
+            ResolvedSubject.internalBinaryWrite(message.subject, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* repeated authzed.api.v1.ResolvedSubject excluded_subjects = 7; */
+        for (let i = 0; i < message.excludedSubjects.length; i++)
+            ResolvedSubject.internalBinaryWrite(message.excludedSubjects[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1798,6 +1860,67 @@ class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
  * @generated MessageType for protobuf message authzed.api.v1.LookupSubjectsResponse
  */
 export const LookupSubjectsResponse = new LookupSubjectsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ResolvedSubject$Type extends MessageType<ResolvedSubject> {
+    constructor() {
+        super("authzed.api.v1.ResolvedSubject", [
+            { no: 1, name: "subject_object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 3, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ResolvedSubject>): ResolvedSubject {
+        const message = { subjectObjectId: "", permissionship: 0 };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ResolvedSubject>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ResolvedSubject): ResolvedSubject {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string subject_object_id */ 1:
+                    message.subjectObjectId = reader.string();
+                    break;
+                case /* authzed.api.v1.LookupPermissionship permissionship */ 2:
+                    message.permissionship = reader.int32();
+                    break;
+                case /* authzed.api.v1.PartialCaveatInfo partial_caveat_info */ 3:
+                    message.partialCaveatInfo = PartialCaveatInfo.internalBinaryRead(reader, reader.uint32(), options, message.partialCaveatInfo);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ResolvedSubject, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string subject_object_id = 1; */
+        if (message.subjectObjectId !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.subjectObjectId);
+        /* authzed.api.v1.LookupPermissionship permissionship = 2; */
+        if (message.permissionship !== 0)
+            writer.tag(2, WireType.Varint).int32(message.permissionship);
+        /* authzed.api.v1.PartialCaveatInfo partial_caveat_info = 3; */
+        if (message.partialCaveatInfo)
+            PartialCaveatInfo.internalBinaryWrite(message.partialCaveatInfo, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ResolvedSubject
+ */
+export const ResolvedSubject = new ResolvedSubject$Type();
 /**
  * @generated ServiceType for protobuf service authzed.api.v1.PermissionsService
  */
