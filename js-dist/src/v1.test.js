@@ -43,6 +43,7 @@ describe('a check with an unknown namespace', () => {
         client.checkPermission(checkPermissionRequest, function (err, response) {
             expect(response).toBe(undefined);
             expect(err === null || err === void 0 ? void 0 : err.code).toBe(grpc.status.FAILED_PRECONDITION);
+            client.close();
             done();
         });
     });
@@ -125,6 +126,7 @@ describe('a check with an known namespace', () => {
             .then((response) => {
             const checkResponse = response;
             expect(checkResponse === null || checkResponse === void 0 ? void 0 : checkResponse.permissionship).toBe(v1_1.CheckPermissionResponse_Permissionship.HAS_PERMISSION);
+            client.close();
             done();
         });
     });
@@ -211,9 +213,11 @@ describe('Lookup APIs', () => {
             expect(['someuser', 'someuser2']).toContain(subject.subjectObjectId);
         });
         resStream.on('end', function () {
+            client.close();
             done();
         });
         resStream.on('error', function (e) {
+            client.close();
             done.fail(e);
         });
         resStream.on('status', function (status) {
@@ -243,9 +247,11 @@ describe('Lookup APIs', () => {
             expect(response.resourceObjectId).toEqual('somedocument');
         });
         resStream.on('end', function () {
+            client.close();
             done();
         });
         resStream.on('error', function (e) {
+            client.close();
             done.fail(e);
         });
         resStream.on('status', function (status) {

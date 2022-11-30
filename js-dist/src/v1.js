@@ -36,6 +36,9 @@ const util_2 = require("./util");
  */
 class ZedClient {
     constructor(endpoint, creds) {
+        this.close = () => {
+            [this.acl, this.ns, this.watch].forEach((client) => client.close());
+        };
         this.acl = new permission_service_grpc_client_1.PermissionsServiceClient(endpoint, creds);
         this.ns = new schema_service_grpc_client_1.SchemaServiceClient(endpoint, creds);
         this.watch = new watch_service_grpc_client_1.WatchServiceClient(endpoint, creds);
@@ -44,6 +47,9 @@ class ZedClient {
         return new Proxy({}, new ZedClient(endpoint, creds));
     }
     get(_target, name) {
+        if (name === 'close') {
+            return this.close;
+        }
         if (this.acl[name]) {
             return this.acl[name];
         }

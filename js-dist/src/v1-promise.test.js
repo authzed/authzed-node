@@ -47,6 +47,7 @@ describe('a check with an unknown namespace', () => {
         }
         catch (err) {
             expect((_a = err) === null || _a === void 0 ? void 0 : _a.code).toBe(grpc.status.FAILED_PRECONDITION);
+            client.close();
         }
     });
 });
@@ -103,6 +104,7 @@ describe('a check with an known namespace', () => {
         expect(response).toBeTruthy();
         const checkResponse = await client.checkPermission(checkPermissionRequest);
         expect(checkResponse === null || checkResponse === void 0 ? void 0 : checkResponse.permissionship).toBe(v1_1.CheckPermissionResponse_Permissionship.HAS_PERMISSION);
+        client.close();
     });
     it('should succeed with full signatures', async () => {
         const { promises: client } = v1_1.NewClient(helpers_1.generateTestToken('v1-promise-namespace'), 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
@@ -112,6 +114,7 @@ describe('a check with an known namespace', () => {
         expect(response).toBeTruthy();
         const checkResponse = await client.checkPermission(checkPermissionRequest, new grpc.Metadata(), {});
         expect(checkResponse === null || checkResponse === void 0 ? void 0 : checkResponse.permissionship).toBe(v1_1.CheckPermissionResponse_Permissionship.HAS_PERMISSION);
+        client.close();
     });
 });
 describe('Lookup APIs', () => {
@@ -193,17 +196,20 @@ describe('Lookup APIs', () => {
                 }),
             ],
         });
-        return client.writeRelationships(writeRequest);
+        await client.writeRelationships(writeRequest);
+        client.close();
     });
     it('can lookup subjects', async () => {
         const { promises: client } = v1_1.NewClient(token, 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
         const result = await client.lookupSubjects(lookupSubjectRequest);
         expect(['someuser', 'someuser2']).toContain(result[0].subjectObjectId);
+        client.close();
     });
     it('can lookup resources', async () => {
         const { promises: client } = v1_1.NewClient(token, 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
         const resStream = await client.lookupResources(lookupResourceRequest);
         expect(resStream[0].resourceObjectId).toEqual('somedocument');
+        client.close();
     });
     it('can lookup using full signatures', async () => {
         const { promises: client } = v1_1.NewClient(token, 'localhost:50051', v1_1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
@@ -211,6 +217,7 @@ describe('Lookup APIs', () => {
         expect(['someuser', 'someuser2']).toContain(result[0].subjectObjectId);
         const resStream = await client.lookupResources(lookupResourceRequest, new grpc.Metadata(), {});
         expect(resStream[0].resourceObjectId).toEqual('somedocument');
+        client.close();
     });
 });
 //# sourceMappingURL=v1-promise.test.js.map
