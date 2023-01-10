@@ -23,12 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14, 16, 17]
+        node-version: [18]
     steps:
     - uses: actions/checkout@v2
-    - uses: "authzed/action-spicedb@v1"
-      with:
-        version: "latest"
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
@@ -38,6 +35,9 @@ jobs:
     - name: Run Yarn lint
       run: CI=true yarn lint
       working-directory: ./
+    - uses: "authzed/action-spicedb@v1"
+      with:
+        version: "v1.15.0"
     - name: Run Yarn tests
       run: CI=true yarn only-run-tests
       working-directory: ./
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14, 16, 17]
+        node-version: [18]
     steps:
       - uses: actions/checkout@v2
       - uses: "authzed/action-spicedb@v1"
