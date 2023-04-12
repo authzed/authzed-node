@@ -1,4 +1,5 @@
 import * as grpc from "@grpc/grpc-js";
+import { NextCall } from "@grpc/grpc-js/build/src/client-interceptors";
 import { ConnectionOptions } from "tls";
 
 // NOTE: Copied from channel-credentials.ts in gRPC Node package because its not exported:
@@ -155,6 +156,16 @@ function promisifyStream<P1, P2, P3>(
         }
       });
     });
+  };
+}
+
+// Based on: https://github.com/grpc/grpc-node/issues/541#issuecomment-631191356
+export function deadlineInterceptor(timeoutInMS: number): grpc.Interceptor {
+  return (options: grpc.InterceptorOptions, nextCall: NextCall) => {
+    if (!options.deadline) {
+      options.deadline = Date.now() + (timeoutInMS ? timeoutInMS : 60000);
+    }
+    return new grpc.InterceptingCall(nextCall(options));
   };
 }
 

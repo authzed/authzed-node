@@ -1,7 +1,7 @@
 import * as grpc from "@grpc/grpc-js";
 import { generateTestToken } from "./__utils__/helpers";
 import { Struct } from "./authzedapi/google/protobuf/struct";
-import { PreconnectServices } from "./util";
+import { PreconnectServices, deadlineInterceptor } from "./util";
 import {
   CheckPermissionRequest,
   CheckPermissionResponse,
@@ -436,6 +436,44 @@ describe("Lookup APIs", () => {
 
     resStream.on("status", function (status) {
       expect(status.code).toEqual(grpc.status.OK);
+    });
+  });
+});
+
+describe("a check with a negative timeout", () => {
+  it("should fail immediately", (done) => {
+    const resource = ObjectReference.create({
+      objectType: "test/somenamespace",
+      objectId: "bar",
+    });
+
+    const testUser = ObjectReference.create({
+      objectType: "test/user",
+      objectId: "someuser",
+    });
+
+    const checkPermissionRequest = CheckPermissionRequest.create({
+      resource,
+      permission: "someperm",
+      subject: SubjectReference.create({
+        object: testUser,
+      }),
+    });
+
+    const client = NewClient(
+      generateTestToken("v1-test-unknown"),
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+      PreconnectServices.NONE,
+      {
+        interceptors: [deadlineInterceptor(-100)],
+      }
+    );
+    client.checkPermission(checkPermissionRequest, function (err, response) {
+      expect(response).toBe(undefined);
+      expect(err?.code).toBe(grpc.status.DEADLINE_EXCEEDED);
+      client.close();
+      done();
     });
   });
 });

@@ -8,7 +8,12 @@ import { PermissionsServiceClient } from "./authzedapi/authzed/api/v1/permission
 import { SchemaServiceClient } from "./authzedapi/authzed/api/v1/schema_service.grpc-client";
 import { WatchServiceClient } from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
 import * as util from "./util";
-import { ClientSecurity, PreconnectServices, promisifyStream } from "./util";
+import {
+  ClientSecurity,
+  PreconnectServices,
+  deadlineInterceptor,
+  promisifyStream,
+} from "./util";
 
 import type { OmitBaseMethods, PromisifiedClient } from "./types";
 
@@ -33,6 +38,8 @@ export type ZedClientInterface = ZedDefaultClientInterface & {
   promises: ZedPromiseClientInterface;
 };
 
+const DEFAULT_DEADLINE_MS = 30 * 1000; // 30 seconds
+
 /**
  * A standard client (via @grpc/grpc-js) that will correctly
  * proxy the namespaced methods to the correct service client.
@@ -41,29 +48,50 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
   private acl: PermissionsServiceClient | undefined;
   private ns: SchemaServiceClient | undefined;
   private watch: WatchServiceClient | undefined;
+  private options: grpc.ClientOptions;
 
   constructor(
     private endpoint: string,
     private creds: grpc.ChannelCredentials,
-    preconnect: PreconnectServices
+    preconnect: PreconnectServices,
+    options: grpc.ClientOptions | undefined
   ) {
+    this.options = {
+      ...(options ?? {}),
+      interceptors: [
+        ...(options?.interceptors ?? []),
+
+        // We put this interceptor last because it checks if the deadline is already
+        // set and, if so, does not overwrite it.
+        deadlineInterceptor(DEFAULT_DEADLINE_MS),
+      ],
+    };
+
     if (preconnect & PreconnectServices.PERMISSIONS_SERVICE) {
-      this.acl = new PermissionsServiceClient(this.endpoint, this.creds);
+      this.acl = new PermissionsServiceClient(
+        this.endpoint,
+        this.creds,
+        options
+      );
     }
     if (preconnect & PreconnectServices.SCHEMA_SERVICE) {
-      this.ns = new SchemaServiceClient(this.endpoint, this.creds);
+      this.ns = new SchemaServiceClient(this.endpoint, this.creds, options);
     }
     if (preconnect & PreconnectServices.WATCH_SERVICE) {
-      this.watch = new WatchServiceClient(this.endpoint, this.creds);
+      this.watch = new WatchServiceClient(this.endpoint, this.creds, options);
     }
   }
 
   static create(
     endpoint: string,
     creds: grpc.ChannelCredentials,
-    preconnect: PreconnectServices
+    preconnect: PreconnectServices,
+    options: grpc.ClientOptions | undefined
   ) {
-    return new Proxy({} as any, new ZedClient(endpoint, creds, preconnect));
+    return new Proxy(
+      {} as any,
+      new ZedClient(endpoint, creds, preconnect, options)
+    );
   }
 
   close = () => {
@@ -80,7 +108,11 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     // pick ACL by default since its the most likely be used.
     if (typeof name === "symbol") {
       if (this.acl === undefined) {
-        this.acl = new PermissionsServiceClient(this.endpoint, this.creds);
+        this.acl = new PermissionsServiceClient(
+          this.endpoint,
+          this.creds,
+          this.options
+        );
       }
 
       return (this.acl as any)[name];
@@ -89,7 +121,11 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     // Otherwise, lazily instantiate the client based on the method requested.
     if (name in PermissionsServiceClient.prototype) {
       if (this.acl === undefined) {
-        this.acl = new PermissionsServiceClient(this.endpoint, this.creds);
+        this.acl = new PermissionsServiceClient(
+          this.endpoint,
+          this.creds,
+          this.options
+        );
       }
 
       return (this.acl as any)[name];
@@ -97,7 +133,11 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
 
     if (name in SchemaServiceClient.prototype) {
       if (this.ns === undefined) {
-        this.ns = new SchemaServiceClient(this.endpoint, this.creds);
+        this.ns = new SchemaServiceClient(
+          this.endpoint,
+          this.creds,
+          this.options
+        );
       }
 
       return (this.ns as any)[name as string];
@@ -105,7 +145,11 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
 
     if (name in WatchServiceClient.prototype) {
       if (this.watch === undefined) {
-        this.watch = new WatchServiceClient(this.endpoint, this.creds);
+        this.watch = new WatchServiceClient(
+          this.endpoint,
+          this.creds,
+          this.options
+        );
       }
 
       return (this.watch as any)[name];
@@ -186,9 +230,10 @@ class ZedCombinedClient implements ProxyHandler<ZedCombinedClient> {
   static create(
     endpoint: string,
     creds: grpc.ChannelCredentials,
-    preconnect: util.PreconnectServices
+    preconnect: util.PreconnectServices,
+    options: grpc.ClientOptions | undefined
   ) {
-    const client = ZedClient.create(endpoint, creds, preconnect);
+    const client = ZedClient.create(endpoint, creds, preconnect, options);
     const promiseClient = ZedPromiseClient.create(client);
     return new Proxy({} as any, new ZedCombinedClient(client, promiseClient));
   }
@@ -215,10 +260,11 @@ export function NewClient(
   token: string,
   endpoint = util.authzedEndpoint,
   security: ClientSecurity = ClientSecurity.SECURE,
-  preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE
+  preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE,
+  options: grpc.ClientOptions | undefined = undefined
 ) {
   const creds = util.createClientCreds(endpoint, token, security);
-  return NewClientWithChannelCredentials(endpoint, creds, preconnect);
+  return NewClientWithChannelCredentials(endpoint, creds, preconnect, options);
 }
 
 /**
@@ -234,10 +280,11 @@ export function NewClientWithCustomCert(
   token: string,
   endpoint = util.authzedEndpoint,
   certificate: Buffer,
-  preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE
+  preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE,
+  options: grpc.ClientOptions | undefined = undefined
 ) {
   const creds = util.createClientCredsWithCustomCert(token, certificate);
-  return NewClientWithChannelCredentials(endpoint, creds, preconnect);
+  return NewClientWithChannelCredentials(endpoint, creds, preconnect, options);
 }
 
 /**
@@ -259,9 +306,10 @@ export function NewClientWithCustomCert(
 export function NewClientWithChannelCredentials(
   endpoint = util.authzedEndpoint,
   creds: grpc.ChannelCredentials,
-  preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE
+  preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE,
+  options: grpc.ClientOptions | undefined = undefined
 ): ZedClientInterface {
-  return ZedCombinedClient.create(endpoint, creds, preconnect);
+  return ZedCombinedClient.create(endpoint, creds, preconnect, options);
 }
 
 export * from "./authzedapi/authzed/api/v1/core";
