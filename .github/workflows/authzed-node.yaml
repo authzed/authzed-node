@@ -2,19 +2,19 @@ name: authzed-node-ci
 on:
   pull_request:
     branches:
-    - '*'
+      - "*"
     paths:
-    - src/**
-    - package.json
-    - .github/workflows/authzed-node.yaml
+      - src/**
+      - package.json
+      - .github/workflows/authzed-node.yaml
   push:
     branches:
-    - main
+      - main
     paths:
-    - src/**
-    - .github/workflows/authzed-node.yaml
-    - package.json
-    - js-dist/package.json
+      - src/**
+      - .github/workflows/authzed-node.yaml
+      - package.json
+      - js-dist/package.json
   release:
     types: [published]
 jobs:
@@ -23,35 +23,35 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14, 16, 17]
+        node-version: [16, 17, 18]
     steps:
-    - uses: actions/checkout@v2
-    - uses: "authzed/action-spicedb@v1"
-      with:
-        version: "latest"
-    - uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - uses: bahmutov/npm-install@v1
-      with:
+      - uses: actions/checkout@v2
+      - uses: "authzed/action-spicedb@v1"
+        with:
+          version: "latest"
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: ./
+      - name: Run Yarn lint
+        run: CI=true yarn lint
         working-directory: ./
-    - name: Run Yarn lint
-      run: CI=true yarn lint
-      working-directory: ./
-    - name: Run Yarn tests
-      run: CI=true yarn only-run-tests
-      working-directory: ./
+      - name: Run Yarn tests
+        run: CI=true yarn only-run-tests
+        working-directory: ./
   publish-npm:
     name: Publish to NPM
     needs:
-    - test
+      - test
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16
       - run: npm install
       - run: npm test
       - uses: battila7/get-version-action@v2
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14, 16, 17]
+        node-version: [16, 17, 18]
     steps:
       - uses: actions/checkout@v2
       - uses: "authzed/action-spicedb@v1"
@@ -105,7 +105,7 @@ jobs:
           name: js-client
       - uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
       - run: npm install
       - uses: battila7/get-version-action@v2
       - uses: JS-DevTools/npm-publish@v1

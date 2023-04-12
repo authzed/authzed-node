@@ -1,5 +1,6 @@
 import * as grpc from "@grpc/grpc-js";
-import { ConnectionOptions } from 'tls';
+import { NextCall } from "@grpc/grpc-js/build/src/client-interceptors";
+import { ConnectionOptions } from "tls";
 
 // NOTE: Copied from channel-credentials.ts in gRPC Node package because its not exported:
 // https://github.com/grpc/grpc-node/blob/3106057f5ad8f79a71d2ae411e116ad308a2e835/packages/grpc-js/src/call-credentials.ts#L143
@@ -11,9 +12,8 @@ class ComposedChannelCredentials extends grpc.ChannelCredentials {
     super(callCreds);
   }
   compose(callCredentials: grpc.CallCredentials) {
-    const combinedCallCredentials = this.callCredentials.compose(
-      callCredentials
-    );
+    const combinedCallCredentials =
+      this.callCredentials.compose(callCredentials);
     return new ComposedChannelCredentials(
       this.channelCredentials,
       combinedCallCredentials
@@ -49,9 +49,8 @@ class KnownInsecureChannelCredentialsImpl extends grpc.ChannelCredentials {
   }
 
   compose(callCredentials: grpc.CallCredentials): grpc.ChannelCredentials {
-    const combinedCallCredentials = this.callCredentials.compose(
-      callCredentials
-    );
+    const combinedCallCredentials =
+      this.callCredentials.compose(callCredentials);
     return new ComposedChannelCredentials(this, combinedCallCredentials);
   }
 
@@ -72,6 +71,13 @@ export enum ClientSecurity {
   INSECURE_PLAINTEXT_CREDENTIALS = 2,
 }
 
+export enum PreconnectServices {
+  NONE = 0,
+  PERMISSIONS_SERVICE = 1,
+  SCHEMA_SERVICE = 2,
+  WATCH_SERVICE = 4,
+}
+
 function createClientCreds(
   endpoint: string,
   token: string,
@@ -82,9 +88,12 @@ function createClientCreds(
 
   const creds = [];
 
-  if (security === ClientSecurity.SECURE ||
+  if (
+    security === ClientSecurity.SECURE ||
     security === ClientSecurity.INSECURE_PLAINTEXT_CREDENTIALS ||
-    (security === ClientSecurity.INSECURE_LOCALHOST_ALLOWED && endpoint.startsWith('localhost:'))) {
+    (security === ClientSecurity.INSECURE_LOCALHOST_ALLOWED &&
+      endpoint.startsWith("localhost:"))
+  ) {
     creds.push(
       grpc.credentials.createFromMetadataGenerator((_, callback) => {
         callback(null, metadata);
@@ -93,14 +102,16 @@ function createClientCreds(
   }
 
   return grpc.credentials.combineChannelCredentials(
-    security === ClientSecurity.SECURE ? grpc.credentials.createSsl() : new KnownInsecureChannelCredentialsImpl(),
+    security === ClientSecurity.SECURE
+      ? grpc.credentials.createSsl()
+      : new KnownInsecureChannelCredentialsImpl(),
     ...creds
   );
 }
 
 function createClientCredsWithCustomCert(
   token: string,
-  certificate:  Buffer
+  certificate: Buffer
 ): grpc.ChannelCredentials {
   const metadata = new grpc.Metadata();
   metadata.set("authorization", "Bearer " + token);
@@ -109,7 +120,7 @@ function createClientCredsWithCustomCert(
 
   creds.push(
     grpc.credentials.createFromMetadataGenerator((_, callback) => {
-        callback(null, metadata);
+      callback(null, metadata);
     })
   );
 
@@ -119,34 +130,56 @@ function createClientCredsWithCustomCert(
   );
 }
 
-function promisifyStream<P1, P2, P3>(fn: (req: P1) => grpc.ClientReadableStream<P2>, bind: P3): (req: P1) => Promise<P2[]> {
+function promisifyStream<P1, P2, P3>(
+  fn: (req: P1) => grpc.ClientReadableStream<P2>,
+  bind: P3
+): (req: P1) => Promise<P2[]> {
   return (req: P1) => {
     return new Promise((resolve, reject) => {
-      const results: P2[] = []
-      const stream = fn.bind(bind)(req)
-      stream.on('data', function (response: P2) {
-        results.push(response)
-      });
-  
-      stream.on('error', function (e) {
-        return reject(e)
+      const results: P2[] = [];
+      const stream = fn.bind(bind)(req);
+      stream.on("data", function (response: P2) {
+        results.push(response);
       });
 
-      stream.on('end', function () {
-        return resolve(results)
+      stream.on("error", function (e) {
+        return reject(e);
       });
-  
-      stream.on('status', function (status) {
+
+      stream.on("end", function () {
+        return resolve(results);
+      });
+
+      stream.on("status", function (status) {
         if (status.code !== grpc.status.OK) {
-          return reject(status)
+          return reject(status);
         }
       });
-    }) 
-  }
+    });
+  };
+}
+
+// Based on: https://github.com/grpc/grpc-node/issues/541#issuecomment-631191356
+export function deadlineInterceptor(timeoutInMS: number): grpc.Interceptor {
+  return (options: grpc.InterceptorOptions, nextCall: NextCall) => {
+    if (!options.deadline) {
+      options.deadline = Date.now() + (timeoutInMS ? timeoutInMS : 60000);
+    }
+    return new grpc.InterceptingCall(nextCall(options));
+  };
 }
 
 const authzedEndpoint = "grpc.authzed.com:443";
 
-
-export { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint, promisifyStream };
-export default { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint, promisifyStream };
+export {
+  createClientCreds,
+  createClientCredsWithCustomCert,
+  authzedEndpoint,
+  promisifyStream,
+};
+export default {
+  createClientCreds,
+  createClientCredsWithCustomCert,
+  authzedEndpoint,
+  promisifyStream,
+};
