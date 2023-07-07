@@ -13,11 +13,13 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { PermissionRelationshipTree } from "./core";
+import { PartialCaveatInfo } from "./core";
 import { Struct } from "../../../google/protobuf/struct";
 import { SubjectReference } from "./core";
 import { ObjectReference } from "./core";
 import { RelationshipUpdate } from "./core";
 import { Relationship } from "./core";
+import { Cursor } from "./core";
 import { ZedToken } from "./core";
 /**
  * Consistency will define how a request is handled by the backend.
@@ -146,9 +148,28 @@ export interface ReadRelationshipsRequest {
      */
     consistency?: Consistency;
     /**
+     * relationship_filter defines the filter to be applied to the relationships
+     * to be returned.
+     *
      * @generated from protobuf field: authzed.api.v1.RelationshipFilter relationship_filter = 2;
      */
     relationshipFilter?: RelationshipFilter;
+    /**
+     * optional_limit, if non-zero, specifies the limit on the number of relationships to return
+     * before the stream is closed on the server side. By default, the stream will continue
+     * resolving relationships until exhausted or the stream is closed due to the client or a
+     * network issue.
+     *
+     * @generated from protobuf field: uint32 optional_limit = 3;
+     */
+    optionalLimit: number;
+    /**
+     * optional_cursor, if specified, indicates the cursor after which results should resume being returned.
+     * The cursor can be found on the ReadRelationshipsResponse object.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor optional_cursor = 4;
+     */
+    optionalCursor?: Cursor;
 }
 /**
  * ReadRelationshipsResponse contains a Relationship found that matches the
@@ -159,13 +180,24 @@ export interface ReadRelationshipsRequest {
  */
 export interface ReadRelationshipsResponse {
     /**
+     * read_at is the ZedToken at which the relationship was found.
+     *
      * @generated from protobuf field: authzed.api.v1.ZedToken read_at = 1;
      */
     readAt?: ZedToken;
     /**
+     * relationship is the found relationship.
+     *
      * @generated from protobuf field: authzed.api.v1.Relationship relationship = 2;
      */
     relationship?: Relationship;
+    /**
+     * after_result_cursor holds a cursor that can be used to resume the ReadRelationships stream after this
+     * result.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor after_result_cursor = 3;
+     */
+    afterResultCursor?: Cursor;
 }
 /**
  * Precondition specifies how and the existence or absence of certain
@@ -251,15 +283,65 @@ export interface DeleteRelationshipsRequest {
      * @generated from protobuf field: repeated authzed.api.v1.Precondition optional_preconditions = 2;
      */
     optionalPreconditions: Precondition[]; // To be bounded by configuration
+    /**
+     * optional_limit, if non-zero, specifies the limit on the number of relationships to be deleted.
+     * If there are more matching relationships found to be deleted than the limit specified here,
+     * the deletion call will fail with an error to prevent partial deletion. If partial deletion
+     * is needed, specify below that partial deletion is allowed. Partial deletions can be used
+     * in a loop to delete large amounts of relationships in a *non-transactional* manner.
+     *
+     * @generated from protobuf field: uint32 optional_limit = 3;
+     */
+    optionalLimit: number;
+    /**
+     * optional_allow_partial_deletions, if true and a limit is specified, will delete matching found
+     * relationships up to the count specified in optional_limit, and no more.
+     *
+     * @generated from protobuf field: bool optional_allow_partial_deletions = 4;
+     */
+    optionalAllowPartialDeletions: boolean;
 }
 /**
  * @generated from protobuf message authzed.api.v1.DeleteRelationshipsResponse
  */
 export interface DeleteRelationshipsResponse {
     /**
+     * deleted_at is the revision at which the relationships were deleted.
+     *
      * @generated from protobuf field: authzed.api.v1.ZedToken deleted_at = 1;
      */
     deletedAt?: ZedToken;
+    /**
+     * deletion_progress is an enumeration of the possible outcomes that occurred when attempting to delete the specified relationships.
+     *
+     * @generated from protobuf field: authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress deletion_progress = 2;
+     */
+    deletionProgress: DeleteRelationshipsResponse_DeletionProgress;
+}
+/**
+ * @generated from protobuf enum authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress
+ */
+export enum DeleteRelationshipsResponse_DeletionProgress {
+    /**
+     * @generated from protobuf enum value: DELETION_PROGRESS_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * DELETION_PROGRESS_COMPLETE indicates that all remaining relationships matching the filter
+     * were deleted. Will be returned even if no relationships were deleted.
+     *
+     * @generated from protobuf enum value: DELETION_PROGRESS_COMPLETE = 1;
+     */
+    COMPLETE = 1,
+    /**
+     * DELETION_PROGRESS_PARTIAL indicates that a subset of the relationships matching the filter
+     * were deleted. Only returned if optional_allow_partial_deletions was true, an optional_limit was
+     * specified, and there existed more relationships matching the filter than optional_limit would allow.
+     * Once all remaining relationships have been deleted, DELETION_PROGRESS_COMPLETE will be returned.
+     *
+     * @generated from protobuf enum value: DELETION_PROGRESS_PARTIAL = 2;
+     */
+    PARTIAL = 2
 }
 /**
  * CheckPermissionRequest issues a check on whether a subject has a permission
@@ -292,26 +374,11 @@ export interface CheckPermissionRequest {
      */
     subject?: SubjectReference;
     /**
-     * context consists of named values that are injected into the caveat evaluation context *
+     * context consists of named values that are injected into the caveat evaluation context
      *
      * @generated from protobuf field: google.protobuf.Struct context = 5;
      */
     context?: Struct;
-}
-/**
- * PartialCaveatInfo carries information necessary for the client to take action
- * in the event a response contains a partially evaluated caveat
- *
- * @generated from protobuf message authzed.api.v1.PartialCaveatInfo
- */
-export interface PartialCaveatInfo {
-    /**
-     * missing_required_context is a list of one or more fields that were missing and prevented caveats
-     * from being fully evaluated
-     *
-     * @generated from protobuf field: repeated string missing_required_context = 1;
-     */
-    missingRequiredContext: string[];
 }
 /**
  * @generated from protobuf message authzed.api.v1.CheckPermissionResponse
@@ -442,11 +509,27 @@ export interface LookupResourcesRequest {
      */
     subject?: SubjectReference;
     /**
-     * context consists of named values that are injected into the caveat evaluation context *
+     * context consists of named values that are injected into the caveat evaluation context
      *
      * @generated from protobuf field: google.protobuf.Struct context = 5;
      */
     context?: Struct;
+    /**
+     * optional_limit, if non-zero, specifies the limit on the number of resources to return
+     * before the stream is closed on the server side. By default, the stream will continue
+     * resolving resources until exhausted or the stream is closed due to the client or a
+     * network issue.
+     *
+     * @generated from protobuf field: uint32 optional_limit = 6;
+     */
+    optionalLimit: number;
+    /**
+     * optional_cursor, if specified, indicates the cursor after which results should resume being returned.
+     * The cursor can be found on the LookupResourcesResponse object.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor optional_cursor = 7;
+     */
+    optionalCursor?: Cursor;
 }
 /**
  * LookupResourcesResponse contains a single matching resource object ID for the
@@ -456,10 +539,14 @@ export interface LookupResourcesRequest {
  */
 export interface LookupResourcesResponse {
     /**
+     * looked_up_at is the ZedToken at which the resource was found.
+     *
      * @generated from protobuf field: authzed.api.v1.ZedToken looked_up_at = 1;
      */
     lookedUpAt?: ZedToken;
     /**
+     * resource_object_id is the object ID of the found resource.
+     *
      * @generated from protobuf field: string resource_object_id = 2;
      */
     resourceObjectId: string;
@@ -475,6 +562,13 @@ export interface LookupResourcesResponse {
      * @generated from protobuf field: authzed.api.v1.PartialCaveatInfo partial_caveat_info = 4;
      */
     partialCaveatInfo?: PartialCaveatInfo;
+    /**
+     * after_result_cursor holds a cursor that can be used to resume the LookupResources stream after this
+     * result.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor after_result_cursor = 5;
+     */
+    afterResultCursor?: Cursor;
 }
 /**
  * LookupSubjectsRequest performs a lookup of all subjects of a particular
@@ -516,11 +610,69 @@ export interface LookupSubjectsRequest {
      */
     optionalSubjectRelation: string;
     /**
-     * context consists of named values that are injected into the caveat evaluation context *
+     * context consists of named values that are injected into the caveat evaluation context
      *
      * @generated from protobuf field: google.protobuf.Struct context = 6;
      */
     context?: Struct;
+    /**
+     * optional_concrete_limit, if non-zero, specifies the limit on the number of
+     * *concrete* (non-wildcard) subjects to return before the stream is closed on the
+     * server side. With the default value of zero, the stream will continue resolving
+     * concrete subjects until exhausted or the stream is closed due to the client or
+     * a network issue.
+     *
+     * NOTE: Wildcard subjects ("*") have special treatment when cursors and limits are used. Because
+     * wildcards can apply to *any* concrete subjects, if a wildcard subject is found within the dataset,
+     * a wildcard subject can be returned for *all* LookupSubjects calls, regardless of the cursor or
+     * limit.
+     *
+     * For example, if wildcards are requested, a wildcard subject exists, there is a specified limit
+     * of 10 concrete subjects, and at least 10 concrete subjects exist, the API will return 11 subjects
+     * in total: the 10 concrete + the wildcard
+     *
+     * Furthermore, if a wildcard has a set of exclusions generated by the dataset,
+     * the exclusions *will respect the cursor* and only a *partial* set of exclusions will be returned
+     * for each invocation of the API.
+     *
+     * ***IT IS UP TO THE CALLER IN THIS CASE TO COMBINE THE EXCLUSIONS IF DESIRED***
+     *
+     * @generated from protobuf field: uint32 optional_concrete_limit = 7;
+     */
+    optionalConcreteLimit: number;
+    /**
+     * optional_cursor, if specified, indicates the cursor after which results should resume being returned.
+     * The cursor can be found on the LookupSubjectsResponse object.
+     *
+     * NOTE: See above for notes about how cursors interact with wildcard subjects.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor optional_cursor = 8;
+     */
+    optionalCursor?: Cursor;
+    /**
+     * wildcard_option specifies whether wildcards should be returned by LookupSubjects.
+     * For backwards compatibility, defaults to WILDCARD_OPTION_INCLUDE_WILDCARDS if unspecified.
+     *
+     * @generated from protobuf field: authzed.api.v1.LookupSubjectsRequest.WildcardOption wildcard_option = 9;
+     */
+    wildcardOption: LookupSubjectsRequest_WildcardOption;
+}
+/**
+ * @generated from protobuf enum authzed.api.v1.LookupSubjectsRequest.WildcardOption
+ */
+export enum LookupSubjectsRequest_WildcardOption {
+    /**
+     * @generated from protobuf enum value: WILDCARD_OPTION_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: WILDCARD_OPTION_INCLUDE_WILDCARDS = 1;
+     */
+    INCLUDE_WILDCARDS = 1,
+    /**
+     * @generated from protobuf enum value: WILDCARD_OPTION_EXCLUDE_WILDCARDS = 2;
+     */
+    EXCLUDE_WILDCARDS = 2
 }
 /**
  * LookupSubjectsResponse contains a single matching subject object ID for the
@@ -582,6 +734,13 @@ export interface LookupSubjectsResponse {
      * @generated from protobuf field: repeated authzed.api.v1.ResolvedSubject excluded_subjects = 7;
      */
     excludedSubjects: ResolvedSubject[];
+    /**
+     * after_result_cursor holds a cursor that can be used to resume the LookupSubjects stream after this
+     * result.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor after_result_cursor = 8;
+     */
+    afterResultCursor?: Cursor;
 }
 /**
  * ResolvedSubject is a single subject resolved within LookupSubjects.
@@ -713,7 +872,7 @@ class RelationshipFilter$Type extends MessageType<RelationshipFilter> {
     constructor() {
         super("authzed.api.v1.RelationshipFilter", [
             { no: 1, name: "resource_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 2, name: "optional_resource_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_|-]{0,127})?$" } } } },
+            { no: 2, name: "optional_resource_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024", pattern: "^([a-zA-Z0-9/_|\\-=+]{1,})?$" } } } },
             { no: 3, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
             { no: 4, name: "optional_subject_filter", kind: "message", T: () => SubjectFilter }
         ]);
@@ -781,7 +940,7 @@ class SubjectFilter$Type extends MessageType<SubjectFilter> {
     constructor() {
         super("authzed.api.v1.SubjectFilter", [
             { no: 1, name: "subject_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-zA-Z0-9_][a-zA-Z0-9/_|-]{0,127})|\\*)?$" } } } },
+            { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024", pattern: "^(([a-zA-Z0-9/_|\\-=+]{1,})|\\*)?$" } } } },
             { no: 3, name: "optional_relation", kind: "message", T: () => SubjectFilter_RelationFilter }
         ]);
     }
@@ -889,11 +1048,13 @@ class ReadRelationshipsRequest$Type extends MessageType<ReadRelationshipsRequest
     constructor() {
         super("authzed.api.v1.ReadRelationshipsRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lte: 1000, gte: 0 } } } },
+            { no: 4, name: "optional_cursor", kind: "message", T: () => Cursor }
         ]);
     }
     create(value?: PartialMessage<ReadRelationshipsRequest>): ReadRelationshipsRequest {
-        const message = {};
+        const message = { optionalLimit: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<ReadRelationshipsRequest>(this, message, value);
@@ -909,6 +1070,12 @@ class ReadRelationshipsRequest$Type extends MessageType<ReadRelationshipsRequest
                     break;
                 case /* authzed.api.v1.RelationshipFilter relationship_filter */ 2:
                     message.relationshipFilter = RelationshipFilter.internalBinaryRead(reader, reader.uint32(), options, message.relationshipFilter);
+                    break;
+                case /* uint32 optional_limit */ 3:
+                    message.optionalLimit = reader.uint32();
+                    break;
+                case /* authzed.api.v1.Cursor optional_cursor */ 4:
+                    message.optionalCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.optionalCursor);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -928,6 +1095,12 @@ class ReadRelationshipsRequest$Type extends MessageType<ReadRelationshipsRequest
         /* authzed.api.v1.RelationshipFilter relationship_filter = 2; */
         if (message.relationshipFilter)
             RelationshipFilter.internalBinaryWrite(message.relationshipFilter, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* uint32 optional_limit = 3; */
+        if (message.optionalLimit !== 0)
+            writer.tag(3, WireType.Varint).uint32(message.optionalLimit);
+        /* authzed.api.v1.Cursor optional_cursor = 4; */
+        if (message.optionalCursor)
+            Cursor.internalBinaryWrite(message.optionalCursor, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -943,7 +1116,8 @@ class ReadRelationshipsResponse$Type extends MessageType<ReadRelationshipsRespon
     constructor() {
         super("authzed.api.v1.ReadRelationshipsResponse", [
             { no: 1, name: "read_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "relationship", kind: "message", T: () => Relationship, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "relationship", kind: "message", T: () => Relationship, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "after_result_cursor", kind: "message", T: () => Cursor }
         ]);
     }
     create(value?: PartialMessage<ReadRelationshipsResponse>): ReadRelationshipsResponse {
@@ -964,6 +1138,9 @@ class ReadRelationshipsResponse$Type extends MessageType<ReadRelationshipsRespon
                 case /* authzed.api.v1.Relationship relationship */ 2:
                     message.relationship = Relationship.internalBinaryRead(reader, reader.uint32(), options, message.relationship);
                     break;
+                case /* authzed.api.v1.Cursor after_result_cursor */ 3:
+                    message.afterResultCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.afterResultCursor);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -982,6 +1159,9 @@ class ReadRelationshipsResponse$Type extends MessageType<ReadRelationshipsRespon
         /* authzed.api.v1.Relationship relationship = 2; */
         if (message.relationship)
             Relationship.internalBinaryWrite(message.relationship, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.Cursor after_result_cursor = 3; */
+        if (message.afterResultCursor)
+            Cursor.internalBinaryWrite(message.afterResultCursor, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1152,11 +1332,13 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
     constructor() {
         super("authzed.api.v1.DeleteRelationshipsRequest", [
             { no: 1, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
+            { no: 3, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lte: 1000, gte: 0 } } } },
+            { no: 4, name: "optional_allow_partial_deletions", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteRelationshipsRequest>): DeleteRelationshipsRequest {
-        const message = { optionalPreconditions: [] };
+        const message = { optionalPreconditions: [], optionalLimit: 0, optionalAllowPartialDeletions: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteRelationshipsRequest>(this, message, value);
@@ -1172,6 +1354,12 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
                     break;
                 case /* repeated authzed.api.v1.Precondition optional_preconditions */ 2:
                     message.optionalPreconditions.push(Precondition.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* uint32 optional_limit */ 3:
+                    message.optionalLimit = reader.uint32();
+                    break;
+                case /* bool optional_allow_partial_deletions */ 4:
+                    message.optionalAllowPartialDeletions = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1191,6 +1379,12 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
         /* repeated authzed.api.v1.Precondition optional_preconditions = 2; */
         for (let i = 0; i < message.optionalPreconditions.length; i++)
             Precondition.internalBinaryWrite(message.optionalPreconditions[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* uint32 optional_limit = 3; */
+        if (message.optionalLimit !== 0)
+            writer.tag(3, WireType.Varint).uint32(message.optionalLimit);
+        /* bool optional_allow_partial_deletions = 4; */
+        if (message.optionalAllowPartialDeletions !== false)
+            writer.tag(4, WireType.Varint).bool(message.optionalAllowPartialDeletions);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1205,11 +1399,12 @@ export const DeleteRelationshipsRequest = new DeleteRelationshipsRequest$Type();
 class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsResponse> {
     constructor() {
         super("authzed.api.v1.DeleteRelationshipsResponse", [
-            { no: 1, name: "deleted_at", kind: "message", T: () => ZedToken }
+            { no: 1, name: "deleted_at", kind: "message", T: () => ZedToken },
+            { no: 2, name: "deletion_progress", kind: "enum", T: () => ["authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress", DeleteRelationshipsResponse_DeletionProgress, "DELETION_PROGRESS_"] }
         ]);
     }
     create(value?: PartialMessage<DeleteRelationshipsResponse>): DeleteRelationshipsResponse {
-        const message = {};
+        const message = { deletionProgress: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteRelationshipsResponse>(this, message, value);
@@ -1222,6 +1417,9 @@ class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsRe
             switch (fieldNo) {
                 case /* authzed.api.v1.ZedToken deleted_at */ 1:
                     message.deletedAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress deletion_progress */ 2:
+                    message.deletionProgress = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1238,6 +1436,9 @@ class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsRe
         /* authzed.api.v1.ZedToken deleted_at = 1; */
         if (message.deletedAt)
             ZedToken.internalBinaryWrite(message.deletedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress deletion_progress = 2; */
+        if (message.deletionProgress !== 0)
+            writer.tag(2, WireType.Varint).int32(message.deletionProgress);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1323,53 +1524,6 @@ class CheckPermissionRequest$Type extends MessageType<CheckPermissionRequest> {
  * @generated MessageType for protobuf message authzed.api.v1.CheckPermissionRequest
  */
 export const CheckPermissionRequest = new CheckPermissionRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PartialCaveatInfo$Type extends MessageType<PartialCaveatInfo> {
-    constructor() {
-        super("authzed.api.v1.PartialCaveatInfo", [
-            { no: 1, name: "missing_required_context", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<PartialCaveatInfo>): PartialCaveatInfo {
-        const message = { missingRequiredContext: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<PartialCaveatInfo>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PartialCaveatInfo): PartialCaveatInfo {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated string missing_required_context */ 1:
-                    message.missingRequiredContext.push(reader.string());
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PartialCaveatInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated string missing_required_context = 1; */
-        for (let i = 0; i < message.missingRequiredContext.length; i++)
-            writer.tag(1, WireType.LengthDelimited).string(message.missingRequiredContext[i]);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message authzed.api.v1.PartialCaveatInfo
- */
-export const PartialCaveatInfo = new PartialCaveatInfo$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CheckPermissionResponse$Type extends MessageType<CheckPermissionResponse> {
     constructor() {
@@ -1554,11 +1708,13 @@ class LookupResourcesRequest$Type extends MessageType<LookupResourcesRequest> {
             { no: 2, name: "resource_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 4, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 5, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
+            { no: 5, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } },
+            { no: 6, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lte: 1000, gte: 0 } } } },
+            { no: 7, name: "optional_cursor", kind: "message", T: () => Cursor }
         ]);
     }
     create(value?: PartialMessage<LookupResourcesRequest>): LookupResourcesRequest {
-        const message = { resourceObjectType: "", permission: "" };
+        const message = { resourceObjectType: "", permission: "", optionalLimit: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<LookupResourcesRequest>(this, message, value);
@@ -1583,6 +1739,12 @@ class LookupResourcesRequest$Type extends MessageType<LookupResourcesRequest> {
                     break;
                 case /* google.protobuf.Struct context */ 5:
                     message.context = Struct.internalBinaryRead(reader, reader.uint32(), options, message.context);
+                    break;
+                case /* uint32 optional_limit */ 6:
+                    message.optionalLimit = reader.uint32();
+                    break;
+                case /* authzed.api.v1.Cursor optional_cursor */ 7:
+                    message.optionalCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.optionalCursor);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1611,6 +1773,12 @@ class LookupResourcesRequest$Type extends MessageType<LookupResourcesRequest> {
         /* google.protobuf.Struct context = 5; */
         if (message.context)
             Struct.internalBinaryWrite(message.context, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* uint32 optional_limit = 6; */
+        if (message.optionalLimit !== 0)
+            writer.tag(6, WireType.Varint).uint32(message.optionalLimit);
+        /* authzed.api.v1.Cursor optional_cursor = 7; */
+        if (message.optionalCursor)
+            Cursor.internalBinaryWrite(message.optionalCursor, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1628,7 +1796,8 @@ class LookupResourcesResponse$Type extends MessageType<LookupResourcesResponse> 
             { no: 1, name: "looked_up_at", kind: "message", T: () => ZedToken },
             { no: 2, name: "resource_object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 4, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } }
+            { no: 4, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
+            { no: 5, name: "after_result_cursor", kind: "message", T: () => Cursor }
         ]);
     }
     create(value?: PartialMessage<LookupResourcesResponse>): LookupResourcesResponse {
@@ -1655,6 +1824,9 @@ class LookupResourcesResponse$Type extends MessageType<LookupResourcesResponse> 
                 case /* authzed.api.v1.PartialCaveatInfo partial_caveat_info */ 4:
                     message.partialCaveatInfo = PartialCaveatInfo.internalBinaryRead(reader, reader.uint32(), options, message.partialCaveatInfo);
                     break;
+                case /* authzed.api.v1.Cursor after_result_cursor */ 5:
+                    message.afterResultCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.afterResultCursor);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1679,6 +1851,9 @@ class LookupResourcesResponse$Type extends MessageType<LookupResourcesResponse> 
         /* authzed.api.v1.PartialCaveatInfo partial_caveat_info = 4; */
         if (message.partialCaveatInfo)
             PartialCaveatInfo.internalBinaryWrite(message.partialCaveatInfo, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.Cursor after_result_cursor = 5; */
+        if (message.afterResultCursor)
+            Cursor.internalBinaryWrite(message.afterResultCursor, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1698,11 +1873,14 @@ class LookupSubjectsRequest$Type extends MessageType<LookupSubjectsRequest> {
             { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
             { no: 4, name: "subject_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)?[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 5, name: "optional_subject_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
-            { no: 6, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
+            { no: 6, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } },
+            { no: 7, name: "optional_concrete_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lte: 1000, gte: 0 } } } },
+            { no: 8, name: "optional_cursor", kind: "message", T: () => Cursor },
+            { no: 9, name: "wildcard_option", kind: "enum", T: () => ["authzed.api.v1.LookupSubjectsRequest.WildcardOption", LookupSubjectsRequest_WildcardOption, "WILDCARD_OPTION_"] }
         ]);
     }
     create(value?: PartialMessage<LookupSubjectsRequest>): LookupSubjectsRequest {
-        const message = { permission: "", subjectObjectType: "", optionalSubjectRelation: "" };
+        const message = { permission: "", subjectObjectType: "", optionalSubjectRelation: "", optionalConcreteLimit: 0, wildcardOption: 0 };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<LookupSubjectsRequest>(this, message, value);
@@ -1730,6 +1908,15 @@ class LookupSubjectsRequest$Type extends MessageType<LookupSubjectsRequest> {
                     break;
                 case /* google.protobuf.Struct context */ 6:
                     message.context = Struct.internalBinaryRead(reader, reader.uint32(), options, message.context);
+                    break;
+                case /* uint32 optional_concrete_limit */ 7:
+                    message.optionalConcreteLimit = reader.uint32();
+                    break;
+                case /* authzed.api.v1.Cursor optional_cursor */ 8:
+                    message.optionalCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.optionalCursor);
+                    break;
+                case /* authzed.api.v1.LookupSubjectsRequest.WildcardOption wildcard_option */ 9:
+                    message.wildcardOption = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1761,6 +1948,15 @@ class LookupSubjectsRequest$Type extends MessageType<LookupSubjectsRequest> {
         /* google.protobuf.Struct context = 6; */
         if (message.context)
             Struct.internalBinaryWrite(message.context, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* uint32 optional_concrete_limit = 7; */
+        if (message.optionalConcreteLimit !== 0)
+            writer.tag(7, WireType.Varint).uint32(message.optionalConcreteLimit);
+        /* authzed.api.v1.Cursor optional_cursor = 8; */
+        if (message.optionalCursor)
+            Cursor.internalBinaryWrite(message.optionalCursor, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.LookupSubjectsRequest.WildcardOption wildcard_option = 9; */
+        if (message.wildcardOption !== 0)
+            writer.tag(9, WireType.Varint).int32(message.wildcardOption);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1781,7 +1977,8 @@ class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
             { no: 4, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 5, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
             { no: 6, name: "subject", kind: "message", T: () => ResolvedSubject },
-            { no: 7, name: "excluded_subjects", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ResolvedSubject }
+            { no: 7, name: "excluded_subjects", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ResolvedSubject },
+            { no: 8, name: "after_result_cursor", kind: "message", T: () => Cursor }
         ]);
     }
     create(value?: PartialMessage<LookupSubjectsResponse>): LookupSubjectsResponse {
@@ -1817,6 +2014,9 @@ class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
                 case /* repeated authzed.api.v1.ResolvedSubject excluded_subjects */ 7:
                     message.excludedSubjects.push(ResolvedSubject.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* authzed.api.v1.Cursor after_result_cursor */ 8:
+                    message.afterResultCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.afterResultCursor);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1850,6 +2050,9 @@ class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
         /* repeated authzed.api.v1.ResolvedSubject excluded_subjects = 7; */
         for (let i = 0; i < message.excludedSubjects.length; i++)
             ResolvedSubject.internalBinaryWrite(message.excludedSubjects[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.Cursor after_result_cursor = 8; */
+        if (message.afterResultCursor)
+            Cursor.internalBinaryWrite(message.afterResultCursor, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

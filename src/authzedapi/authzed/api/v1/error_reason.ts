@@ -237,5 +237,114 @@ export enum ErrorReason {
      *
      * @generated from protobuf enum value: ERROR_REASON_CANNOT_UPDATE_PERMISSION = 13;
      */
-    CANNOT_UPDATE_PERMISSION = 13
+    CANNOT_UPDATE_PERMISSION = 13,
+    /**
+     * The request failed to evaluate a caveat expression due to an error.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_CAVEAT_EVALUATION_ERROR",
+     *       "domain": "authzed.com",
+     *       "metadata": {
+     *         "caveat_name": "somecaveat",
+     *       }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_CAVEAT_EVALUATION_ERROR = 14;
+     */
+    CAVEAT_EVALUATION_ERROR = 14,
+    /**
+     * The request failed because the provided cursor was invalid in some way.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_INVALID_CURSOR",
+     *       "domain": "authzed.com",
+     *       "metadata": {
+     *          ... additional keys based on the kind of cursor error ...
+     *       }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_INVALID_CURSOR = 15;
+     */
+    INVALID_CURSOR = 15,
+    /**
+     * The request failed because there are too many matching relationships to be
+     * deleted within a single transactional deletion call. To avoid, set
+     * `optional_allow_partial_deletions` to true on the DeleteRelationships call.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_TOO_MANY_RELATIONSHIPS_FOR_TRANSACTIONAL_DELETE",
+     *       "domain": "authzed.com",
+     *       "metadata": {
+     *          ... fields for the filter ...
+     *       }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_TOO_MANY_RELATIONSHIPS_FOR_TRANSACTIONAL_DELETE = 16;
+     */
+    TOO_MANY_RELATIONSHIPS_FOR_TRANSACTIONAL_DELETE = 16,
+    /**
+     * The request failed because the client attempted to write a relationship
+     * with a context that exceeded the configured server limit.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_MAX_RELATIONSHIP_CONTEXT_SIZE",
+     *       "domain": "authzed.com",
+     *       "metadata": {
+     *         "relationship":     "relationship_exceeding_the_limit",
+     *         "max_allowed_size": "server_max_allowed_context_size",
+     *         "context_size":     "actual_relationship_context_size" ,
+     *       }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_MAX_RELATIONSHIP_CONTEXT_SIZE = 17;
+     */
+    MAX_RELATIONSHIP_CONTEXT_SIZE = 17,
+    /**
+     * The request failed because a relationship marked to be CREATEd
+     * was already present within the datastore.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_ATTEMPT_TO_RECREATE_RELATIONSHIP",
+     *       "domain": "authzed.com",
+     *       "metadata": {
+     *         "relationship":          "relationship_that_already_existed",
+     *         "resource_type":         "resource type",
+     *         "resource_object_id":    "resource object id",
+     *         ... additional decomposed relationship fields ...
+     *       }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_ATTEMPT_TO_RECREATE_RELATIONSHIP = 18;
+     */
+    ATTEMPT_TO_RECREATE_RELATIONSHIP = 18,
+    /**
+     * The request failed because it caused the maximum depth allowed to be
+     * exceeded. This typically indicates that there is a circular data traversal
+     * somewhere in the schema, but can also be raised if the data traversal is simply
+     * too deep.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_MAXIMUM_DEPTH_EXCEEDED",
+     *       "domain": "authzed.com",
+     *       "metadata": {
+     *         "maximum_depth_allowed": "50",
+     *         ... additional fields based on request type ...
+     *       }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_MAXIMUM_DEPTH_EXCEEDED = 19;
+     */
+    MAXIMUM_DEPTH_EXCEEDED = 19
 }
