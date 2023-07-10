@@ -76,6 +76,7 @@ export enum PreconnectServices {
   PERMISSIONS_SERVICE = 1,
   SCHEMA_SERVICE = 2,
   WATCH_SERVICE = 4,
+  EXPERIMENTAL_SERVICE = 8,
 }
 
 function createClientCreds(
@@ -84,7 +85,7 @@ function createClientCreds(
   security: ClientSecurity = ClientSecurity.SECURE
 ): grpc.ChannelCredentials {
   const metadata = new grpc.Metadata();
-  metadata.set("authorization", "Bearer " + token);
+  metadata.set('authorization', 'Bearer ' + token);
 
   const creds = [];
 
@@ -92,7 +93,7 @@ function createClientCreds(
     security === ClientSecurity.SECURE ||
     security === ClientSecurity.INSECURE_PLAINTEXT_CREDENTIALS ||
     (security === ClientSecurity.INSECURE_LOCALHOST_ALLOWED &&
-      endpoint.startsWith("localhost:"))
+      endpoint.startsWith('localhost:'))
   ) {
     creds.push(
       grpc.credentials.createFromMetadataGenerator((_, callback) => {
@@ -114,7 +115,7 @@ function createClientCredsWithCustomCert(
   certificate: Buffer
 ): grpc.ChannelCredentials {
   const metadata = new grpc.Metadata();
-  metadata.set("authorization", "Bearer " + token);
+  metadata.set('authorization', 'Bearer ' + token);
 
   const creds = [];
 
@@ -138,19 +139,19 @@ function promisifyStream<P1, P2, P3>(
     return new Promise((resolve, reject) => {
       const results: P2[] = [];
       const stream = fn.bind(bind)(req);
-      stream.on("data", function (response: P2) {
+      stream.on('data', function (response: P2) {
         results.push(response);
       });
 
-      stream.on("error", function (e) {
+      stream.on('error', function (e) {
         return reject(e);
       });
 
-      stream.on("end", function () {
+      stream.on('end', function () {
         return resolve(results);
       });
 
-      stream.on("status", function (status) {
+      stream.on('status', function (status) {
         if (status.code !== grpc.status.OK) {
           return reject(status);
         }

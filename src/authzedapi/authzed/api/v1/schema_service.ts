@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { ZedToken } from "./core";
 /**
  * ReadSchemaRequest returns the schema from the database.
  *
@@ -32,6 +33,12 @@ export interface ReadSchemaResponse {
      * @generated from protobuf field: string schema_text = 1;
      */
     schemaText: string;
+    /**
+     * read_at is the ZedToken at which the schema was read.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken read_at = 2;
+     */
+    readAt?: ZedToken;
 }
 /**
  * WriteSchemaRequest is the required data used to "upsert" the Schema of a
@@ -55,6 +62,12 @@ export interface WriteSchemaRequest {
  * @generated from protobuf message authzed.api.v1.WriteSchemaResponse
  */
 export interface WriteSchemaResponse {
+    /**
+     * written_at is the ZedToken at which the schema was written.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken written_at = 1;
+     */
+    writtenAt?: ZedToken;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ReadSchemaRequest$Type extends MessageType<ReadSchemaRequest> {
@@ -86,7 +99,8 @@ export const ReadSchemaRequest = new ReadSchemaRequest$Type();
 class ReadSchemaResponse$Type extends MessageType<ReadSchemaResponse> {
     constructor() {
         super("authzed.api.v1.ReadSchemaResponse", [
-            { no: 1, name: "schema_text", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "schema_text", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "read_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<ReadSchemaResponse>): ReadSchemaResponse {
@@ -104,6 +118,9 @@ class ReadSchemaResponse$Type extends MessageType<ReadSchemaResponse> {
                 case /* string schema_text */ 1:
                     message.schemaText = reader.string();
                     break;
+                case /* authzed.api.v1.ZedToken read_at */ 2:
+                    message.readAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.readAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -119,6 +136,9 @@ class ReadSchemaResponse$Type extends MessageType<ReadSchemaResponse> {
         /* string schema_text = 1; */
         if (message.schemaText !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.schemaText);
+        /* authzed.api.v1.ZedToken read_at = 2; */
+        if (message.readAt)
+            ZedToken.internalBinaryWrite(message.readAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -179,7 +199,9 @@ export const WriteSchemaRequest = new WriteSchemaRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class WriteSchemaResponse$Type extends MessageType<WriteSchemaResponse> {
     constructor() {
-        super("authzed.api.v1.WriteSchemaResponse", []);
+        super("authzed.api.v1.WriteSchemaResponse", [
+            { no: 1, name: "written_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } }
+        ]);
     }
     create(value?: PartialMessage<WriteSchemaResponse>): WriteSchemaResponse {
         const message = {};
@@ -189,9 +211,28 @@ class WriteSchemaResponse$Type extends MessageType<WriteSchemaResponse> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WriteSchemaResponse): WriteSchemaResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.ZedToken written_at */ 1:
+                    message.writtenAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.writtenAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: WriteSchemaResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.ZedToken written_at = 1; */
+        if (message.writtenAt)
+            ZedToken.internalBinaryWrite(message.writtenAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

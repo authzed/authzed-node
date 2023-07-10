@@ -27,6 +27,14 @@ export interface WatchRequest {
      */
     optionalObjectTypes: string[];
     /**
+     * optional_start_cursor is the ZedToken holding the point-in-time at
+     * which to start watching for changes.
+     * If not specified, the watch will begin at the current head revision
+     * of the datastore, returning any updates that occur after the caller
+     * makes the request.
+     * Note that if this cursor references a point-in-time containing data
+     * that has been garbage collected, an error will be returned.
+     *
      * @generated from protobuf field: authzed.api.v1.ZedToken optional_start_cursor = 2;
      */
     optionalStartCursor?: ZedToken;

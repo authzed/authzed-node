@@ -1,4 +1,4 @@
-#!/usr/bin/env -S buf generate buf.build/authzed/api:c9dc57b6f25666952f736f5b3ba621397b5e09a3 --template
+#!/usr/bin/env -S buf generate buf.build/authzed/api:dc592e107033a7a4336935cf94fb90426719508d --template
 # To regenerate:
 #   npm install -g grpc-tools
 #   ./buf.gen.yaml
