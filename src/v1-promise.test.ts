@@ -1,23 +1,25 @@
-import {
-  CheckPermissionRequest,
-  ClientSecurity,
-  NewClient,
-  ObjectReference,
-  SubjectReference,
-  WriteSchemaRequest,
-  WriteRelationshipsRequest,
-  Relationship,
-  RelationshipUpdate,
-  Consistency,
-  CheckPermissionResponse_Permissionship,
-  RelationshipUpdate_Operation,
-  LookupSubjectsRequest,
-  LookupResourcesRequest,
-  ContextualizedCaveat,
-} from './v1';
 import * as grpc from '@grpc/grpc-js';
 import { generateTestToken } from './__utils__/helpers';
 import { Struct } from './authzedapi/google/protobuf/struct';
+import {
+  BulkExportRelationshipsRequest,
+  BulkImportRelationshipsRequest,
+  CheckPermissionRequest,
+  CheckPermissionResponse_Permissionship,
+  ClientSecurity,
+  Consistency,
+  ContextualizedCaveat,
+  LookupResourcesRequest,
+  LookupSubjectsRequest,
+  NewClient,
+  ObjectReference,
+  Relationship,
+  RelationshipUpdate,
+  RelationshipUpdate_Operation,
+  SubjectReference,
+  WriteRelationshipsRequest,
+  WriteSchemaRequest,
+} from './v1';
 
 describe('a check with an unknown namespace', () => {
   it('should raise a failed precondition', async () => {
@@ -447,6 +449,168 @@ describe('Lookup APIs', () => {
       {} as grpc.CallOptions
     );
     expect(resStream[0].resourceObjectId).toEqual('somedocument');
+
+    client.close();
+  });
+});
+
+describe('Experimental Service', () => {
+  let token: string;
+
+  beforeEach(async () => {
+    token = generateTestToken('v1-experimental-service');
+    const { promises: client } = NewClient(
+      token,
+      'localhost:50051',
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+    );
+
+    const request = WriteSchemaRequest.create({
+      schema: `definition test/user {}
+
+      definition test/document {
+        relation viewer: test/user
+        permission view = viewer
+      }
+      `,
+    });
+
+    await client.writeSchema(request);
+
+    client.close();
+  });
+
+  it('can bulk import relationships', async (done) => {
+    const { promises: client } = NewClient(
+      token,
+      'localhost:50051',
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+    );
+
+    const writeStream = client.bulkImportRelationships((err, value) => {
+      if (err) {
+        done.fail(err);
+      }
+
+      expect(value?.numLoaded).toEqual('2');
+      done();
+    });
+
+    const resource = ObjectReference.create({
+      objectType: 'test/document',
+      objectId: 'somedocument',
+    });
+    writeStream.write(
+      BulkImportRelationshipsRequest.create({
+        relationships: [
+          Relationship.create({
+            resource: resource,
+            relation: 'viewer',
+            subject: SubjectReference.create({
+              object: ObjectReference.create({
+                objectType: 'test/user',
+                objectId: 'someuser',
+              }),
+            }),
+          }),
+          Relationship.create({
+            resource: resource,
+            relation: 'viewer',
+            subject: SubjectReference.create({
+              object: ObjectReference.create({
+                objectType: 'test/user',
+                objectId: 'someuser2',
+              }),
+            }),
+          }),
+        ],
+      })
+    );
+
+    writeStream.end();
+    client.close();
+  });
+
+  it('can bulk export relationships', async () => {
+    const { promises: client } = NewClient(
+      token,
+      'localhost:50051',
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+    );
+
+    const resource = ObjectReference.create({
+      objectType: 'test/document',
+      objectId: 'somedocument',
+    });
+
+    const writeRequest = WriteRelationshipsRequest.create({
+      updates: [
+        RelationshipUpdate.create({
+          relationship: Relationship.create({
+            resource: resource,
+            relation: 'viewer',
+            subject: SubjectReference.create({
+              object: ObjectReference.create({
+                objectType: 'test/user',
+                objectId: 'someuser',
+              }),
+            }),
+          }),
+          operation: RelationshipUpdate_Operation.CREATE,
+        }),
+        RelationshipUpdate.create({
+          relationship: Relationship.create({
+            resource: resource,
+            relation: 'viewer',
+            subject: SubjectReference.create({
+              object: ObjectReference.create({
+                objectType: 'test/user',
+                objectId: 'someuser2',
+              }),
+            }),
+          }),
+          operation: RelationshipUpdate_Operation.CREATE,
+        }),
+      ],
+    });
+
+    await client.writeRelationships(writeRequest);
+
+    const resStream = await client.bulkExportRelationships(
+      BulkExportRelationshipsRequest.create({
+        consistency: Consistency.create({
+          requirement: {
+            oneofKind: 'fullyConsistent',
+            fullyConsistent: true,
+          },
+        }),
+      })
+    );
+
+    expect(resStream[0].relationships).toEqual([
+      {
+        relation: 'viewer',
+        resource: {
+          objectType: 'test/document',
+          objectId: 'somedocument',
+        },
+        subject: {
+          optionalRelation: '',
+          object: { objectType: 'test/user', objectId: 'someuser' },
+        },
+      },
+      {
+        relation: 'viewer',
+        resource: {
+          objectType: 'test/document',
+          objectId: 'somedocument',
+        },
+        subject: {
+          optionalRelation: '',
+          object: { objectType: 'test/user', objectId: 'someuser2' },
+        },
+      },
+    ]);
 
     client.close();
   });

@@ -4,18 +4,19 @@
 import { promisify } from "util";
 
 import * as grpc from "@grpc/grpc-js";
-import { PermissionsServiceClient } from "./authzedapi/authzed/api/v1/permission_service.grpc-client";
-import { SchemaServiceClient } from "./authzedapi/authzed/api/v1/schema_service.grpc-client";
-import { WatchServiceClient } from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
-import * as util from "./util";
+import { ExperimentalServiceClient } from './authzedapi/authzed/api/v1/experimental_service.grpc-client';
+import { PermissionsServiceClient } from './authzedapi/authzed/api/v1/permission_service.grpc-client';
+import { SchemaServiceClient } from './authzedapi/authzed/api/v1/schema_service.grpc-client';
+import { WatchServiceClient } from './authzedapi/authzed/api/v1/watch_service.grpc-client';
+import * as util from './util';
 import {
   ClientSecurity,
   PreconnectServices,
   deadlineInterceptor,
   promisifyStream,
-} from "./util";
+} from './util';
 
-import type { OmitBaseMethods, PromisifiedClient } from "./types";
+import type { OmitBaseMethods, PromisifiedClient } from './types';
 
 // A merge of the three generated gRPC clients, with their base methods omitted
 export type ZedDefaultClientInterface = OmitBaseMethods<
@@ -24,14 +25,16 @@ export type ZedDefaultClientInterface = OmitBaseMethods<
 > &
   OmitBaseMethods<SchemaServiceClient, grpc.Client> &
   OmitBaseMethods<WatchServiceClient, grpc.Client> &
-  Pick<grpc.Client, "close">;
+  OmitBaseMethods<ExperimentalServiceClient, grpc.Client> &
+  Pick<grpc.Client, 'close'>;
 
 // The promisified version of the interface
 export type ZedPromiseClientInterface =
   PromisifiedClient<PermissionsServiceClient> &
     PromisifiedClient<SchemaServiceClient> &
     PromisifiedClient<WatchServiceClient> &
-    Pick<ZedDefaultClientInterface, "close">;
+    PromisifiedClient<ExperimentalServiceClient> &
+    Pick<ZedDefaultClientInterface, 'close'>;
 
 // A combined client containing the root gRPC client methods and a promisified set at a "promises" key
 export type ZedClientInterface = ZedDefaultClientInterface & {
@@ -48,6 +51,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
   private acl: PermissionsServiceClient | undefined;
   private ns: SchemaServiceClient | undefined;
   private watch: WatchServiceClient | undefined;
+  private experimental: ExperimentalServiceClient | undefined;
   private options: grpc.ClientOptions;
 
   constructor(
@@ -80,6 +84,13 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     if (preconnect & PreconnectServices.WATCH_SERVICE) {
       this.watch = new WatchServiceClient(this.endpoint, this.creds, options);
     }
+    if (preconnect & PreconnectServices.EXPERIMENTAL_SERVICE) {
+      this.experimental = new ExperimentalServiceClient(
+        this.endpoint,
+        this.creds,
+        options
+      );
+    }
   }
 
   static create(
@@ -95,18 +106,20 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
   }
 
   close = () => {
-    [this.acl, this.ns, this.watch].forEach((client) => client?.close());
+    [this.acl, this.ns, this.watch, this.experimental].forEach((client) =>
+      client?.close()
+    );
   };
 
   get(_target: object, name: string | symbol) {
-    if (name === "close") {
+    if (name === 'close') {
       return this.close;
     }
 
     // If the name is a symbol, pass it to the underlying gRPC code.
     // NOTE: it doesn't really matter to which client we give symbols, so just
     // pick ACL by default since its the most likely be used.
-    if (typeof name === "symbol") {
+    if (typeof name === 'symbol') {
       if (this.acl === undefined) {
         this.acl = new PermissionsServiceClient(
           this.endpoint,
@@ -155,6 +168,18 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
       return (this.watch as any)[name];
     }
 
+    if (name in ExperimentalServiceClient.prototype) {
+      if (this.experimental === undefined) {
+        this.experimental = new ExperimentalServiceClient(
+          this.endpoint,
+          this.creds,
+          this.options
+        );
+      }
+
+      return (this.experimental as any)[name];
+    }
+
     return undefined;
   }
 }
@@ -172,10 +197,12 @@ class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface> {
   private client: ZedDefaultClientInterface;
   private promiseCache: Record<string, any> = {};
   private streamMethods = new Set([
-    "readRelationships",
-    "lookupResources",
-    "lookupSubjects",
+    'readRelationships',
+    'lookupResources',
+    'lookupSubjects',
+    'bulkExportRelationships',
   ]);
+  private writableStreamMethods = new Set(['bulkImportRelationships']);
 
   constructor(client: ZedDefaultClientInterface) {
     this.client = client;
@@ -194,7 +221,9 @@ class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface> {
             clientMethod,
             this.client
           );
-        } else if (typeof clientMethod === "function") {
+        } else if (this.writableStreamMethods.has(name as string)) {
+          this.promiseCache[name as string] = clientMethod.bind(this.client);
+        } else if (typeof clientMethod === 'function') {
           this.promiseCache[name as string] = promisify(
             (this.client as any)[name as string]
           ).bind(this.client);
@@ -239,7 +268,7 @@ class ZedCombinedClient implements ProxyHandler<ZedCombinedClient> {
   }
 
   get(_target: object, name: string | symbol) {
-    if (name === "promises") {
+    if (name === 'promises') {
       return this.promiseClient;
     }
 
@@ -289,14 +318,14 @@ export function NewClientWithCustomCert(
 
 /**
  * NewClientWithChannelCredentials creates a new client for calling Authzed APIs using custom grpc ChannelCredentials.
- * 
+ *
  The {@link ZedCombinedClient} proxies both callback/promise-style methods to the underlying
  * {@link ZedClient} and {@link ZedPromiseClient} instances. Direct method calls on the combined
  * client will result in calling the underlying callback methods (the generated gRPC methods) while
  * the same methods accessed at a sub-path `.promises.<method>` will result in the promise-wrapped
- * methods. For all methods that return a {@link ClientReadableStream}, the promise-wrapped method 
+ * methods. For all methods that return a {@link ClientReadableStream}, the promise-wrapped method
  * will return an array of the resulting responses after the stream has been closed.
- * 
+ *
  * @param endpoint Uri for communicating with Authzed.
  * @param creds ChannelCredentials used for grpc.
  * @param preconnect The services to which the client will preconnect.
@@ -312,13 +341,15 @@ export function NewClientWithChannelCredentials(
   return ZedCombinedClient.create(endpoint, creds, preconnect, options);
 }
 
-export * from "./authzedapi/authzed/api/v1/core";
-export * from "./authzedapi/authzed/api/v1/permission_service";
-export * from "./authzedapi/authzed/api/v1/permission_service.grpc-client";
-export * from "./authzedapi/authzed/api/v1/schema_service";
-export * from "./authzedapi/authzed/api/v1/schema_service.grpc-client";
-export * from "./authzedapi/authzed/api/v1/watch_service";
-export * from "./authzedapi/authzed/api/v1/watch_service.grpc-client";
+export * from './authzedapi/authzed/api/v1/core';
+export * from './authzedapi/authzed/api/v1/experimental_service';
+export * from './authzedapi/authzed/api/v1/experimental_service.grpc-client';
+export * from './authzedapi/authzed/api/v1/permission_service';
+export * from './authzedapi/authzed/api/v1/permission_service.grpc-client';
+export * from './authzedapi/authzed/api/v1/schema_service';
+export * from './authzedapi/authzed/api/v1/schema_service.grpc-client';
+export * from './authzedapi/authzed/api/v1/watch_service';
+export * from './authzedapi/authzed/api/v1/watch_service.grpc-client';
 export { ClientSecurity } from "./util";
 
 export default {
