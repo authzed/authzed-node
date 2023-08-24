@@ -16,20 +16,20 @@ jobs:
       - uses: actions/setup-node@v3
       - name: "Update Buf Script"
         id: buf-update
-        uses: authzed/actions/buf-api-updatemain
+        uses: authzed/actions/buf-api-update@main
         with:
           api-commit: ${{ inputs.buftag }}
           spec-path: buf.gen.yaml
           file-format: generate-shell-script
       - name: "Update package version"
-        uses: authzed/actions/semver-updatemain
+        uses: authzed/actions/semver-update@main
         if: steps.updated.outputs.updated == 'true'
         with:
           sourcefile-path: package.json
           version-regex: '"version": "(.+)"'
           version-change: minor
       - name: "Update js-dist package version"
-        uses: authzed/actions/semver-updatemain
+        uses: authzed/actions/semver-update@main
         if: steps.updated.outputs.updated == 'true'
         with:
           sourcefile-path: js-dist/package.json
