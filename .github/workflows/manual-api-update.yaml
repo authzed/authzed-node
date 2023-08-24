@@ -1,0 +1,54 @@
+name: Update for API change
+on:
+  workflow_dispatch:
+    inputs:
+      buftag:
+        description: Tag or commit from https://buf.build/authzed/api/tags/main
+        required: true
+        type: string
+jobs:
+  test:
+    name: "Create PR for API update"
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: "Update Buf Script"
+        id: buf-update
+        uses: authzed/actions/buf-api-updatemain
+        with:
+          api-commit: ${{ inputs.buftag }}
+          spec-path: buf.gen.yaml
+          file-format: generate-shell-script
+      - name: "Update package version"
+        uses: authzed/actions/semver-updatemain
+        if: steps.updated.outputs.updated == 'true'
+        with:
+          sourcefile-path: package.json
+          version-regex: '"version": "(.+)"'
+          version-change: minor
+      - name: "Update js-dist package version"
+        uses: authzed/actions/semver-updatemain
+        if: steps.updated.outputs.updated == 'true'
+        with:
+          sourcefile-path: js-dist/package.json
+          version-regex: '"version": "(.+)"'
+          version-change: minor
+      - name: "Install NPM deps"
+        uses: bahmutov/npm-install@v1
+        if: steps.updated.outputs.updated == 'true'
+        with:
+          working-directory: ./
+      - name: "Run buf generate"
+        if: steps.updated.outputs.updated == 'true'
+        run: |
+          ./buf.gen.yaml
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4.0.4
+        if: steps.updated.outputs.updated == 'true'
+        with:
+          delete-branch: "true"
+          title: Update API to ${{ inputs.buftag }}
+          branch: api-change/${{ inputs.buftag }}
+          token: ${{ secrets.AUTHZEDBOT_REPO_SCOPED_TOKEN }}
