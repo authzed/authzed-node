@@ -61,4 +61,4 @@ jobs:
           delete-branch: "true"
           title: Update API to ${{ inputs.buftag }}
           branch: api-change/${{ inputs.buftag }}
-          token: ${{ secrets.AUTHZEDBOT_REPO_SCOPED_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
