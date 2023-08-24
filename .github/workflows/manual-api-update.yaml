@@ -21,6 +21,11 @@ jobs:
           api-commit: ${{ inputs.buftag }}
           spec-path: buf.gen.yaml
           file-format: generate-shell-script
+      - name: "Output update status"
+        env:
+          UPDATED_STATUS: ${{ steps.updated.outputs.updated }}
+        run: |
+          echo "Update status: $UPDATED_STATUS"
       - name: "Update package version"
         uses: authzed/actions/semver-update@main
         if: steps.updated.outputs.updated == 'true'
