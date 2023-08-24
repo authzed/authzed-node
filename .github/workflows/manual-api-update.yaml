@@ -23,35 +23,35 @@ jobs:
           file-format: generate-shell-script
       - name: "Output update status"
         env:
-          UPDATED_STATUS: ${{ steps.updated.outputs.updated }}
+          UPDATED_STATUS: ${{ steps.buf-update.outputs.updated }}
         run: |
           echo "Update status: $UPDATED_STATUS"
       - name: "Update package version"
         uses: authzed/actions/semver-update@main
-        if: steps.updated.outputs.updated == 'true'
+        if: steps.buf-update.outputs.updated == 'true'
         with:
           sourcefile-path: package.json
           version-regex: '"version": "(.+)"'
           version-change: minor
       - name: "Update js-dist package version"
         uses: authzed/actions/semver-update@main
-        if: steps.updated.outputs.updated == 'true'
+        if: steps.buf-update.outputs.updated == 'true'
         with:
           sourcefile-path: js-dist/package.json
           version-regex: '"version": "(.+)"'
           version-change: minor
       - name: "Install NPM deps"
         uses: bahmutov/npm-install@v1
-        if: steps.updated.outputs.updated == 'true'
+        if: steps.buf-update.outputs.updated == 'true'
         with:
           working-directory: ./
       - name: "Run buf generate"
-        if: steps.updated.outputs.updated == 'true'
+        if: steps.buf-update.outputs.updated == 'true'
         run: |
           ./buf.gen.yaml
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4.0.4
-        if: steps.updated.outputs.updated == 'true'
+        if: steps.buf-update.outputs.updated == 'true'
         with:
           delete-branch: "true"
           title: Update API to ${{ inputs.buftag }}
