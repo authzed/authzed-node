@@ -1,11 +1,7 @@
 name: Called update for API change
 on:
-  workflow_call:
-    inputs:
-      buftag:
-        description: Tag or commit from https://buf.build/authzed/api/tags/main
-        required: true
-        type: string
+  repository_dispatch:
+    types: [api_update]
 jobs:
   test:
     name: "Create PR for API update"
@@ -18,7 +14,7 @@ jobs:
         id: buf-update
         uses: authzed/actions/buf-api-update@main
         with:
-          api-commit: ${{ inputs.buftag }}
+          api-commit: ${{ github.event.client_payload.BUFTAG }}
           spec-path: buf.gen.yaml
           file-format: generate-shell-script
       - name: "Output update status"
@@ -59,6 +55,6 @@ jobs:
         if: steps.buf-update.outputs.updated == 'true'
         with:
           delete-branch: "true"
-          title: Update API to ${{ inputs.buftag }}
-          branch: api-change/${{ inputs.buftag }}
+          title: Update API to ${{ github.event.client_payload.BUFTAG }}
+          branch: api-change/${{ github.event.client_payload.BUFTAG }}
           token: ${{ secrets.GITHUB_TOKEN }}
