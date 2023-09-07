@@ -23,19 +23,6 @@ import { SubjectReference } from "./core";
 import { ObjectReference } from "./core";
 import { Consistency } from "./permission_service";
 /**
- * @generated from protobuf message authzed.api.v1.StreamingBulkCheckPermissionRequest
- */
-export interface StreamingBulkCheckPermissionRequest {
-    /**
-     * @generated from protobuf field: authzed.api.v1.Consistency consistency = 1;
-     */
-    consistency?: Consistency;
-    /**
-     * @generated from protobuf field: repeated authzed.api.v1.BulkCheckPermissionRequestItem items = 2;
-     */
-    items: BulkCheckPermissionRequestItem[];
-}
-/**
  * @generated from protobuf message authzed.api.v1.BulkCheckPermissionRequest
  */
 export interface BulkCheckPermissionRequest {
@@ -73,19 +60,6 @@ export interface BulkCheckPermissionRequestItem {
  * @generated from protobuf message authzed.api.v1.BulkCheckPermissionResponse
  */
 export interface BulkCheckPermissionResponse {
-    /**
-     * @generated from protobuf field: authzed.api.v1.ZedToken checked_at = 1;
-     */
-    checkedAt?: ZedToken;
-    /**
-     * @generated from protobuf field: repeated authzed.api.v1.BulkCheckPermissionPair pairs = 2;
-     */
-    pairs: BulkCheckPermissionPair[];
-}
-/**
- * @generated from protobuf message authzed.api.v1.StreamingBulkCheckPermissionResponse
- */
-export interface StreamingBulkCheckPermissionResponse {
     /**
      * @generated from protobuf field: authzed.api.v1.ZedToken checked_at = 1;
      */
@@ -208,60 +182,6 @@ export interface BulkExportRelationshipsResponse {
      */
     relationships: Relationship[];
 }
-// @generated message type with reflection information, may provide speed optimized methods
-class StreamingBulkCheckPermissionRequest$Type extends MessageType<StreamingBulkCheckPermissionRequest> {
-    constructor() {
-        super("authzed.api.v1.StreamingBulkCheckPermissionRequest", [
-            { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BulkCheckPermissionRequestItem, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
-        ]);
-    }
-    create(value?: PartialMessage<StreamingBulkCheckPermissionRequest>): StreamingBulkCheckPermissionRequest {
-        const message = { items: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<StreamingBulkCheckPermissionRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamingBulkCheckPermissionRequest): StreamingBulkCheckPermissionRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* authzed.api.v1.Consistency consistency */ 1:
-                    message.consistency = Consistency.internalBinaryRead(reader, reader.uint32(), options, message.consistency);
-                    break;
-                case /* repeated authzed.api.v1.BulkCheckPermissionRequestItem items */ 2:
-                    message.items.push(BulkCheckPermissionRequestItem.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: StreamingBulkCheckPermissionRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* authzed.api.v1.Consistency consistency = 1; */
-        if (message.consistency)
-            Consistency.internalBinaryWrite(message.consistency, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated authzed.api.v1.BulkCheckPermissionRequestItem items = 2; */
-        for (let i = 0; i < message.items.length; i++)
-            BulkCheckPermissionRequestItem.internalBinaryWrite(message.items[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message authzed.api.v1.StreamingBulkCheckPermissionRequest
- */
-export const StreamingBulkCheckPermissionRequest = new StreamingBulkCheckPermissionRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class BulkCheckPermissionRequest$Type extends MessageType<BulkCheckPermissionRequest> {
     constructor() {
@@ -438,60 +358,6 @@ class BulkCheckPermissionResponse$Type extends MessageType<BulkCheckPermissionRe
  * @generated MessageType for protobuf message authzed.api.v1.BulkCheckPermissionResponse
  */
 export const BulkCheckPermissionResponse = new BulkCheckPermissionResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class StreamingBulkCheckPermissionResponse$Type extends MessageType<StreamingBulkCheckPermissionResponse> {
-    constructor() {
-        super("authzed.api.v1.StreamingBulkCheckPermissionResponse", [
-            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: false } } } },
-            { no: 2, name: "pairs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BulkCheckPermissionPair, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
-        ]);
-    }
-    create(value?: PartialMessage<StreamingBulkCheckPermissionResponse>): StreamingBulkCheckPermissionResponse {
-        const message = { pairs: [] };
-        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
-        if (value !== undefined)
-            reflectionMergePartial<StreamingBulkCheckPermissionResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamingBulkCheckPermissionResponse): StreamingBulkCheckPermissionResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* authzed.api.v1.ZedToken checked_at */ 1:
-                    message.checkedAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.checkedAt);
-                    break;
-                case /* repeated authzed.api.v1.BulkCheckPermissionPair pairs */ 2:
-                    message.pairs.push(BulkCheckPermissionPair.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: StreamingBulkCheckPermissionResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* authzed.api.v1.ZedToken checked_at = 1; */
-        if (message.checkedAt)
-            ZedToken.internalBinaryWrite(message.checkedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated authzed.api.v1.BulkCheckPermissionPair pairs = 2; */
-        for (let i = 0; i < message.pairs.length; i++)
-            BulkCheckPermissionPair.internalBinaryWrite(message.pairs[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message authzed.api.v1.StreamingBulkCheckPermissionResponse
- */
-export const StreamingBulkCheckPermissionResponse = new StreamingBulkCheckPermissionResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class BulkCheckPermissionPair$Type extends MessageType<BulkCheckPermissionPair> {
     constructor() {
@@ -828,6 +694,5 @@ export const BulkExportRelationshipsResponse = new BulkExportRelationshipsRespon
 export const ExperimentalService = new ServiceType("authzed.api.v1.ExperimentalService", [
     { name: "BulkImportRelationships", clientStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkimport", body: "*" } }, I: BulkImportRelationshipsRequest, O: BulkImportRelationshipsResponse },
     { name: "BulkExportRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkexport", body: "*" } }, I: BulkExportRelationshipsRequest, O: BulkExportRelationshipsResponse },
-    { name: "StreamingBulkCheckPermission", serverStreaming: true, options: { "google.api.http": { post: "/v1/experimental/permissions/streamingbulkcheckpermission", body: "*" } }, I: StreamingBulkCheckPermissionRequest, O: StreamingBulkCheckPermissionResponse },
     { name: "BulkCheckPermission", options: { "google.api.http": { post: "/v1/experimental/permissions/bulkcheckpermission", body: "*" } }, I: BulkCheckPermissionRequest, O: BulkCheckPermissionResponse }
 ]);
