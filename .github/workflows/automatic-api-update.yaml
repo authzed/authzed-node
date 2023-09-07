@@ -1,0 +1,64 @@
+name: Called update for API change
+on:
+  workflow_call:
+    inputs:
+      buftag:
+        description: Tag or commit from https://buf.build/authzed/api/tags/main
+        required: true
+        type: string
+jobs:
+  test:
+    name: "Create PR for API update"
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: "Update Buf Script"
+        id: buf-update
+        uses: authzed/actions/buf-api-update@main
+        with:
+          api-commit: ${{ inputs.buftag }}
+          spec-path: buf.gen.yaml
+          file-format: generate-shell-script
+      - name: "Output update status"
+        env:
+          UPDATED_STATUS: ${{ steps.buf-update.outputs.updated }}
+        run: |
+          echo "Update status: $UPDATED_STATUS"
+      - name: "Update package version"
+        uses: authzed/actions/semver-update@main
+        if: steps.buf-update.outputs.updated == 'true'
+        with:
+          sourcefile-path: package.json
+          version-regex: '"version": "(.+)"'
+          version-change: minor
+      - name: "Update js-dist package version"
+        uses: authzed/actions/semver-update@main
+        if: steps.buf-update.outputs.updated == 'true'
+        with:
+          sourcefile-path: js-dist/package.json
+          version-regex: '"version": "(.+)"'
+          version-change: minor
+      - name: "Install NPM deps"
+        uses: bahmutov/npm-install@v1
+        if: steps.buf-update.outputs.updated == 'true'
+        with:
+          working-directory: ./
+      - name: "Install buf"
+        uses: "bufbuild/buf-setup-action@v1"
+        if: steps.buf-update.outputs.updated == 'true'
+        with:
+          version: "1.18.0"
+      - name: "Run buf generate"
+        if: steps.buf-update.outputs.updated == 'true'
+        run: |
+          ./buf.gen.yaml
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4.0.4
+        if: steps.buf-update.outputs.updated == 'true'
+        with:
+          delete-branch: "true"
+          title: Update API to ${{ inputs.buftag }}
+          branch: api-change/${{ inputs.buftag }}
+          token: ${{ secrets.GITHUB_TOKEN }}
