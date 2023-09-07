@@ -6,8 +6,6 @@ import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { BulkCheckPermissionResponse } from "./experimental_service";
 import type { BulkCheckPermissionRequest } from "./experimental_service";
-import type { StreamingBulkCheckPermissionResponse } from "./experimental_service";
-import type { StreamingBulkCheckPermissionRequest } from "./experimental_service";
 import type { BulkExportRelationshipsResponse } from "./experimental_service";
 import type { BulkExportRelationshipsRequest } from "./experimental_service";
 import type { BulkImportRelationshipsRequest } from "./experimental_service";
@@ -46,11 +44,6 @@ export interface IExperimentalServiceClient {
      */
     bulkExportRelationships(input: BulkExportRelationshipsRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<BulkExportRelationshipsResponse>;
     bulkExportRelationships(input: BulkExportRelationshipsRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<BulkExportRelationshipsResponse>;
-    /**
-     * @generated from protobuf rpc: StreamingBulkCheckPermission(authzed.api.v1.StreamingBulkCheckPermissionRequest) returns (stream authzed.api.v1.StreamingBulkCheckPermissionResponse);
-     */
-    streamingBulkCheckPermission(input: StreamingBulkCheckPermissionRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<StreamingBulkCheckPermissionResponse>;
-    streamingBulkCheckPermission(input: StreamingBulkCheckPermissionRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<StreamingBulkCheckPermissionResponse>;
     /**
      * @generated from protobuf rpc: BulkCheckPermission(authzed.api.v1.BulkCheckPermissionRequest) returns (authzed.api.v1.BulkCheckPermissionResponse);
      */
@@ -100,17 +93,10 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
         return this.makeServerStreamRequest<BulkExportRelationshipsRequest, BulkExportRelationshipsResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: BulkExportRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): BulkExportRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
     /**
-     * @generated from protobuf rpc: StreamingBulkCheckPermission(authzed.api.v1.StreamingBulkCheckPermissionRequest) returns (stream authzed.api.v1.StreamingBulkCheckPermissionResponse);
-     */
-    streamingBulkCheckPermission(input: StreamingBulkCheckPermissionRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<StreamingBulkCheckPermissionResponse> {
-        const method = ExperimentalService.methods[2];
-        return this.makeServerStreamRequest<StreamingBulkCheckPermissionRequest, StreamingBulkCheckPermissionResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: StreamingBulkCheckPermissionRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): StreamingBulkCheckPermissionResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
-    }
-    /**
      * @generated from protobuf rpc: BulkCheckPermission(authzed.api.v1.BulkCheckPermissionRequest) returns (authzed.api.v1.BulkCheckPermissionResponse);
      */
     bulkCheckPermission(input: BulkCheckPermissionRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: BulkCheckPermissionResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: BulkCheckPermissionResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: BulkCheckPermissionResponse) => void)): grpc.ClientUnaryCall {
-        const method = ExperimentalService.methods[3];
+        const method = ExperimentalService.methods[2];
         return this.makeUnaryRequest<BulkCheckPermissionRequest, BulkCheckPermissionResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: BulkCheckPermissionRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): BulkCheckPermissionResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }

@@ -53,7 +53,7 @@ export interface WriteSchemaRequest {
      *
      * @generated from protobuf field: string schema = 1;
      */
-    schema: string; // 256KiB
+    schema: string; // 4MiB
 }
 /**
  * WriteSchemaResponse is the resulting data after having written a Schema to
@@ -153,7 +153,7 @@ export const ReadSchemaResponse = new ReadSchemaResponse$Type();
 class WriteSchemaRequest$Type extends MessageType<WriteSchemaRequest> {
     constructor() {
         super("authzed.api.v1.WriteSchemaRequest", [
-            { no: 1, name: "schema", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "262144" } } } }
+            { no: 1, name: "schema", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "4194304" } } } }
         ]);
     }
     create(value?: PartialMessage<WriteSchemaRequest>): WriteSchemaRequest {
