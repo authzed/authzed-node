@@ -96,7 +96,7 @@ const emilia = v1.ObjectReference.create({
 });
 
 const subject = v1.SubjectReference.create({
-    object: userref,
+    object: emilia,
 });
 
 const checkPermissionRequest = v1.CheckPermissionRequest.create({
