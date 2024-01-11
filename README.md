@@ -95,8 +95,9 @@ const emilia = v1.ObjectReference.create({
     objectId: "emilia",
 });
 
+// Create the subject reference using the user reference
 const subject = v1.SubjectReference.create({
-    object: userref,
+    object: emilia,
 });
 
 const checkPermissionRequest = v1.CheckPermissionRequest.create({
