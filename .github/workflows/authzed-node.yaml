@@ -19,17 +19,17 @@ on:
     types: [published]
 jobs:
   test:
-    name: Lint and Test
-    runs-on: ubuntu-latest
+    name: Lint
+    runs-on: "buildjet-2vcpu-ubuntu-2204"
     strategy:
       matrix:
-        node-version: [16, 17, 18]
+        node-version: [18, 20, 21]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: "authzed/action-spicedb@v1"
         with:
           version: "latest"
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - uses: bahmutov/npm-install@v1
@@ -38,9 +38,6 @@ jobs:
       - name: Run Yarn lint
         run: CI=true yarn lint
         working-directory: ./
-      - name: Run Yarn tests
-        run: CI=true yarn only-run-tests
-        working-directory: ./
   publish-npm:
     name: Publish to NPM
     needs:
@@ -48,10 +45,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 18
       - run: npm install
       - run: npm test
       - uses: battila7/get-version-action@v2
@@ -62,16 +59,16 @@ jobs:
           access: public
   build-js-client:
     name: Build and Test JS client
-    runs-on: ubuntu-latest
+    runs-on: "buildjet-2vcpu-ubuntu-2204"
     strategy:
       matrix:
-        node-version: [16, 17, 18]
+        node-version: [18, 20, 21]
     steps:
       - uses: actions/checkout@v2
       - uses: "authzed/action-spicedb@v1"
         with:
           version: "latest"
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
@@ -103,9 +100,9 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: js-client
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 18
       - run: npm install
       - uses: battila7/get-version-action@v2
       - uses: JS-DevTools/npm-publish@v1
