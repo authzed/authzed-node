@@ -35,7 +35,7 @@
   "devDependencies": {
     "@protobuf-ts/plugin": "^2.9.3",
     "@types/jasmine": "^3.10.0",
-    "@types/jest": "^27.0.2",
+    "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^8.57.0",
