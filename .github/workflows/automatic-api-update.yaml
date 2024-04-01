@@ -8,8 +8,8 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
       - name: "Update Buf Script"
         id: buf-update
         uses: authzed/actions/buf-api-update@main
@@ -51,7 +51,7 @@ jobs:
         run: |
           ./buf.gen.yaml
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4.0.4
+        uses: peter-evans/create-pull-request@v6.0.2
         if: steps.buf-update.outputs.updated == 'true'
         with:
           delete-branch: "true"
