@@ -28,20 +28,20 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.10.4",
-    "@protobuf-ts/runtime": "^2.9.3",
-    "@protobuf-ts/runtime-rpc": "^2.8.1",
+    "@protobuf-ts/runtime": "^2.9.4",
+    "@protobuf-ts/runtime-rpc": "^2.9.4",
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
-    "@protobuf-ts/plugin": "^2.9.3",
+    "@protobuf-ts/plugin": "^2.9.4",
     "@types/jasmine": "^5.1.4",
     "@types/jest": "^29.5.12",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.1.0",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
     "eslint": "^8.57.0",
     "grpc-tools": "^1.11.2",
     "jasmine": "^5.1.0",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4"
   }
 }
