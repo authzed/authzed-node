@@ -36,7 +36,7 @@
     "@protobuf-ts/plugin": "^2.9.3",
     "@types/jasmine": "^5.1.4",
     "@types/jest": "^29.5.12",
-    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^8.57.0",
     "grpc-tools": "^1.11.2",
