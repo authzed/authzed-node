@@ -5,3 +5,13 @@ updates:
     schedule:
       interval: "monthly"
     versioning-strategy: increase
+    groups:
+      npm:
+        patterns: ["*"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      github-actions:
+        patterns: ["*"]
