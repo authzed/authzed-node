@@ -52,7 +52,7 @@ jobs:
       - run: npm install
       - run: npm test
       - uses: battila7/get-version-action@v2
-      - uses: JS-DevTools/npm-publish@v1
+      - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{ steps.get_version.outputs.version }}
@@ -64,7 +64,7 @@ jobs:
       matrix:
         node-version: [18, 20, 21]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: "authzed/action-spicedb@v1"
         with:
           version: "latest"
@@ -84,7 +84,7 @@ jobs:
       - name: Run Yarn tests
         run: CI=true yarn only-run-tests
         working-directory: ./js-dist
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: js-client
           path: |
@@ -97,7 +97,7 @@ jobs:
     if: github.event_name == 'release'
     steps:
       - name: Download js client build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: js-client
       - uses: actions/setup-node@v4
@@ -105,7 +105,7 @@ jobs:
           node-version: 18
       - run: npm install
       - uses: battila7/get-version-action@v2
-      - uses: JS-DevTools/npm-publish@v1
+      - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{ steps.get_version.outputs.version }}
