@@ -1,29 +1,41 @@
 name: authzed-node-ci
 on:
+  push:
+    branches:
+      - "main"
   pull_request:
     branches:
       - "*"
-    paths:
-      - src/**
-      - package.json
-      - .github/workflows/authzed-node.yaml
-  push:
-    branches:
-      - main
-    paths:
-      - src/**
-      - .github/workflows/authzed-node.yaml
-      - package.json
-      - js-dist/package.json
+  merge_group:
+    types:
+      - "checks_requested"
   release:
     types: [published]
 jobs:
+  paths-filter:
+    runs-on: "buildjet-2vcpu-ubuntu-2204"
+    outputs:
+      codechange: "${{ steps.code-filter.outputs.codechange }}"
+    steps:
+      - uses: "actions/checkout@v4"
+      - uses: "dorny/paths-filter@v3"
+        id: "code-filter"
+        with:
+          filters: |
+            codechange:
+              - src/**
+              - .github/workflows/authzed-node.yaml
+              - package.json
+              - js-dist/package.json
   test:
     name: Lint
     runs-on: "buildjet-2vcpu-ubuntu-2204"
     strategy:
       matrix:
         node-version: [18, 20, 21]
+    needs: "paths-filter"
+    if: |
+      needs.paths-filter.outputs.codechange == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: "authzed/action-spicedb@v1"
@@ -63,6 +75,9 @@ jobs:
     strategy:
       matrix:
         node-version: [18, 20, 21]
+    needs: "paths-filter"
+    if: |
+      needs.paths-filter.outputs.codechange == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: "authzed/action-spicedb@v1"
