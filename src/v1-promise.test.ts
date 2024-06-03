@@ -476,11 +476,10 @@ describe('Experimental Service', () => {
     });
 
     await client.writeSchema(request);
-
     client.close();
   });
 
-  it('can bulk import relationships', async (done) => {
+  it('can bulk import relationships', () => {
     const { promises: client } = NewClient(
       token,
       'localhost:50051',
@@ -489,11 +488,14 @@ describe('Experimental Service', () => {
 
     const writeStream = client.bulkImportRelationships((err, value) => {
       if (err) {
-        done.fail(err);
+        fail(err);
       }
 
       expect(value?.numLoaded).toEqual('2');
-      done();
+    });
+
+    writeStream.on('error', (e) => {
+      fail(e);
     });
 
     const resource = ObjectReference.create({
