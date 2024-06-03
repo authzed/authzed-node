@@ -28,7 +28,7 @@ jobs:
               - package.json
               - js-dist/package.json
   test:
-    name: Lint
+    name: Lint and Test
     runs-on: "buildjet-2vcpu-ubuntu-2204"
     strategy:
       matrix:
@@ -50,6 +50,9 @@ jobs:
           working-directory: ./
       - name: Run lint
         run: CI=true yarn lint
+        working-directory: ./
+      - name: Run Yarn tests
+        run: CI=true yarn only-run-tests
         working-directory: ./
   publish-npm:
     name: Publish to NPM
