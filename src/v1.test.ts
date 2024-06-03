@@ -285,7 +285,8 @@ describe('a check with an known namespace', () => {
 
 describe('Lookup APIs', () => {
   let token: string;
-  beforeEach(async () => {
+
+  beforeEach((done) => {
     token = generateTestToken('v1-lookup');
     const client = NewClient(
       token,
@@ -301,13 +302,6 @@ describe('Lookup APIs', () => {
         permission view = viewer
       }
       `,
-    });
-
-    await new Promise((resolve) => {
-      client.writeSchema(request, function (err, response) {
-        expect(err).toBe(null);
-        resolve(response);
-      });
     });
 
     const resource = ObjectReference.create({
@@ -346,10 +340,12 @@ describe('Lookup APIs', () => {
       ],
     });
 
-    await new Promise((resolve) => {
+    client.writeSchema(request, function (err, response) {
+      expect(err).toBe(null);
+
       client.writeRelationships(writeRequest, function (err, response) {
         expect(err).toBe(null);
-        resolve(response);
+        done();
       });
     });
   });
@@ -484,7 +480,7 @@ describe('a check with a negative timeout', () => {
 describe('Experimental Service', () => {
   let token: string;
 
-  beforeEach(async () => {
+  beforeEach((done) => {
     token = generateTestToken('v1-experimental-service');
     const client = NewClient(
       token,
@@ -502,17 +498,14 @@ describe('Experimental Service', () => {
       `,
     });
 
-    await new Promise((resolve) => {
-      client.writeSchema(request, function (err, response) {
-        expect(err).toBe(null);
-        resolve(response);
-      });
+    client.writeSchema(request, function (err, response) {
+      expect(err).toBe(null);
+      client.close();
+      done();
     });
-
-    client.close();
   });
 
-  it('can bulk import relationships', async (done) => {
+  it('can bulk import relationships', () => {
     const client = NewClient(
       token,
       'localhost:50051',
@@ -521,11 +514,14 @@ describe('Experimental Service', () => {
 
     const writeStream = client.bulkImportRelationships((err, value) => {
       if (err) {
-        done.fail(err);
+        fail(err);
       }
 
       expect(value?.numLoaded).toEqual('2');
-      done();
+    });
+
+    writeStream.on('error', (e) => {
+      fail(e);
     });
 
     const resource = ObjectReference.create({
@@ -564,7 +560,7 @@ describe('Experimental Service', () => {
     client.close();
   });
 
-  it('can bulk export relationships', async (done) => {
+  it('can bulk export relationships', (done) => {
     const client = NewClient(
       token,
       'localhost:50051',
@@ -607,63 +603,63 @@ describe('Experimental Service', () => {
       ],
     });
 
-    await new Promise((resolve) => {
-      client.writeRelationships(writeRequest, function (err, response) {
-        expect(err).toBe(null);
-        resolve(response);
+    client.writeRelationships(writeRequest, function (err, response) {
+      expect(err).toBe(null);
+
+      const resStream = client.bulkExportRelationships(
+        BulkExportRelationshipsRequest.create({
+          consistency: Consistency.create({
+            requirement: {
+              oneofKind: 'fullyConsistent',
+              fullyConsistent: true,
+            },
+          }),
+        })
+      );
+
+      resStream.on(
+        'data',
+        function (response: BulkExportRelationshipsResponse) {
+          expect(response.relationships).toEqual([
+            {
+              relation: 'viewer',
+              resource: {
+                objectType: 'test/document',
+                objectId: 'somedocument',
+              },
+              subject: {
+                optionalRelation: '',
+                object: { objectType: 'test/user', objectId: 'someuser' },
+              },
+            },
+            {
+              relation: 'viewer',
+              resource: {
+                objectType: 'test/document',
+                objectId: 'somedocument',
+              },
+              subject: {
+                optionalRelation: '',
+                object: { objectType: 'test/user', objectId: 'someuser2' },
+              },
+            },
+          ]);
+        }
+      );
+
+      resStream.on('end', function () {
+        client.close();
+        done();
       });
-    });
 
-    const resStream = client.bulkExportRelationships(
-      BulkExportRelationshipsRequest.create({
-        consistency: Consistency.create({
-          requirement: {
-            oneofKind: 'fullyConsistent',
-            fullyConsistent: true,
-          },
-        }),
-      })
-    );
+      resStream.on('error', function (e) {
+        client.close();
+        done.fail(e);
+      });
 
-    resStream.on('data', function (response: BulkExportRelationshipsResponse) {
-      expect(response.relationships).toEqual([
-        {
-          relation: 'viewer',
-          resource: {
-            objectType: 'test/document',
-            objectId: 'somedocument',
-          },
-          subject: {
-            optionalRelation: '',
-            object: { objectType: 'test/user', objectId: 'someuser' },
-          },
-        },
-        {
-          relation: 'viewer',
-          resource: {
-            objectType: 'test/document',
-            objectId: 'somedocument',
-          },
-          subject: {
-            optionalRelation: '',
-            object: { objectType: 'test/user', objectId: 'someuser2' },
-          },
-        },
-      ]);
-    });
-
-    resStream.on('end', function () {
-      client.close();
-      done();
-    });
-
-    resStream.on('error', function (e) {
-      client.close();
-      done.fail(e);
-    });
-
-    resStream.on('status', function (status) {
-      expect(status.code).toEqual(grpc.status.OK);
+      resStream.on('status', function (status) {
+        expect(status.code).toEqual(grpc.status.OK);
+      });
     });
   });
 });
