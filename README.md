@@ -58,7 +58,8 @@ You will have to provide a your own API Token from the [Authzed dashboard] in pl
 
 ```js
 import { v1 } from '@authzed/authzed-node';
-
+// if your endpoint is localhost
+// const client = v1.NewClient('t_your_token_here_1234567deadbeef', 'localhost:50051', ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
 const client = v1.NewClient('t_your_token_here_1234567deadbeef');
 ```
 
@@ -144,4 +145,3 @@ console.log(results[0]); // first ReadRelationship result
 Supported Node.js versions: 14, 16, 17
 
 Minimum TypeScript version 3.8
-
