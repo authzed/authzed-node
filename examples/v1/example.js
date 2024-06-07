@@ -1,5 +1,6 @@
 import { v1 } from '@authzed/authzed-node';
-
+// set up it on localhost like this:
+// const client = v1.NewClient('mytokenhere', 'localhost:50051', 1);
 const client = v1.NewClient('mytokenhere');
 
 const writeRequest = v1.WriteSchemaRequest.create({
