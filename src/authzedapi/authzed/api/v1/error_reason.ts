@@ -442,5 +442,49 @@ export enum ErrorReason {
      *
      * @generated from protobuf enum value: ERROR_REASON_EMPTY_PRECONDITION = 25;
      */
-    EMPTY_PRECONDITION = 25
+    EMPTY_PRECONDITION = 25,
+    /**
+     * The request failed because the counter was already registered.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_COUNTER_ALREADY_REGISTERED",
+     *       "domain": "authzed.com",
+     *       "metadata": { "counter_name": "name" }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_COUNTER_ALREADY_REGISTERED = 26;
+     */
+    COUNTER_ALREADY_REGISTERED = 26,
+    /**
+     * The request failed because the counter was not registered.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_COUNTER_NOT_REGISTERED",
+     *       "domain": "authzed.com",
+     *       "metadata": { "counter_name": "name"  }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_COUNTER_NOT_REGISTERED = 27;
+     */
+    COUNTER_NOT_REGISTERED = 27,
+    /**
+     * The request failed because a wildcard was not allowed. For CheckPermission,
+     * this means that the subject or resource ID was a wildcard. For LookupResources,
+     * this means that the subject ID was a wildcard.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_WILDCARD_NOT_ALLOWED",
+     *       "domain": "authzed.com",
+     *       "metadata": { "disallowed_field": "subject_id" }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_WILDCARD_NOT_ALLOWED = 28;
+     */
+    WILDCARD_NOT_ALLOWED = 28
 }

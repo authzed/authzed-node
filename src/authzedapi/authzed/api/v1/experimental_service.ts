@@ -11,17 +11,111 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { RelationshipFilter } from "./permission_service";
 import { Cursor } from "./core";
 import { Relationship } from "./core";
 import { PartialCaveatInfo } from "./core";
 import { CheckPermissionResponse_Permissionship } from "./permission_service";
 import { Status } from "../../../google/rpc/status";
-import { ZedToken } from "./core";
 import { Struct } from "../../../google/protobuf/struct";
 import { SubjectReference } from "./core";
 import { ObjectReference } from "./core";
 import { Consistency } from "./permission_service";
+import { ZedToken } from "./core";
+import { RelationshipFilter } from "./permission_service";
+/**
+ * @generated from protobuf message authzed.api.v1.ExperimentalRegisterRelationshipCounterRequest
+ */
+export interface ExperimentalRegisterRelationshipCounterRequest {
+    /**
+     * name is the name of the counter being registered.
+     *
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * relationship_filter defines the filter to be applied to the relationships
+     * to be counted.
+     *
+     * @generated from protobuf field: authzed.api.v1.RelationshipFilter relationship_filter = 2;
+     */
+    relationshipFilter?: RelationshipFilter;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ExperimentalRegisterRelationshipCounterResponse
+ */
+export interface ExperimentalRegisterRelationshipCounterResponse {
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ExperimentalCountRelationshipsRequest
+ */
+export interface ExperimentalCountRelationshipsRequest {
+    /**
+     * name is the name of the counter whose count is being requested.
+     *
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ExperimentalCountRelationshipsResponse
+ */
+export interface ExperimentalCountRelationshipsResponse {
+    /**
+     * @generated from protobuf oneof: counter_result
+     */
+    counterResult: {
+        oneofKind: "counterStillCalculating";
+        /**
+         * counter_still_calculating is true if the counter is still calculating the count.
+         *
+         * @generated from protobuf field: bool counter_still_calculating = 1;
+         */
+        counterStillCalculating: boolean;
+    } | {
+        oneofKind: "readCounterValue";
+        /**
+         * read_counter_value is the value of the counter at the time of the read.
+         *
+         * @generated from protobuf field: authzed.api.v1.ReadCounterValue read_counter_value = 2;
+         */
+        readCounterValue: ReadCounterValue;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ReadCounterValue
+ */
+export interface ReadCounterValue {
+    /**
+     * relationship_count is the count of relationships that match the filter.
+     *
+     * @generated from protobuf field: uint64 relationship_count = 1;
+     */
+    relationshipCount: string;
+    /**
+     * read_at is the ZedToken at which the relationship count applies.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken read_at = 2;
+     */
+    readAt?: ZedToken;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ExperimentalUnregisterRelationshipCounterRequest
+ */
+export interface ExperimentalUnregisterRelationshipCounterRequest {
+    /**
+     * name is the name of the counter being unregistered.
+     *
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ExperimentalUnregisterRelationshipCounterResponse
+ */
+export interface ExperimentalUnregisterRelationshipCounterResponse {
+}
 /**
  * NOTE: Deprecated now that BulkCheckPermission has been promoted to the stable API as "CheckBulkPermission".
  *
@@ -704,6 +798,318 @@ export interface ExpSchemaDiff {
         oneofKind: undefined;
     };
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class ExperimentalRegisterRelationshipCounterRequest$Type extends MessageType<ExperimentalRegisterRelationshipCounterRequest> {
+    constructor() {
+        super("authzed.api.v1.ExperimentalRegisterRelationshipCounterRequest", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 2, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExperimentalRegisterRelationshipCounterRequest>): ExperimentalRegisterRelationshipCounterRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        if (value !== undefined)
+            reflectionMergePartial<ExperimentalRegisterRelationshipCounterRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExperimentalRegisterRelationshipCounterRequest): ExperimentalRegisterRelationshipCounterRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* authzed.api.v1.RelationshipFilter relationship_filter */ 2:
+                    message.relationshipFilter = RelationshipFilter.internalBinaryRead(reader, reader.uint32(), options, message.relationshipFilter);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExperimentalRegisterRelationshipCounterRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* authzed.api.v1.RelationshipFilter relationship_filter = 2; */
+        if (message.relationshipFilter)
+            RelationshipFilter.internalBinaryWrite(message.relationshipFilter, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ExperimentalRegisterRelationshipCounterRequest
+ */
+export const ExperimentalRegisterRelationshipCounterRequest = new ExperimentalRegisterRelationshipCounterRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExperimentalRegisterRelationshipCounterResponse$Type extends MessageType<ExperimentalRegisterRelationshipCounterResponse> {
+    constructor() {
+        super("authzed.api.v1.ExperimentalRegisterRelationshipCounterResponse", []);
+    }
+    create(value?: PartialMessage<ExperimentalRegisterRelationshipCounterResponse>): ExperimentalRegisterRelationshipCounterResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ExperimentalRegisterRelationshipCounterResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExperimentalRegisterRelationshipCounterResponse): ExperimentalRegisterRelationshipCounterResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: ExperimentalRegisterRelationshipCounterResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ExperimentalRegisterRelationshipCounterResponse
+ */
+export const ExperimentalRegisterRelationshipCounterResponse = new ExperimentalRegisterRelationshipCounterResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExperimentalCountRelationshipsRequest$Type extends MessageType<ExperimentalCountRelationshipsRequest> {
+    constructor() {
+        super("authzed.api.v1.ExperimentalCountRelationshipsRequest", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExperimentalCountRelationshipsRequest>): ExperimentalCountRelationshipsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        if (value !== undefined)
+            reflectionMergePartial<ExperimentalCountRelationshipsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExperimentalCountRelationshipsRequest): ExperimentalCountRelationshipsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExperimentalCountRelationshipsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ExperimentalCountRelationshipsRequest
+ */
+export const ExperimentalCountRelationshipsRequest = new ExperimentalCountRelationshipsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExperimentalCountRelationshipsResponse$Type extends MessageType<ExperimentalCountRelationshipsResponse> {
+    constructor() {
+        super("authzed.api.v1.ExperimentalCountRelationshipsResponse", [
+            { no: 1, name: "counter_still_calculating", kind: "scalar", oneof: "counterResult", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "read_counter_value", kind: "message", oneof: "counterResult", T: () => ReadCounterValue }
+        ]);
+    }
+    create(value?: PartialMessage<ExperimentalCountRelationshipsResponse>): ExperimentalCountRelationshipsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.counterResult = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<ExperimentalCountRelationshipsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExperimentalCountRelationshipsResponse): ExperimentalCountRelationshipsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool counter_still_calculating */ 1:
+                    message.counterResult = {
+                        oneofKind: "counterStillCalculating",
+                        counterStillCalculating: reader.bool()
+                    };
+                    break;
+                case /* authzed.api.v1.ReadCounterValue read_counter_value */ 2:
+                    message.counterResult = {
+                        oneofKind: "readCounterValue",
+                        readCounterValue: ReadCounterValue.internalBinaryRead(reader, reader.uint32(), options, (message.counterResult as any).readCounterValue)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExperimentalCountRelationshipsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool counter_still_calculating = 1; */
+        if (message.counterResult.oneofKind === "counterStillCalculating")
+            writer.tag(1, WireType.Varint).bool(message.counterResult.counterStillCalculating);
+        /* authzed.api.v1.ReadCounterValue read_counter_value = 2; */
+        if (message.counterResult.oneofKind === "readCounterValue")
+            ReadCounterValue.internalBinaryWrite(message.counterResult.readCounterValue, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ExperimentalCountRelationshipsResponse
+ */
+export const ExperimentalCountRelationshipsResponse = new ExperimentalCountRelationshipsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReadCounterValue$Type extends MessageType<ReadCounterValue> {
+    constructor() {
+        super("authzed.api.v1.ReadCounterValue", [
+            { no: 1, name: "relationship_count", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "read_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReadCounterValue>): ReadCounterValue {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.relationshipCount = "0";
+        if (value !== undefined)
+            reflectionMergePartial<ReadCounterValue>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReadCounterValue): ReadCounterValue {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 relationship_count */ 1:
+                    message.relationshipCount = reader.uint64().toString();
+                    break;
+                case /* authzed.api.v1.ZedToken read_at */ 2:
+                    message.readAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.readAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReadCounterValue, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 relationship_count = 1; */
+        if (message.relationshipCount !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.relationshipCount);
+        /* authzed.api.v1.ZedToken read_at = 2; */
+        if (message.readAt)
+            ZedToken.internalBinaryWrite(message.readAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReadCounterValue
+ */
+export const ReadCounterValue = new ReadCounterValue$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExperimentalUnregisterRelationshipCounterRequest$Type extends MessageType<ExperimentalUnregisterRelationshipCounterRequest> {
+    constructor() {
+        super("authzed.api.v1.ExperimentalUnregisterRelationshipCounterRequest", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExperimentalUnregisterRelationshipCounterRequest>): ExperimentalUnregisterRelationshipCounterRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        if (value !== undefined)
+            reflectionMergePartial<ExperimentalUnregisterRelationshipCounterRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExperimentalUnregisterRelationshipCounterRequest): ExperimentalUnregisterRelationshipCounterRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExperimentalUnregisterRelationshipCounterRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ExperimentalUnregisterRelationshipCounterRequest
+ */
+export const ExperimentalUnregisterRelationshipCounterRequest = new ExperimentalUnregisterRelationshipCounterRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExperimentalUnregisterRelationshipCounterResponse$Type extends MessageType<ExperimentalUnregisterRelationshipCounterResponse> {
+    constructor() {
+        super("authzed.api.v1.ExperimentalUnregisterRelationshipCounterResponse", []);
+    }
+    create(value?: PartialMessage<ExperimentalUnregisterRelationshipCounterResponse>): ExperimentalUnregisterRelationshipCounterResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ExperimentalUnregisterRelationshipCounterResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExperimentalUnregisterRelationshipCounterResponse): ExperimentalUnregisterRelationshipCounterResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: ExperimentalUnregisterRelationshipCounterResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ExperimentalUnregisterRelationshipCounterResponse
+ */
+export const ExperimentalUnregisterRelationshipCounterResponse = new ExperimentalUnregisterRelationshipCounterResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class BulkCheckPermissionRequest$Type extends MessageType<BulkCheckPermissionRequest> {
     constructor() {
@@ -2587,5 +2993,8 @@ export const ExperimentalService = new ServiceType("authzed.api.v1.ExperimentalS
     { name: "ExperimentalReflectSchema", options: { "google.api.http": { post: "/v1/experimental/reflectschema", body: "*" } }, I: ExperimentalReflectSchemaRequest, O: ExperimentalReflectSchemaResponse },
     { name: "ExperimentalComputablePermissions", options: { "google.api.http": { post: "/v1/experimental/permissions/computable", body: "*" } }, I: ExperimentalComputablePermissionsRequest, O: ExperimentalComputablePermissionsResponse },
     { name: "ExperimentalDependentRelations", options: { "google.api.http": { post: "/v1/experimental/permissions/dependent", body: "*" } }, I: ExperimentalDependentRelationsRequest, O: ExperimentalDependentRelationsResponse },
-    { name: "ExperimentalDiffSchema", options: { "google.api.http": { post: "/v1/experimental/diffschema", body: "*" } }, I: ExperimentalDiffSchemaRequest, O: ExperimentalDiffSchemaResponse }
+    { name: "ExperimentalDiffSchema", options: { "google.api.http": { post: "/v1/experimental/diffschema", body: "*" } }, I: ExperimentalDiffSchemaRequest, O: ExperimentalDiffSchemaResponse },
+    { name: "ExperimentalRegisterRelationshipCounter", options: { "google.api.http": { post: "/v1/experimental/registerrelationshipcounter", body: "*" } }, I: ExperimentalRegisterRelationshipCounterRequest, O: ExperimentalRegisterRelationshipCounterResponse },
+    { name: "ExperimentalCountRelationships", options: { "google.api.http": { post: "/v1/experimental/countrelationships", body: "*" } }, I: ExperimentalCountRelationshipsRequest, O: ExperimentalCountRelationshipsResponse },
+    { name: "ExperimentalUnregisterRelationshipCounter", options: { "google.api.http": { post: "/v1/experimental/unregisterrelationshipcounter", body: "*" } }, I: ExperimentalUnregisterRelationshipCounterRequest, O: ExperimentalUnregisterRelationshipCounterResponse }
 ]);

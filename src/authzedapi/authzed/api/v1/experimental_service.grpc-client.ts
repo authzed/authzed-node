@@ -4,6 +4,12 @@
 import { ExperimentalService } from "./experimental_service";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
+import type { ExperimentalUnregisterRelationshipCounterResponse } from "./experimental_service";
+import type { ExperimentalUnregisterRelationshipCounterRequest } from "./experimental_service";
+import type { ExperimentalCountRelationshipsResponse } from "./experimental_service";
+import type { ExperimentalCountRelationshipsRequest } from "./experimental_service";
+import type { ExperimentalRegisterRelationshipCounterResponse } from "./experimental_service";
+import type { ExperimentalRegisterRelationshipCounterRequest } from "./experimental_service";
 import type { ExperimentalDiffSchemaResponse } from "./experimental_service";
 import type { ExperimentalDiffSchemaRequest } from "./experimental_service";
 import type { ExperimentalDependentRelationsResponse } from "./experimental_service";
@@ -107,6 +113,34 @@ export interface IExperimentalServiceClient {
     experimentalDiffSchema(input: ExperimentalDiffSchemaRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void): grpc.ClientUnaryCall;
     experimentalDiffSchema(input: ExperimentalDiffSchemaRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void): grpc.ClientUnaryCall;
     experimentalDiffSchema(input: ExperimentalDiffSchemaRequest, callback: (err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * EXPERIMENTAL: RegisterRelationshipCounter registers a new filter for counting relationships. A filter must be registered before
+     * a count can be requested.
+     *
+     * @generated from protobuf rpc: ExperimentalRegisterRelationshipCounter(authzed.api.v1.ExperimentalRegisterRelationshipCounterRequest) returns (authzed.api.v1.ExperimentalRegisterRelationshipCounterResponse);
+     */
+    experimentalRegisterRelationshipCounter(input: ExperimentalRegisterRelationshipCounterRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalRegisterRelationshipCounterResponse) => void): grpc.ClientUnaryCall;
+    experimentalRegisterRelationshipCounter(input: ExperimentalRegisterRelationshipCounterRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ExperimentalRegisterRelationshipCounterResponse) => void): grpc.ClientUnaryCall;
+    experimentalRegisterRelationshipCounter(input: ExperimentalRegisterRelationshipCounterRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalRegisterRelationshipCounterResponse) => void): grpc.ClientUnaryCall;
+    experimentalRegisterRelationshipCounter(input: ExperimentalRegisterRelationshipCounterRequest, callback: (err: grpc.ServiceError | null, value?: ExperimentalRegisterRelationshipCounterResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * EXPERIMENTAL: CountRelationships returns the count of relationships for *pre-registered* filter.
+     *
+     * @generated from protobuf rpc: ExperimentalCountRelationships(authzed.api.v1.ExperimentalCountRelationshipsRequest) returns (authzed.api.v1.ExperimentalCountRelationshipsResponse);
+     */
+    experimentalCountRelationships(input: ExperimentalCountRelationshipsRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalCountRelationshipsResponse) => void): grpc.ClientUnaryCall;
+    experimentalCountRelationships(input: ExperimentalCountRelationshipsRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ExperimentalCountRelationshipsResponse) => void): grpc.ClientUnaryCall;
+    experimentalCountRelationships(input: ExperimentalCountRelationshipsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalCountRelationshipsResponse) => void): grpc.ClientUnaryCall;
+    experimentalCountRelationships(input: ExperimentalCountRelationshipsRequest, callback: (err: grpc.ServiceError | null, value?: ExperimentalCountRelationshipsResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * EXPERIMENTAL: UnregisterRelationshipCounter unregisters an existing filter for counting relationships.
+     *
+     * @generated from protobuf rpc: ExperimentalUnregisterRelationshipCounter(authzed.api.v1.ExperimentalUnregisterRelationshipCounterRequest) returns (authzed.api.v1.ExperimentalUnregisterRelationshipCounterResponse);
+     */
+    experimentalUnregisterRelationshipCounter(input: ExperimentalUnregisterRelationshipCounterRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalUnregisterRelationshipCounterResponse) => void): grpc.ClientUnaryCall;
+    experimentalUnregisterRelationshipCounter(input: ExperimentalUnregisterRelationshipCounterRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ExperimentalUnregisterRelationshipCounterResponse) => void): grpc.ClientUnaryCall;
+    experimentalUnregisterRelationshipCounter(input: ExperimentalUnregisterRelationshipCounterRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalUnregisterRelationshipCounterResponse) => void): grpc.ClientUnaryCall;
+    experimentalUnregisterRelationshipCounter(input: ExperimentalUnregisterRelationshipCounterRequest, callback: (err: grpc.ServiceError | null, value?: ExperimentalUnregisterRelationshipCounterResponse) => void): grpc.ClientUnaryCall;
 }
 /**
  * ExperimentalService exposes a number of APIs that are currently being
@@ -202,5 +236,33 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
     experimentalDiffSchema(input: ExperimentalDiffSchemaRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void)): grpc.ClientUnaryCall {
         const method = ExperimentalService.methods[6];
         return this.makeUnaryRequest<ExperimentalDiffSchemaRequest, ExperimentalDiffSchemaResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: ExperimentalDiffSchemaRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExperimentalDiffSchemaResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * EXPERIMENTAL: RegisterRelationshipCounter registers a new filter for counting relationships. A filter must be registered before
+     * a count can be requested.
+     *
+     * @generated from protobuf rpc: ExperimentalRegisterRelationshipCounter(authzed.api.v1.ExperimentalRegisterRelationshipCounterRequest) returns (authzed.api.v1.ExperimentalRegisterRelationshipCounterResponse);
+     */
+    experimentalRegisterRelationshipCounter(input: ExperimentalRegisterRelationshipCounterRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalRegisterRelationshipCounterResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalRegisterRelationshipCounterResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ExperimentalRegisterRelationshipCounterResponse) => void)): grpc.ClientUnaryCall {
+        const method = ExperimentalService.methods[7];
+        return this.makeUnaryRequest<ExperimentalRegisterRelationshipCounterRequest, ExperimentalRegisterRelationshipCounterResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: ExperimentalRegisterRelationshipCounterRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExperimentalRegisterRelationshipCounterResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * EXPERIMENTAL: CountRelationships returns the count of relationships for *pre-registered* filter.
+     *
+     * @generated from protobuf rpc: ExperimentalCountRelationships(authzed.api.v1.ExperimentalCountRelationshipsRequest) returns (authzed.api.v1.ExperimentalCountRelationshipsResponse);
+     */
+    experimentalCountRelationships(input: ExperimentalCountRelationshipsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalCountRelationshipsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalCountRelationshipsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ExperimentalCountRelationshipsResponse) => void)): grpc.ClientUnaryCall {
+        const method = ExperimentalService.methods[8];
+        return this.makeUnaryRequest<ExperimentalCountRelationshipsRequest, ExperimentalCountRelationshipsResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: ExperimentalCountRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExperimentalCountRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * EXPERIMENTAL: UnregisterRelationshipCounter unregisters an existing filter for counting relationships.
+     *
+     * @generated from protobuf rpc: ExperimentalUnregisterRelationshipCounter(authzed.api.v1.ExperimentalUnregisterRelationshipCounterRequest) returns (authzed.api.v1.ExperimentalUnregisterRelationshipCounterResponse);
+     */
+    experimentalUnregisterRelationshipCounter(input: ExperimentalUnregisterRelationshipCounterRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalUnregisterRelationshipCounterResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalUnregisterRelationshipCounterResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ExperimentalUnregisterRelationshipCounterResponse) => void)): grpc.ClientUnaryCall {
+        const method = ExperimentalService.methods[9];
+        return this.makeUnaryRequest<ExperimentalUnregisterRelationshipCounterRequest, ExperimentalUnregisterRelationshipCounterResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: ExperimentalUnregisterRelationshipCounterRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExperimentalUnregisterRelationshipCounterResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }
