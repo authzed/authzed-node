@@ -27,7 +27,7 @@
     "build-js-client": "tsc --target es2018 --declaration false --outDir js-dist"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.10.9",
+    "@grpc/grpc-js": "^1.10.10",
     "@protobuf-ts/runtime": "^2.9.4",
     "@protobuf-ts/runtime-rpc": "^2.9.4",
     "google-protobuf": "^3.15.3"
