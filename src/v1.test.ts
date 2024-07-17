@@ -505,7 +505,7 @@ describe("Experimental Service", () => {
     });
   });
 
-  it("can bulk import relationships", () => {
+  it("can bulk import relationships", (done) => {
     const client = NewClient(
       token,
       "localhost:50051",
@@ -514,14 +514,16 @@ describe("Experimental Service", () => {
 
     const writeStream = client.bulkImportRelationships((err, value) => {
       if (err) {
-        fail(err);
+        done.fail(err);
       }
 
       expect(value?.numLoaded).toEqual("2");
+      client.close();
+      done();
     });
 
     writeStream.on("error", (e) => {
-      fail(e);
+      done.fail(e);
     });
 
     const resource = ObjectReference.create({
@@ -557,7 +559,6 @@ describe("Experimental Service", () => {
     );
 
     writeStream.end();
-    client.close();
   });
 
   it("can bulk export relationships", (done) => {
