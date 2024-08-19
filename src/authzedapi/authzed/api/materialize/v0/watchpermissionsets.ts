@@ -65,6 +65,17 @@ export interface WatchPermissionSetsResponse {
          */
         lookupPermissionSetsRequired: LookupPermissionSetsRequired;
     } | {
+        oneofKind: "breakingSchemaChange";
+        /**
+         * breaking_schema_change is a signal that a breaking schema change has been written to the origin SpiceDB cluster,
+         * and that the consumer should expect delays in the ingestion of new changes,
+         * because the permission set snapshot needs to be rebuilt from scratch. Once the snapshot is ready, the consumer
+         * will receive a LookupPermissionSetsRequired event.
+         *
+         * @generated from protobuf field: authzed.api.materialize.v0.BreakingSchemaChange breaking_schema_change = 4;
+         */
+        breakingSchemaChange: BreakingSchemaChange;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -96,6 +107,12 @@ export interface Cursor {
      * @generated from protobuf field: bool completed_members = 6;
      */
     completedMembers: boolean;
+    /**
+     * starting_key is a string cursor used by some backends to resume the stream from a specific point.
+     *
+     * @generated from protobuf field: string starting_key = 7;
+     */
+    startingKey: string;
 }
 /**
  * @generated from protobuf message authzed.api.materialize.v0.LookupPermissionSetsRequest
@@ -109,6 +126,14 @@ export interface LookupPermissionSetsRequest {
      * @generated from protobuf field: uint32 limit = 1;
      */
     limit: number;
+    /**
+     * optional_at_revision specifies the client is requesting to lookup PermissionSets at a specific revision. It's
+     * optional, and if not provided, PermissionSets will be looked up at the current revision. The cursor always
+     * takes precedence in defining the revision when present.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken optional_at_revision = 2;
+     */
+    optionalAtRevision?: ZedToken;
     /**
      * optional_starting_after_cursor is used to specify the offset to start streaming permission sets from.
      *
@@ -250,7 +275,7 @@ export interface MemberReference {
 /**
  * LookupPermissionSetsRequired is a signal that the consumer should perform a LookupPermissionSets call because
  * the permission set snapshot needs to be rebuilt from scratch. This typically happens when the origin SpiceDB
- * cluster has seen its schema changed.
+ * cluster has seen its schema changed, see BreakingSchemaChange event.
  *
  * @generated from protobuf message authzed.api.materialize.v0.LookupPermissionSetsRequired
  */
@@ -261,6 +286,21 @@ export interface LookupPermissionSetsRequired {
      * @generated from protobuf field: authzed.api.v1.ZedToken required_lookup_at = 1;
      */
     requiredLookupAt?: ZedToken;
+}
+/**
+ * BreakingSchemaChange is used to signal a breaking schema change has happened, and that the consumer should
+ * expect delays in the ingestion of new changes, because the permission set snapshot needs to be rebuilt from scratch.
+ * Once the snapshot is ready, the consumer will receive a LookupPermissionSetsRequired event.
+ *
+ * @generated from protobuf message authzed.api.materialize.v0.BreakingSchemaChange
+ */
+export interface BreakingSchemaChange {
+    /**
+     * change_at is the revision at which a breaking schema event has happened.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken change_at = 1;
+     */
+    changeAt?: ZedToken;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class WatchPermissionSetsRequest$Type extends MessageType<WatchPermissionSetsRequest> {
@@ -314,7 +354,8 @@ class WatchPermissionSetsResponse$Type extends MessageType<WatchPermissionSetsRe
         super("authzed.api.materialize.v0.WatchPermissionSetsResponse", [
             { no: 1, name: "change", kind: "message", oneof: "response", T: () => PermissionSetChange },
             { no: 2, name: "completed_revision", kind: "message", oneof: "response", T: () => ZedToken },
-            { no: 3, name: "lookup_permission_sets_required", kind: "message", oneof: "response", T: () => LookupPermissionSetsRequired }
+            { no: 3, name: "lookup_permission_sets_required", kind: "message", oneof: "response", T: () => LookupPermissionSetsRequired },
+            { no: 4, name: "breaking_schema_change", kind: "message", oneof: "response", T: () => BreakingSchemaChange }
         ]);
     }
     create(value?: PartialMessage<WatchPermissionSetsResponse>): WatchPermissionSetsResponse {
@@ -347,6 +388,12 @@ class WatchPermissionSetsResponse$Type extends MessageType<WatchPermissionSetsRe
                         lookupPermissionSetsRequired: LookupPermissionSetsRequired.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).lookupPermissionSetsRequired)
                     };
                     break;
+                case /* authzed.api.materialize.v0.BreakingSchemaChange breaking_schema_change */ 4:
+                    message.response = {
+                        oneofKind: "breakingSchemaChange",
+                        breakingSchemaChange: BreakingSchemaChange.internalBinaryRead(reader, reader.uint32(), options, (message.response as any).breakingSchemaChange)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -368,6 +415,9 @@ class WatchPermissionSetsResponse$Type extends MessageType<WatchPermissionSetsRe
         /* authzed.api.materialize.v0.LookupPermissionSetsRequired lookup_permission_sets_required = 3; */
         if (message.response.oneofKind === "lookupPermissionSetsRequired")
             LookupPermissionSetsRequired.internalBinaryWrite(message.response.lookupPermissionSetsRequired, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.materialize.v0.BreakingSchemaChange breaking_schema_change = 4; */
+        if (message.response.oneofKind === "breakingSchemaChange")
+            BreakingSchemaChange.internalBinaryWrite(message.response.breakingSchemaChange, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -385,7 +435,8 @@ class Cursor$Type extends MessageType<Cursor> {
             { no: 1, name: "limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
             { no: 4, name: "token", kind: "message", T: () => ZedToken },
             { no: 5, name: "starting_index", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 6, name: "completed_members", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 6, name: "completed_members", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "starting_key", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<Cursor>): Cursor {
@@ -393,6 +444,7 @@ class Cursor$Type extends MessageType<Cursor> {
         message.limit = 0;
         message.startingIndex = 0;
         message.completedMembers = false;
+        message.startingKey = "";
         if (value !== undefined)
             reflectionMergePartial<Cursor>(this, message, value);
         return message;
@@ -413,6 +465,9 @@ class Cursor$Type extends MessageType<Cursor> {
                     break;
                 case /* bool completed_members */ 6:
                     message.completedMembers = reader.bool();
+                    break;
+                case /* string starting_key */ 7:
+                    message.startingKey = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -438,6 +493,9 @@ class Cursor$Type extends MessageType<Cursor> {
         /* bool completed_members = 6; */
         if (message.completedMembers !== false)
             writer.tag(6, WireType.Varint).bool(message.completedMembers);
+        /* string starting_key = 7; */
+        if (message.startingKey !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.startingKey);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -453,6 +511,7 @@ class LookupPermissionSetsRequest$Type extends MessageType<LookupPermissionSetsR
     constructor() {
         super("authzed.api.materialize.v0.LookupPermissionSetsRequest", [
             { no: 1, name: "limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 2, name: "optional_at_revision", kind: "message", T: () => ZedToken },
             { no: 4, name: "optional_starting_after_cursor", kind: "message", T: () => Cursor }
         ]);
     }
@@ -470,6 +529,9 @@ class LookupPermissionSetsRequest$Type extends MessageType<LookupPermissionSetsR
             switch (fieldNo) {
                 case /* uint32 limit */ 1:
                     message.limit = reader.uint32();
+                    break;
+                case /* authzed.api.v1.ZedToken optional_at_revision */ 2:
+                    message.optionalAtRevision = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.optionalAtRevision);
                     break;
                 case /* authzed.api.materialize.v0.Cursor optional_starting_after_cursor */ 4:
                     message.optionalStartingAfterCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.optionalStartingAfterCursor);
@@ -489,6 +551,9 @@ class LookupPermissionSetsRequest$Type extends MessageType<LookupPermissionSetsR
         /* uint32 limit = 1; */
         if (message.limit !== 0)
             writer.tag(1, WireType.Varint).uint32(message.limit);
+        /* authzed.api.v1.ZedToken optional_at_revision = 2; */
+        if (message.optionalAtRevision)
+            ZedToken.internalBinaryWrite(message.optionalAtRevision, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* authzed.api.materialize.v0.Cursor optional_starting_after_cursor = 4; */
         if (message.optionalStartingAfterCursor)
             Cursor.internalBinaryWrite(message.optionalStartingAfterCursor, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
@@ -809,6 +874,52 @@ class LookupPermissionSetsRequired$Type extends MessageType<LookupPermissionSets
  * @generated MessageType for protobuf message authzed.api.materialize.v0.LookupPermissionSetsRequired
  */
 export const LookupPermissionSetsRequired = new LookupPermissionSetsRequired$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BreakingSchemaChange$Type extends MessageType<BreakingSchemaChange> {
+    constructor() {
+        super("authzed.api.materialize.v0.BreakingSchemaChange", [
+            { no: 1, name: "change_at", kind: "message", T: () => ZedToken }
+        ]);
+    }
+    create(value?: PartialMessage<BreakingSchemaChange>): BreakingSchemaChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<BreakingSchemaChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BreakingSchemaChange): BreakingSchemaChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.ZedToken change_at */ 1:
+                    message.changeAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.changeAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BreakingSchemaChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.ZedToken change_at = 1; */
+        if (message.changeAt)
+            ZedToken.internalBinaryWrite(message.changeAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.materialize.v0.BreakingSchemaChange
+ */
+export const BreakingSchemaChange = new BreakingSchemaChange$Type();
 /**
  * @generated ServiceType for protobuf service authzed.api.materialize.v0.WatchPermissionSetsService
  */

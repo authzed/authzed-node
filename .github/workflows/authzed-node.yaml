@@ -27,6 +27,7 @@ jobs:
               - .github/workflows/authzed-node.yaml
               - package.json
               - js-dist/package.json
+              - buf.gen.yaml
   test:
     name: Lint and Test
     runs-on: "buildjet-2vcpu-ubuntu-2204"

@@ -46,10 +46,10 @@ jobs:
         with:
           working-directory: ./
       - name: "Install buf"
-        uses: "bufbuild/buf-setup-action@v1"
+        uses: "bufbuild/buf-setup-action@v1.37.0"
         if: steps.buf-update.outputs.updated == 'true'
         with:
-          version: "1.18.0"
+          version: "1.37.0"
       - name: "Run buf generate"
         if: steps.buf-update.outputs.updated == 'true'
         run: |
