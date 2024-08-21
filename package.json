@@ -21,7 +21,8 @@
     "test": "./scripts/run-and-test.sh",
     "only-run-tests": "ts-node node_modules/jasmine/bin/jasmine --config=jasmine.json",
     "buf": "./buf.gen.yaml",
-    "lint": "./node_modules/.bin/eslint src",
+    "lint": "biome check .",
+    "fix": "biome check --write .",
     "build": "tsc",
     "prepublish": "yarn build",
     "build-js-client": "tsc --target es2018 --declaration false --outDir js-dist"
@@ -33,14 +34,10 @@
     "google-protobuf": "^3.21.4"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^9.9.0",
+    "@biomejs/biome": "1.8.3",
     "@protobuf-ts/plugin": "^2.9.4",
     "@types/jasmine": "^5.1.4",
     "@types/jest": "^29.5.12",
-    "@typescript-eslint/eslint-plugin": "^8.1.0",
-    "@typescript-eslint/parser": "^8.1.0",
-    "eslint": "^9.9.0",
     "grpc-tools": "^1.11.2",
     "jasmine": "^5.2.0",
     "ts-node": "^10.9.2",
