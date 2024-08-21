@@ -1,0 +1,21 @@
+---
+repos:
+  - repo: "https://github.com/adrienverge/yamllint"
+    rev: "v1.35.1"
+    hooks:
+      - id: "yamllint"
+  - repo: "https://github.com/biomejs/pre-commit"
+    rev: "v0.4.0"
+    hooks:
+      - id: "biome-check"
+        additional_dependencies: ["@biomejs/biome@1.8.3"]
+  - repo: "local"
+    hooks:
+      - id: "typescript-check"
+        name: "Check types"
+        entry: "yarn run tsc --noEmit"
+        language: "system"
+        types_or: ["ts"]
+        # We do this to ensure that type changes in the modified
+        # files don't change things elsewhere.
+        pass_filenames: false

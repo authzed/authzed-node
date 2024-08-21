@@ -1,13 +1,17 @@
+import { generateTestToken } from "./__utils__/helpers";
 import { ClientSecurity } from "./util";
 import * as v1 from "./v1";
 import { Consistency } from "./v1";
-import { generateTestToken } from './__utils__/helpers'
 
 describe("a check following a write of schema and relationships", () => {
   it("should succeed", (done) => {
     // Write the schema.
-    const token = generateTestToken('full-test')
-    const v1client = v1.NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+    const token = generateTestToken("full-test");
+    const v1client = v1.NewClient(
+      token,
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+    );
 
     const writeSchemaRequest = v1.WriteSchemaRequest.create({
       schema: `
@@ -20,7 +24,7 @@ describe("a check following a write of schema and relationships", () => {
   `,
     });
 
-    v1client.writeSchema(writeSchemaRequest, function (err) {
+    v1client.writeSchema(writeSchemaRequest, (err) => {
       expect(err).toBe(null);
 
       // Create the relationship between the resource and the user.
@@ -55,7 +59,7 @@ describe("a check following a write of schema and relationships", () => {
         updates: [update],
       });
 
-      v1client.writeRelationships(writeRequest, function (err, response) {
+      v1client.writeRelationships(writeRequest, (err, response) => {
         expect(err).toBe(null);
         expect(response).toBeTruthy();
 
@@ -68,13 +72,13 @@ describe("a check following a write of schema and relationships", () => {
               oneofKind: "fullyConsistent",
               fullyConsistent: true,
             },
-          })
+          }),
         });
 
         v1client.checkPermission(checkPermissionRequest, (err, response) => {
           expect(err).toBe(null);
           expect(response?.permissionship).toBe(
-            v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION
+            v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION,
           );
           done();
         });

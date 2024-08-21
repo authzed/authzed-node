@@ -1,7 +1,7 @@
-import { v1 } from '@authzed/authzed-node';
+import { v1 } from "@authzed/authzed-node";
 // set up it on localhost like this:
 // const client = v1.NewClient('mytokenhere', 'localhost:50051', 1);
-const client = v1.NewClient('mytokenhere');
+const client = v1.NewClient("mytokenhere");
 
 const writeRequest = v1.WriteSchemaRequest.create({
   schema: `definition test/user {}
@@ -15,7 +15,7 @@ const writeRequest = v1.WriteSchemaRequest.create({
 
 // Write a schema.
 await new Promise((resolve, reject) => {
-  client.writeSchema(writeRequest, function (err, response) {
+  client.writeSchema(writeRequest, (err, response) => {
     if (err) reject(err);
     resolve(response);
   });
@@ -27,14 +27,14 @@ const writeRelationshipRequest = v1.WriteRelationshipsRequest.create({
     v1.RelationshipUpdate.create({
       relationship: v1.Relationship.create({
         resource: v1.ObjectReference.create({
-          objectType: 'test/document',
-          objectId: 'somedocument',
+          objectType: "test/document",
+          objectId: "somedocument",
         }),
-        relation: 'viewer',
+        relation: "viewer",
         subject: v1.SubjectReference.create({
           object: v1.ObjectReference.create({
-            objectType: 'test/user',
-            objectId: 'fred',
+            objectType: "test/user",
+            objectId: "fred",
           }),
         }),
       }),
@@ -44,7 +44,7 @@ const writeRelationshipRequest = v1.WriteRelationshipsRequest.create({
 });
 
 await new Promise((resolve, reject) => {
-  client.writeRelationships(writeRelationshipRequest, function (err, response) {
+  client.writeRelationships(writeRelationshipRequest, (err, response) => {
     if (err) reject(err);
     resolve(response);
   });
@@ -53,26 +53,26 @@ await new Promise((resolve, reject) => {
 // Check a permission.
 const checkPermissionRequest = v1.CheckPermissionRequest.create({
   resource: v1.ObjectReference.create({
-    objectType: 'test/document',
-    objectId: 'somedocument',
+    objectType: "test/document",
+    objectId: "somedocument",
   }),
-  permission: 'view',
+  permission: "view",
   subject: v1.SubjectReference.create({
     object: v1.ObjectReference.create({
-      objectType: 'test/user',
-      objectId: 'fred',
+      objectType: "test/user",
+      objectId: "fred",
     }),
   }),
   consistency: v1.Consistency.create({
     requirement: {
-      oneofKind: 'fullyConsistent',
+      oneofKind: "fullyConsistent",
       fullyConsistent: true,
     },
   }),
 });
 
 const checkResult = await new Promise((resolve, reject) => {
-  client.checkPermission(checkPermissionRequest, function (err, response) {
+  client.checkPermission(checkPermissionRequest, (err, response) => {
     if (err) reject(err);
     resolve(response);
   });
@@ -80,5 +80,5 @@ const checkResult = await new Promise((resolve, reject) => {
 
 console.log(
   checkResult.permissionship ===
-    v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION
+    v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION,
 );

@@ -4,18 +4,18 @@ import { Struct } from "./authzedapi/google/protobuf/struct";
 import { PreconnectServices, deadlineInterceptor } from "./util";
 import {
   BulkExportRelationshipsRequest,
-  BulkExportRelationshipsResponse,
+  type BulkExportRelationshipsResponse,
   BulkImportRelationshipsRequest,
   CheckPermissionRequest,
-  CheckPermissionResponse,
+  type CheckPermissionResponse,
   CheckPermissionResponse_Permissionship,
   ClientSecurity,
   Consistency,
   ContextualizedCaveat,
   LookupResourcesRequest,
-  LookupResourcesResponse,
+  type LookupResourcesResponse,
   LookupSubjectsRequest,
-  LookupSubjectsResponse,
+  type LookupSubjectsResponse,
   NewClient,
   ObjectReference,
   Relationship,
@@ -23,7 +23,7 @@ import {
   RelationshipUpdate_Operation,
   SubjectReference,
   WriteRelationshipsRequest,
-  WriteRelationshipsResponse,
+  type WriteRelationshipsResponse,
   WriteSchemaRequest,
 } from "./v1";
 
@@ -50,9 +50,9 @@ describe("a check with an unknown namespace", () => {
     const client = NewClient(
       generateTestToken("v1-test-unknown"),
       "localhost:50051",
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
-    client.checkPermission(checkPermissionRequest, function (err, response) {
+    client.checkPermission(checkPermissionRequest, (err, response) => {
       expect(response).toBe(undefined);
       expect(err?.code).toBe(grpc.status.FAILED_PRECONDITION);
       client.close();
@@ -68,7 +68,8 @@ describe("a check with an known namespace", () => {
       generateTestToken("v1-namespace"),
       "localhost:50051",
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-      PreconnectServices.PERMISSIONS_SERVICE | PreconnectServices.SCHEMA_SERVICE
+      PreconnectServices.PERMISSIONS_SERVICE |
+        PreconnectServices.SCHEMA_SERVICE,
     );
 
     const request = WriteSchemaRequest.create({
@@ -82,7 +83,7 @@ describe("a check with an known namespace", () => {
     });
 
     new Promise((resolve) => {
-      client.writeSchema(request, function (err, response) {
+      client.writeSchema(request, (err, response) => {
         expect(err).toBe(null);
         resolve(response);
       });
@@ -117,7 +118,7 @@ describe("a check with an known namespace", () => {
             ],
           });
 
-          client.writeRelationships(writeRequest, function (err, response) {
+          client.writeRelationships(writeRequest, (err, response) => {
             expect(err).toBe(null);
             resolve({ response, resource, testUser });
           });
@@ -147,19 +148,16 @@ describe("a check with an known namespace", () => {
             }),
           });
 
-          client.checkPermission(
-            checkPermissionRequest,
-            function (err, response) {
-              expect(err).toBe(null);
-              resolve(response);
-            }
-          );
+          client.checkPermission(checkPermissionRequest, (err, response) => {
+            expect(err).toBe(null);
+            resolve(response);
+          });
         });
       })
       .then((response) => {
         const checkResponse = response as CheckPermissionResponse;
         expect(checkResponse?.permissionship).toBe(
-          CheckPermissionResponse_Permissionship.HAS_PERMISSION
+          CheckPermissionResponse_Permissionship.HAS_PERMISSION,
         );
 
         client.close();
@@ -173,7 +171,7 @@ describe("a check with an known namespace", () => {
       const client = NewClient(
         generateTestToken("v1-namespace-caveats"),
         "localhost:50051",
-        ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
       );
 
       const request = WriteSchemaRequest.create({
@@ -192,7 +190,7 @@ describe("a check with an known namespace", () => {
       });
 
       new Promise((resolve) => {
-        client.writeSchema(request, function (err, response) {
+        client.writeSchema(request, (err, response) => {
           expect(err).toBe(null);
           resolve(response);
         });
@@ -230,7 +228,7 @@ describe("a check with an known namespace", () => {
               ],
             });
 
-            client.writeRelationships(writeRequest, function (err, response) {
+            client.writeRelationships(writeRequest, (err, response) => {
               expect(err).toBe(null);
               resolve({ response, resource, testUser });
             });
@@ -261,19 +259,16 @@ describe("a check with an known namespace", () => {
               context: Struct.fromJson({ special: true }),
             });
 
-            client.checkPermission(
-              checkPermissionRequest,
-              function (err, response) {
-                expect(err).toBe(null);
-                resolve(response);
-              }
-            );
+            client.checkPermission(checkPermissionRequest, (err, response) => {
+              expect(err).toBe(null);
+              resolve(response);
+            });
           });
         })
         .then((response) => {
           const checkResponse = response as CheckPermissionResponse;
           expect(checkResponse?.permissionship).toBe(
-            CheckPermissionResponse_Permissionship.HAS_PERMISSION
+            CheckPermissionResponse_Permissionship.HAS_PERMISSION,
           );
 
           client.close();
@@ -291,7 +286,7 @@ describe("Lookup APIs", () => {
     const client = NewClient(
       token,
       "localhost:50051",
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const request = WriteSchemaRequest.create({
@@ -340,10 +335,10 @@ describe("Lookup APIs", () => {
       ],
     });
 
-    client.writeSchema(request, function (err) {
+    client.writeSchema(request, (err) => {
       expect(err).toBe(null);
 
-      client.writeRelationships(writeRequest, function (err) {
+      client.writeRelationships(writeRequest, (err) => {
         expect(err).toBe(null);
         done();
       });
@@ -354,7 +349,7 @@ describe("Lookup APIs", () => {
     const client = NewClient(
       token,
       "localhost:50051",
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const request = LookupSubjectsRequest.create({
@@ -374,21 +369,21 @@ describe("Lookup APIs", () => {
 
     const resStream = client.lookupSubjects(request);
 
-    resStream.on("data", function (subject: LookupSubjectsResponse) {
+    resStream.on("data", (subject: LookupSubjectsResponse) => {
       expect(["someuser", "someuser2"]).toContain(subject.subjectObjectId);
     });
 
-    resStream.on("end", function () {
+    resStream.on("end", () => {
       client.close();
       done();
     });
 
-    resStream.on("error", function (e) {
+    resStream.on("error", (e) => {
       client.close();
       done.fail(e);
     });
 
-    resStream.on("status", function (status) {
+    resStream.on("status", (status) => {
       expect(status.code).toEqual(grpc.status.OK);
     });
   });
@@ -397,7 +392,7 @@ describe("Lookup APIs", () => {
     const client = NewClient(
       token,
       "localhost:50051",
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const request = LookupResourcesRequest.create({
@@ -419,21 +414,21 @@ describe("Lookup APIs", () => {
 
     const resStream = client.lookupResources(request);
 
-    resStream.on("data", function (response: LookupResourcesResponse) {
+    resStream.on("data", (response: LookupResourcesResponse) => {
       expect(response.resourceObjectId).toEqual("somedocument");
     });
 
-    resStream.on("end", function () {
+    resStream.on("end", () => {
       client.close();
       done();
     });
 
-    resStream.on("error", function (e) {
+    resStream.on("error", (e) => {
       client.close();
       done.fail(e);
     });
 
-    resStream.on("status", function (status) {
+    resStream.on("status", (status) => {
       expect(status.code).toEqual(grpc.status.OK);
     });
   });
@@ -466,9 +461,9 @@ describe("a check with a negative timeout", () => {
       PreconnectServices.NONE,
       {
         interceptors: [deadlineInterceptor(-100)],
-      }
+      },
     );
-    client.checkPermission(checkPermissionRequest, function (err, response) {
+    client.checkPermission(checkPermissionRequest, (err, response) => {
       expect(response).toBe(undefined);
       expect(err?.code).toBe(grpc.status.DEADLINE_EXCEEDED);
       client.close();
@@ -485,7 +480,7 @@ describe("Experimental Service", () => {
     const client = NewClient(
       token,
       "localhost:50051",
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const request = WriteSchemaRequest.create({
@@ -498,7 +493,7 @@ describe("Experimental Service", () => {
       `,
     });
 
-    client.writeSchema(request, function (err) {
+    client.writeSchema(request, (err) => {
       expect(err).toBe(null);
       client.close();
       done();
@@ -509,7 +504,7 @@ describe("Experimental Service", () => {
     const client = NewClient(
       token,
       "localhost:50051",
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const writeStream = client.bulkImportRelationships((err, value) => {
@@ -555,7 +550,7 @@ describe("Experimental Service", () => {
             }),
           }),
         ],
-      })
+      }),
     );
 
     writeStream.end();
@@ -565,7 +560,7 @@ describe("Experimental Service", () => {
     const client = NewClient(
       token,
       "localhost:50051",
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const resource = ObjectReference.create({
@@ -604,7 +599,7 @@ describe("Experimental Service", () => {
       ],
     });
 
-    client.writeRelationships(writeRequest, function (err) {
+    client.writeRelationships(writeRequest, (err) => {
       expect(err).toBe(null);
 
       const resStream = client.bulkExportRelationships(
@@ -615,50 +610,53 @@ describe("Experimental Service", () => {
               fullyConsistent: true,
             },
           }),
-        })
+        }),
       );
 
-      resStream.on(
-        "data",
-        function (response: BulkExportRelationshipsResponse) {
-          expect(response.relationships).toEqual([
-            {
-              relation: "viewer",
-              resource: {
-                objectType: "test/document",
-                objectId: "somedocument",
-              },
-              subject: {
-                optionalRelation: "",
-                object: { objectType: "test/user", objectId: "someuser" },
+      resStream.on("data", (response: BulkExportRelationshipsResponse) => {
+        expect(response.relationships).toEqual([
+          {
+            relation: "viewer",
+            resource: {
+              objectType: "test/document",
+              objectId: "somedocument",
+            },
+            subject: {
+              optionalRelation: "",
+              object: {
+                objectType: "test/user",
+                objectId: "someuser",
               },
             },
-            {
-              relation: "viewer",
-              resource: {
-                objectType: "test/document",
-                objectId: "somedocument",
-              },
-              subject: {
-                optionalRelation: "",
-                object: { objectType: "test/user", objectId: "someuser2" },
+          },
+          {
+            relation: "viewer",
+            resource: {
+              objectType: "test/document",
+              objectId: "somedocument",
+            },
+            subject: {
+              optionalRelation: "",
+              object: {
+                objectType: "test/user",
+                objectId: "someuser2",
               },
             },
-          ]);
-        }
-      );
+          },
+        ]);
+      });
 
-      resStream.on("end", function () {
+      resStream.on("end", () => {
         client.close();
         done();
       });
 
-      resStream.on("error", function (e) {
+      resStream.on("error", (e) => {
         client.close();
         done.fail(e);
       });
 
-      resStream.on("status", function (status) {
+      resStream.on("status", (status) => {
         expect(status.code).toEqual(grpc.status.OK);
       });
     });
