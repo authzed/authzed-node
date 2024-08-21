@@ -1,10 +1,17 @@
-#!/usr/bin/env -S buf generate buf.build/authzed/api:v1.35.0 --template
+#!/usr/bin/env -S buf generate
 # To regenerate:
 #   npm install -g grpc-tools
 #   ./buf.gen.yaml
-version: "v1beta1"
+version: "v2"
+inputs:
+  - module: "buf.build/authzed/api:v1.35.0"
 plugins:
-  - name: "ts"
+  - local: "./node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts"
     out: "src/authzedapi"
-    opt: generate_dependencies,long_type_string,client_grpc1
-    path: ./node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts
+    # protobuf-ts expects this to be set to "all"
+    # https://github.com/timostamm/protobuf-ts/issues/165#issuecomment-931492639
+    strategy: "all"
+    opt:
+      - "generate_dependencies"
+      - "long_type_string"
+      - "client_grpc1"
