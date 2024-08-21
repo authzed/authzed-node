@@ -1,3 +1,4 @@
+---
 name: authzed-node-ci
 on:
   push:
@@ -57,6 +58,13 @@ jobs:
     steps:
       - uses: "actions/checkout@v4"
       - uses: "actions/setup-python@v5"
+      # NOTE: this is needed for installing and then running tsc,
+      # which is invoked locally by pre-commit
+      - uses: "actions/setup-node@v4"
+        with:
+          cache: "yarn"
+      - name: "Yarn install"
+        run: yarn install --frozen-lockfile
       - uses: "pre-commit/action@v3.0.1"
   publish-npm:
     name: Publish to NPM
