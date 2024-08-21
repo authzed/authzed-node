@@ -45,10 +45,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
+          cache: "yarn"
+      - name: "Yarn install"
+        run: yarn install --frozen-lockfile
       - name: Run lint
         run: CI=true yarn lint
         working-directory: ./
