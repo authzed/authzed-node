@@ -1,13 +1,17 @@
+import { generateTestToken } from "./__utils__/helpers";
 import { ClientSecurity } from "./util";
 import * as v1 from "./v1";
 import { Consistency } from "./v1";
-import { generateTestToken } from './__utils__/helpers' 
 
 describe("a check following a write of schema and relationships", () => {
   it("should succeed", async () => {
     // Write the schema.
-    const token = generateTestToken('full-promises')
-    const { promises: v1client } = v1.NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
+    const token = generateTestToken("full-promises");
+    const { promises: v1client } = v1.NewClient(
+      token,
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+    );
 
     const writeSchemaRequest = v1.WriteSchemaRequest.create({
       schema: `
@@ -20,7 +24,7 @@ describe("a check following a write of schema and relationships", () => {
   `,
     });
 
-    await v1client.writeSchema(writeSchemaRequest)
+    await v1client.writeSchema(writeSchemaRequest);
     // Create the relationship between the resource and the user.
     const resource = v1.ObjectReference.create({
       objectType: "test/resource",
@@ -53,7 +57,7 @@ describe("a check following a write of schema and relationships", () => {
       updates: [update],
     });
 
-    const response = await v1client.writeRelationships(writeRequest)
+    const response = await v1client.writeRelationships(writeRequest);
     expect(response).toBeTruthy();
 
     const checkPermissionRequest = v1.CheckPermissionRequest.create({
@@ -65,12 +69,14 @@ describe("a check following a write of schema and relationships", () => {
           oneofKind: "fullyConsistent",
           fullyConsistent: true,
         },
-      })
+      }),
     });
 
-    const permissionResponse = await v1client.checkPermission(checkPermissionRequest)
+    const permissionResponse = await v1client.checkPermission(
+      checkPermissionRequest,
+    );
     expect(permissionResponse?.permissionship).toBe(
-      v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION
+      v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION,
     );
   });
 });
