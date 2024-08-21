@@ -1,7 +1,7 @@
 {
     "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
     "files": {
-        "ignore": ["src/authzedapi"]
+        "ignore": ["src/authzedapi", "dist"]
     },
     "formatter": {
         "indentWidth": 2,
