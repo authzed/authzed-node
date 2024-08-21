@@ -3,6 +3,13 @@
     "files": {
         "ignore": ["src/authzedapi", "dist"]
     },
+    "linter": {
+        "rules": {
+            "complexity": {
+                "noForEach": "off"
+            }
+        }
+    },
     "formatter": {
         "indentWidth": 2,
         "indentStyle": "space"
