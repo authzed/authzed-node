@@ -65,10 +65,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
+          cache: "yarn"
+      - name: "Yarn install"
+        run: yarn install --frozen-lockfile
       - run: yarn test
       - uses: battila7/get-version-action@v2
       - uses: JS-DevTools/npm-publish@v3
@@ -93,17 +92,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
+          cache: "yarn"
+      - name: "Yarn install"
+        run: yarn install --frozen-lockfile
       - name: Run build
         run: yarn build-js-client
         working-directory: ./
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./js-dist
+      - name: "Yarn install"
+        run: yarn install --frozen-lockfile
+        working-directory: ./js-dist
       - name: Run tests
         run: CI=true yarn only-run-tests
         working-directory: ./js-dist
@@ -126,10 +123,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
+          cache: "yarn"
+      - name: "Yarn install"
+        run: yarn install --frozen-lockfile
       - uses: battila7/get-version-action@v2
       - uses: JS-DevTools/npm-publish@v3
         with:
