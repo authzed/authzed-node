@@ -29,7 +29,7 @@ jobs:
               - js-dist/package.json
               - buf.gen.yaml
   test:
-    name: Lint and Test
+    name: Run Tests
     runs-on: "buildjet-2vcpu-ubuntu-2204"
     strategy:
       matrix:
@@ -45,16 +45,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
-      - name: Run lint
-        run: CI=true yarn lint
-        working-directory: ./
+          cache: "yarn"
+      - name: "Yarn install"
+        run: yarn install --frozen-lockfile
       - name: Run Yarn tests
         run: CI=true yarn only-run-tests
         working-directory: ./
+  lint:
+    name: Lint
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v4"
+      - uses: "actions/setup-python@v5"
+      - uses: "pre-commit/action@v3.0.1"
   publish-npm:
     name: Publish to NPM
     needs:
