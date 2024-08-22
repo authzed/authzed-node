@@ -47,7 +47,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
       - name: "Yarn install"
-        run: yarn install --frozen-lockfile
+        # Note that there is no --frozen-lockfile here.
+        # When we're running against a matrix of node versions,
+        # different versions of packages may request different
+        # sets of dependencies, which would result in an error
+        # when the deps don't line up with what's in the lockfile.
+        # We retain it in build steps so that we have reproducible
+        # builds, however.
+        run: yarn install
       - name: Run lint
         run: CI=true yarn lint
         working-directory: ./
