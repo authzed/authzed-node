@@ -101,12 +101,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
       - name: "Yarn install"
-        run: yarn install --frozen-lockfile
+        run: yarn install
       - name: Run build
         run: yarn build-js-client
         working-directory: ./
       - name: "Yarn install"
-        run: yarn install --frozen-lockfile
+        run: yarn install
         working-directory: ./js-dist
       - name: Run tests
         run: CI=true yarn only-run-tests
