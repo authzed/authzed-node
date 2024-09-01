@@ -46,7 +46,7 @@ jobs:
         with:
           working-directory: ./
       - name: "Install buf"
-        uses: "bufbuild/buf-setup-action@v1.37.0"
+        uses: "bufbuild/buf-setup-action@v1.39.0"
         if: steps.buf-update.outputs.updated == 'true'
         with:
           version: "1.37.0"
