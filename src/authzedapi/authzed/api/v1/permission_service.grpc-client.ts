@@ -4,6 +4,10 @@
 import { PermissionsService } from "./permission_service";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
+import type { ExportBulkRelationshipsResponse } from "./permission_service";
+import type { ExportBulkRelationshipsRequest } from "./permission_service";
+import type { ImportBulkRelationshipsRequest } from "./permission_service";
+import type { ImportBulkRelationshipsResponse } from "./permission_service";
 import type { LookupSubjectsResponse } from "./permission_service";
 import type { LookupSubjectsRequest } from "./permission_service";
 import type { LookupResourcesResponse } from "./permission_service";
@@ -106,6 +110,29 @@ export interface IPermissionsServiceClient {
      */
     lookupSubjects(input: LookupSubjectsRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupSubjectsResponse>;
     lookupSubjects(input: LookupSubjectsRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupSubjectsResponse>;
+    /**
+     * ImportBulkRelationships is a faster path to writing a large number of
+     * relationships at once. It is both batched and streaming. For maximum
+     * performance, the caller should attempt to write relationships in as close
+     * to relationship sort order as possible: (resource.object_type,
+     * resource.object_id, relation, subject.object.object_type,
+     * subject.object.object_id, subject.optional_relation)
+     *
+     * @generated from protobuf rpc: ImportBulkRelationships(stream authzed.api.v1.ImportBulkRelationshipsRequest) returns (authzed.api.v1.ImportBulkRelationshipsResponse);
+     */
+    importBulkRelationships(metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ImportBulkRelationshipsResponse) => void): grpc.ClientWritableStream<ImportBulkRelationshipsRequest>;
+    importBulkRelationships(metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ImportBulkRelationshipsResponse) => void): grpc.ClientWritableStream<ImportBulkRelationshipsRequest>;
+    importBulkRelationships(options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ImportBulkRelationshipsResponse) => void): grpc.ClientWritableStream<ImportBulkRelationshipsRequest>;
+    importBulkRelationships(callback: (err: grpc.ServiceError | null, value?: ImportBulkRelationshipsResponse) => void): grpc.ClientWritableStream<ImportBulkRelationshipsRequest>;
+    /**
+     * ExportBulkRelationships is the fastest path available to exporting
+     * relationships from the server. It is resumable, and will return results
+     * in an order determined by the server.
+     *
+     * @generated from protobuf rpc: ExportBulkRelationships(authzed.api.v1.ExportBulkRelationshipsRequest) returns (stream authzed.api.v1.ExportBulkRelationshipsResponse);
+     */
+    exportBulkRelationships(input: ExportBulkRelationshipsRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<ExportBulkRelationshipsResponse>;
+    exportBulkRelationships(input: ExportBulkRelationshipsRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<ExportBulkRelationshipsResponse>;
 }
 /**
  * PermissionsService implements a set of RPCs that perform operations on
@@ -202,5 +229,30 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
     lookupSubjects(input: LookupSubjectsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupSubjectsResponse> {
         const method = PermissionsService.methods[7];
         return this.makeServerStreamRequest<LookupSubjectsRequest, LookupSubjectsResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: LookupSubjectsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): LookupSubjectsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
+    }
+    /**
+     * ImportBulkRelationships is a faster path to writing a large number of
+     * relationships at once. It is both batched and streaming. For maximum
+     * performance, the caller should attempt to write relationships in as close
+     * to relationship sort order as possible: (resource.object_type,
+     * resource.object_id, relation, subject.object.object_type,
+     * subject.object.object_id, subject.optional_relation)
+     *
+     * @generated from protobuf rpc: ImportBulkRelationships(stream authzed.api.v1.ImportBulkRelationshipsRequest) returns (authzed.api.v1.ImportBulkRelationshipsResponse);
+     */
+    importBulkRelationships(metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ImportBulkRelationshipsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ImportBulkRelationshipsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ImportBulkRelationshipsResponse) => void)): grpc.ClientWritableStream<ImportBulkRelationshipsRequest> {
+        const method = PermissionsService.methods[8];
+        return this.makeClientStreamRequest<ImportBulkRelationshipsRequest, ImportBulkRelationshipsResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: ImportBulkRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ImportBulkRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * ExportBulkRelationships is the fastest path available to exporting
+     * relationships from the server. It is resumable, and will return results
+     * in an order determined by the server.
+     *
+     * @generated from protobuf rpc: ExportBulkRelationships(authzed.api.v1.ExportBulkRelationshipsRequest) returns (stream authzed.api.v1.ExportBulkRelationshipsResponse);
+     */
+    exportBulkRelationships(input: ExportBulkRelationshipsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<ExportBulkRelationshipsResponse> {
+        const method = PermissionsService.methods[9];
+        return this.makeServerStreamRequest<ExportBulkRelationshipsRequest, ExportBulkRelationshipsResponse>(`/${PermissionsService.typeName}/${method.name}`, (value: ExportBulkRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExportBulkRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
 }

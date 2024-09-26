@@ -898,6 +898,86 @@ export interface ResolvedSubject {
     partialCaveatInfo?: PartialCaveatInfo;
 }
 /**
+ * ImportBulkRelationshipsRequest represents one batch of the streaming
+ * ImportBulkRelationships API. The maximum size is only limited by the backing
+ * datastore, and optimal size should be determined by the calling client
+ * experimentally.
+ *
+ * @generated from protobuf message authzed.api.v1.ImportBulkRelationshipsRequest
+ */
+export interface ImportBulkRelationshipsRequest {
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.Relationship relationships = 1;
+     */
+    relationships: Relationship[];
+}
+/**
+ * ImportBulkRelationshipsResponse is returned on successful completion of the
+ * bulk load stream, and contains the total number of relationships loaded.
+ *
+ * @generated from protobuf message authzed.api.v1.ImportBulkRelationshipsResponse
+ */
+export interface ImportBulkRelationshipsResponse {
+    /**
+     * @generated from protobuf field: uint64 num_loaded = 1;
+     */
+    numLoaded: string;
+}
+/**
+ * ExportBulkRelationshipsRequest represents a resumable request for
+ * all relationships from the server.
+ *
+ * @generated from protobuf message authzed.api.v1.ExportBulkRelationshipsRequest
+ */
+export interface ExportBulkRelationshipsRequest {
+    /**
+     * @generated from protobuf field: authzed.api.v1.Consistency consistency = 1;
+     */
+    consistency?: Consistency;
+    /**
+     * optional_limit, if non-zero, specifies the limit on the number of
+     * relationships the server can return in one page. By default, the server
+     * will pick a page size, and the server is free to choose a smaller size
+     * at will.
+     *
+     * @generated from protobuf field: uint32 optional_limit = 2;
+     */
+    optionalLimit: number;
+    /**
+     * optional_cursor, if specified, indicates the cursor after which results
+     * should resume being returned. The cursor can be found on the
+     * BulkExportRelationshipsResponse object.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor optional_cursor = 3;
+     */
+    optionalCursor?: Cursor;
+    /**
+     * optional_relationship_filter, if specified, indicates the
+     * filter to apply to each relationship to be exported.
+     *
+     * @generated from protobuf field: authzed.api.v1.RelationshipFilter optional_relationship_filter = 4;
+     */
+    optionalRelationshipFilter?: RelationshipFilter;
+}
+/**
+ * ExportBulkRelationshipsResponse is one page in a stream of relationship
+ * groups that meet the criteria specified by the originating request. The
+ * server will continue to stream back relationship groups as quickly as it can
+ * until all relationships have been transmitted back.
+ *
+ * @generated from protobuf message authzed.api.v1.ExportBulkRelationshipsResponse
+ */
+export interface ExportBulkRelationshipsResponse {
+    /**
+     * @generated from protobuf field: authzed.api.v1.Cursor after_result_cursor = 1;
+     */
+    afterResultCursor?: Cursor;
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.Relationship relationships = 2;
+     */
+    relationships: Relationship[];
+}
+/**
  * LookupPermissionship represents whether a Lookup response was partially evaluated or not
  *
  * @generated from protobuf enum authzed.api.v1.LookupPermissionship
@@ -2587,6 +2667,222 @@ class ResolvedSubject$Type extends MessageType<ResolvedSubject> {
  * @generated MessageType for protobuf message authzed.api.v1.ResolvedSubject
  */
 export const ResolvedSubject = new ResolvedSubject$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ImportBulkRelationshipsRequest$Type extends MessageType<ImportBulkRelationshipsRequest> {
+    constructor() {
+        super("authzed.api.v1.ImportBulkRelationshipsRequest", [
+            { no: 1, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relationship, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ImportBulkRelationshipsRequest>): ImportBulkRelationshipsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.relationships = [];
+        if (value !== undefined)
+            reflectionMergePartial<ImportBulkRelationshipsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ImportBulkRelationshipsRequest): ImportBulkRelationshipsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated authzed.api.v1.Relationship relationships */ 1:
+                    message.relationships.push(Relationship.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ImportBulkRelationshipsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated authzed.api.v1.Relationship relationships = 1; */
+        for (let i = 0; i < message.relationships.length; i++)
+            Relationship.internalBinaryWrite(message.relationships[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ImportBulkRelationshipsRequest
+ */
+export const ImportBulkRelationshipsRequest = new ImportBulkRelationshipsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ImportBulkRelationshipsResponse$Type extends MessageType<ImportBulkRelationshipsResponse> {
+    constructor() {
+        super("authzed.api.v1.ImportBulkRelationshipsResponse", [
+            { no: 1, name: "num_loaded", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ImportBulkRelationshipsResponse>): ImportBulkRelationshipsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.numLoaded = "0";
+        if (value !== undefined)
+            reflectionMergePartial<ImportBulkRelationshipsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ImportBulkRelationshipsResponse): ImportBulkRelationshipsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 num_loaded */ 1:
+                    message.numLoaded = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ImportBulkRelationshipsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 num_loaded = 1; */
+        if (message.numLoaded !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.numLoaded);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ImportBulkRelationshipsResponse
+ */
+export const ImportBulkRelationshipsResponse = new ImportBulkRelationshipsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExportBulkRelationshipsRequest$Type extends MessageType<ExportBulkRelationshipsRequest> {
+    constructor() {
+        super("authzed.api.v1.ExportBulkRelationshipsRequest", [
+            { no: 1, name: "consistency", kind: "message", T: () => Consistency },
+            { no: 2, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { gte: 0 } } } },
+            { no: 3, name: "optional_cursor", kind: "message", T: () => Cursor },
+            { no: 4, name: "optional_relationship_filter", kind: "message", T: () => RelationshipFilter }
+        ]);
+    }
+    create(value?: PartialMessage<ExportBulkRelationshipsRequest>): ExportBulkRelationshipsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.optionalLimit = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ExportBulkRelationshipsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExportBulkRelationshipsRequest): ExportBulkRelationshipsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.Consistency consistency */ 1:
+                    message.consistency = Consistency.internalBinaryRead(reader, reader.uint32(), options, message.consistency);
+                    break;
+                case /* uint32 optional_limit */ 2:
+                    message.optionalLimit = reader.uint32();
+                    break;
+                case /* authzed.api.v1.Cursor optional_cursor */ 3:
+                    message.optionalCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.optionalCursor);
+                    break;
+                case /* authzed.api.v1.RelationshipFilter optional_relationship_filter */ 4:
+                    message.optionalRelationshipFilter = RelationshipFilter.internalBinaryRead(reader, reader.uint32(), options, message.optionalRelationshipFilter);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExportBulkRelationshipsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.Consistency consistency = 1; */
+        if (message.consistency)
+            Consistency.internalBinaryWrite(message.consistency, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* uint32 optional_limit = 2; */
+        if (message.optionalLimit !== 0)
+            writer.tag(2, WireType.Varint).uint32(message.optionalLimit);
+        /* authzed.api.v1.Cursor optional_cursor = 3; */
+        if (message.optionalCursor)
+            Cursor.internalBinaryWrite(message.optionalCursor, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.RelationshipFilter optional_relationship_filter = 4; */
+        if (message.optionalRelationshipFilter)
+            RelationshipFilter.internalBinaryWrite(message.optionalRelationshipFilter, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ExportBulkRelationshipsRequest
+ */
+export const ExportBulkRelationshipsRequest = new ExportBulkRelationshipsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExportBulkRelationshipsResponse$Type extends MessageType<ExportBulkRelationshipsResponse> {
+    constructor() {
+        super("authzed.api.v1.ExportBulkRelationshipsResponse", [
+            { no: 1, name: "after_result_cursor", kind: "message", T: () => Cursor },
+            { no: 2, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relationship }
+        ]);
+    }
+    create(value?: PartialMessage<ExportBulkRelationshipsResponse>): ExportBulkRelationshipsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.relationships = [];
+        if (value !== undefined)
+            reflectionMergePartial<ExportBulkRelationshipsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExportBulkRelationshipsResponse): ExportBulkRelationshipsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.Cursor after_result_cursor */ 1:
+                    message.afterResultCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.afterResultCursor);
+                    break;
+                case /* repeated authzed.api.v1.Relationship relationships */ 2:
+                    message.relationships.push(Relationship.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExportBulkRelationshipsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.Cursor after_result_cursor = 1; */
+        if (message.afterResultCursor)
+            Cursor.internalBinaryWrite(message.afterResultCursor, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated authzed.api.v1.Relationship relationships = 2; */
+        for (let i = 0; i < message.relationships.length; i++)
+            Relationship.internalBinaryWrite(message.relationships[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ExportBulkRelationshipsResponse
+ */
+export const ExportBulkRelationshipsResponse = new ExportBulkRelationshipsResponse$Type();
 /**
  * @generated ServiceType for protobuf service authzed.api.v1.PermissionsService
  */
@@ -2598,5 +2894,7 @@ export const PermissionsService = new ServiceType("authzed.api.v1.PermissionsSer
     { name: "CheckBulkPermissions", options: { "google.api.http": { post: "/v1/permissions/checkbulk", body: "*" } }, I: CheckBulkPermissionsRequest, O: CheckBulkPermissionsResponse },
     { name: "ExpandPermissionTree", options: { "google.api.http": { post: "/v1/permissions/expand", body: "*" } }, I: ExpandPermissionTreeRequest, O: ExpandPermissionTreeResponse },
     { name: "LookupResources", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/resources", body: "*" } }, I: LookupResourcesRequest, O: LookupResourcesResponse },
-    { name: "LookupSubjects", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/subjects", body: "*" } }, I: LookupSubjectsRequest, O: LookupSubjectsResponse }
+    { name: "LookupSubjects", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/subjects", body: "*" } }, I: LookupSubjectsRequest, O: LookupSubjectsResponse },
+    { name: "ImportBulkRelationships", clientStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkimport", body: "*" } }, I: ImportBulkRelationshipsRequest, O: ImportBulkRelationshipsResponse },
+    { name: "ExportBulkRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkexport", body: "*" } }, I: ExportBulkRelationshipsRequest, O: ExportBulkRelationshipsResponse }
 ]);
