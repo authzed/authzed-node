@@ -34,7 +34,7 @@ jobs:
         node-version: [18, 20, 21]
     needs: "paths-filter"
     if: |
-      needs.paths-filter.outputs.codechange == 'true' || github.event_name == 'release'
+      needs.paths-filter.outputs.codechange == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: "authzed/action-spicedb@v1"
@@ -57,7 +57,7 @@ jobs:
         node-version: [18, 20, 21]
     needs: "paths-filter"
     if: |
-      needs.paths-filter.outputs.codechange == 'true' || github.event_name == 'release'
+      needs.paths-filter.outputs.codechange == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: "authzed/action-spicedb@v1"
