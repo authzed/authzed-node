@@ -1,4 +1,4 @@
-name: authzed-node-ci
+name: "Lint and Test"
 on:
   push:
     branches:
@@ -9,8 +9,6 @@ on:
   merge_group:
     types:
       - "checks_requested"
-  release:
-    types: [published]
 jobs:
   paths-filter:
     runs-on: "buildjet-2vcpu-ubuntu-2204"
@@ -55,28 +53,6 @@ jobs:
       - name: Run Yarn tests
         run: CI=true yarn only-run-tests
         working-directory: ./
-  publish-npm:
-    name: Publish to NPM
-    needs:
-      - test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
-      - run: yarn test
-      - uses: battila7/get-version-action@v2
-      - uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          tag: ${{ steps.get_version.outputs.version }}
-          access: public
   build-js-client:
     name: Build and Test JS client
     runs-on: "buildjet-2vcpu-ubuntu-2204"
@@ -114,26 +90,3 @@ jobs:
           path: |
             js-dist/**
             !js-dist/node_modules/**
-  publish-js-client-npm:
-    name: Publish JS client to NPM
-    needs: build-js-client
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release'
-    steps:
-      - name: Download js client build
-        uses: actions/download-artifact@v4
-        with:
-          name: js-client-18
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
-      - uses: battila7/get-version-action@v2
-      - uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          tag: ${{ steps.get_version.outputs.version }}
-          access: public
