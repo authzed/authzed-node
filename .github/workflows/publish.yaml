@@ -8,8 +8,6 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   publish:
     name: Publish to NPM
-    needs:
-      - test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,22 +27,28 @@ jobs:
   # NOTE: this publishes an alternate version that doesn't depend on protobuf-ts/runtime
   publish-js-client:
     name: Publish JS client to NPM
-    needs: build-js-client
     runs-on: ubuntu-latest
     steps:
-      - name: Download js client build
-        uses: actions/download-artifact@v4
-        with:
-          name: js-client-18
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: "yarn"
+      # Install deps in base package and build into js-dist
       - uses: bahmutov/npm-install@v1
+      - name: Run build
+        run: yarn build-js-client
+      - uses: bahmutov/npm-install@v1
+        with:
+          working-directory: ./js-dist
       - uses: battila7/get-version-action@v2
       # Set the version in package.json to match the tag
       - run: "npm version ${{ steps.get_version.outputs.version-without-v }}"
+        working-directory: ./js-dist
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{ steps.get_version.outputs.version }}
+          # Point at the js-dist directory as the working directory
+          package: js-dist
           access: public
