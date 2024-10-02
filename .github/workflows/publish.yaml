@@ -17,9 +17,6 @@ jobs:
         with:
           node-version: 18
       - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
       - run: yarn test
       - uses: battila7/get-version-action@v2
       # Set the version in package.json to match the tag
@@ -43,9 +40,6 @@ jobs:
         with:
           node-version: 18
       - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
       - uses: battila7/get-version-action@v2
       # Set the version in package.json to match the tag
       - run: "npm version ${{ steps.get_version.outputs.version-without-v }}"

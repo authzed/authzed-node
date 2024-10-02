@@ -45,15 +45,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
       - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
       - name: Run lint
         run: CI=true yarn lint
-        working-directory: ./
       - name: Run Yarn tests
         run: CI=true yarn only-run-tests
-        working-directory: ./
   build-js-client:
     name: Build and Test JS client
     runs-on: "buildjet-2vcpu-ubuntu-2204"
@@ -73,15 +68,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
       - uses: bahmutov/npm-install@v1
-        with:
-          install-command: yarn --frozen-lockfile --silent
-          working-directory: ./
       - name: Run build
         run: yarn build-js-client
         working-directory: ./
       - uses: bahmutov/npm-install@v1
         with:
-          install-command: yarn --frozen-lockfile --silent
           working-directory: ./js-dist
       - name: Run tests
         run: CI=true yarn only-run-tests
