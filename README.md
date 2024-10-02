@@ -142,6 +142,6 @@ console.log(results[0]); // first ReadRelationship result
 
 ## Requirements
 
-Supported Node.js versions: 14, 16, 17
+Supported Node.js versions: 18, 20, 21
 
 Minimum TypeScript version 3.8
