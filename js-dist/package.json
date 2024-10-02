@@ -21,11 +21,11 @@
     "only-run-tests": "jasmine --config=jasmine.json"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.8.3",
+    "@grpc/grpc-js": "^1.11.3",
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
     "grpc-tools": "^1.11.2",
-    "jasmine": "^3.6.4"
+    "jasmine": "^5.3.0"
   }
 }
