@@ -2,9 +2,14 @@
 # yamllint disable rule:line-length
 name: "Publish to NPM"
 on:  # yamllint disable-line rule:truthy
-  release:
-    types:
-      - "published"
+  #release:
+    #types:
+      #- "published"
+  # NOTE: this is temporary until I get the release process ironed out.
+  pull_request:
+    branches:
+      - "*"
+
 jobs:
   publish:
     name: Publish to NPM
@@ -22,7 +27,9 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           echo Version: $VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - run: "npm version ${VERSION}"
+      # NOTE: the flag is necessary because otherwise `npm version <version>` attempts to
+      # cut a git tag with that version, which fails because the git user isn't configured.
+      - run: "npm version 1.0.2 --no-git-tag-version"
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
@@ -45,13 +52,15 @@ jobs:
       - uses: bahmutov/npm-install@v1
         with:
           working-directory: ./js-dist
+      # Set the version in package.json to match the tag
       - name: Write release version
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           echo Version: $VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      # Set the version in package.json to match the tag
-      - run: "npm version ${VERSION}"
+      # NOTE: the flag is necessary because otherwise `npm version <version>` attempts to
+      # cut a git tag with that version, which fails because the git user isn't configured.
+      - run: "npm version 1.0.2 --no-git-tag-version"
         working-directory: ./js-dist
       - uses: JS-DevTools/npm-publish@v3
         with:
