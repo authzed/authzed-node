@@ -16,9 +16,13 @@ jobs:
           node-version: 18
       - uses: bahmutov/npm-install@v1
       - run: yarn test
-      - uses: battila7/get-version-action@v2
       # Set the version in package.json to match the tag
-      - run: "npm version ${{ steps.get_version.outputs.version-without-v }}"
+      - name: Write release version
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo Version: $VERSION
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - run: "npm version ${VERSION}"
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
@@ -41,9 +45,13 @@ jobs:
       - uses: bahmutov/npm-install@v1
         with:
           working-directory: ./js-dist
-      - uses: battila7/get-version-action@v2
+      - name: Write release version
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo Version: $VERSION
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       # Set the version in package.json to match the tag
-      - run: "npm version ${{ steps.get_version.outputs.version-without-v }}"
+      - run: "npm version ${VERSION}"
         working-directory: ./js-dist
       - uses: JS-DevTools/npm-publish@v3
         with:
