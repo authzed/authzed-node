@@ -6,9 +6,6 @@ on:
   pull_request:
     branches:
       - "*"
-  merge_group:
-    types:
-      - "checks_requested"
 jobs:
   paths-filter:
     runs-on: "buildjet-2vcpu-ubuntu-2204"
