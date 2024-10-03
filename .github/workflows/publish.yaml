@@ -5,6 +5,7 @@ on:  # yamllint disable-line rule:truthy
   release:
     types:
       - "published"
+
 jobs:
   publish:
     name: Publish to NPM
@@ -15,14 +16,15 @@ jobs:
         with:
           node-version: 18
       - uses: bahmutov/npm-install@v1
-      - run: yarn test
       # Set the version in package.json to match the tag
       - name: Write release version
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           echo Version: $VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      - run: "npm version ${VERSION}"
+      # NOTE: the flag is necessary because otherwise `npm version <version>` attempts to
+      # cut a git tag with that version, which fails because the git user isn't configured.
+      - run: "npm version ${VERSION} --no-git-tag-version"
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
@@ -45,13 +47,15 @@ jobs:
       - uses: bahmutov/npm-install@v1
         with:
           working-directory: ./js-dist
+      # Set the version in package.json to match the tag
       - name: Write release version
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           echo Version: $VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-      # Set the version in package.json to match the tag
-      - run: "npm version ${VERSION}"
+      # NOTE: the flag is necessary because otherwise `npm version <version>` attempts to
+      # cut a git tag with that version, which fails because the git user isn't configured.
+      - run: "npm version ${VERSION} --no-git-tag-version"
         working-directory: ./js-dist
       - uses: JS-DevTools/npm-publish@v3
         with:
