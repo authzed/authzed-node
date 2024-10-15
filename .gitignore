@@ -4,3 +4,12 @@ src/authzedapi/authzed/api/v0
 src/authzedapi/authzed/api/v1alpha1
 js-dist/src/authzedapi/authzed/api/v0
 js-dist/src/authzedapi/authzed/api/v1alpha1
+
+# Because of how node's dependency management works,
+# and the fact that a lockfile in a published package
+# isn't exported, keeping these files out of the repo
+# will make our tests reflect installed usage more closely.
+yarn.lock
+package-lock.json
+js-dist/yarn.lock
+js-dist/package-lock.json

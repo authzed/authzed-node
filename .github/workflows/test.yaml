@@ -40,8 +40,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache-dependency-path: ./package.json
           cache: "yarn"
       - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
       - name: Run lint
         run: CI=true yarn lint
       - name: Run Yarn tests
@@ -63,13 +66,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache-dependency-path: ./package.json
           cache: "yarn"
       - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
       - name: Run build
         run: yarn build-js-client
         working-directory: ./
       - uses: bahmutov/npm-install@v1
         with:
+          useLockFile: false
           working-directory: ./js-dist
       - name: Run tests
         run: CI=true yarn only-run-tests

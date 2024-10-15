@@ -14,8 +14,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
+          cache-dependency-path: ./package.json
+          cache: "yarn"
           node-version: 18
       - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
       # Set the version in package.json to match the tag
       - name: Write release version
         run: |
@@ -39,13 +43,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache-dependency-path: ./package.json
           cache: "yarn"
       # Install deps in base package and build into js-dist
       - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
       - name: Run build
         run: yarn build-js-client
       - uses: bahmutov/npm-install@v1
         with:
+          useLockFile: false
           working-directory: ./js-dist
       # Set the version in package.json to match the tag
       - name: Write release version
