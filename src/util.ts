@@ -54,8 +54,8 @@ class KnownInsecureChannelCredentialsImpl extends grpc.ChannelCredentials {
     return new ComposedChannelCredentials(this, combinedCallCredentials);
   }
 
-  _getConnectionOptions(): ConnectionOptions | null {
-    return null;
+  _getConnectionOptions(): ConnectionOptions {
+    return {};
   }
   _isSecure(): boolean {
     return false;
