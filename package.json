@@ -19,7 +19,7 @@
   "private": false,
   "scripts": {
     "test": "./scripts/run-and-test.sh",
-    "only-run-tests": "ts-node node_modules/jasmine/bin/jasmine --config=jasmine.json",
+    "only-run-tests": "vitest",
     "buf": "./buf.gen.yaml",
     "lint": "./node_modules/.bin/eslint src",
     "build": "tsc",
@@ -36,14 +36,11 @@
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.17.0",
     "@protobuf-ts/plugin": "^2.9.4",
-    "@types/jasmine": "^5.1.5",
-    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
     "eslint": "^9.17.0",
     "grpc-tools": "^1.12.4",
-    "jasmine": "^5.5.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7"
+    "typescript": "^5.7",
+    "vitest": "^2.1.3"
   }
 }
