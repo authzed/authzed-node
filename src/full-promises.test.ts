@@ -2,6 +2,7 @@ import { ClientSecurity } from "./util";
 import * as v1 from "./v1";
 import { Consistency } from "./v1";
 import { generateTestToken } from './__utils__/helpers' 
+import { describe, it, expect } from 'vitest'
 
 describe("a check following a write of schema and relationships", () => {
   it("should succeed", async () => {
