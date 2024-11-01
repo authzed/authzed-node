@@ -15,9 +15,9 @@ import { PermissionRelationshipTree } from "./core";
 import { Status } from "../../../google/rpc/status";
 import { DebugInformation } from "./debug";
 import { PartialCaveatInfo } from "./core";
-import { Struct } from "../../../google/protobuf/struct";
 import { SubjectReference } from "./core";
 import { ObjectReference } from "./core";
+import { Struct } from "../../../google/protobuf/struct";
 import { RelationshipUpdate } from "./core";
 import { Relationship } from "./core";
 import { Cursor } from "./core";
@@ -264,7 +264,8 @@ export enum Precondition_Operation {
  * WriteRelationshipsRequest contains a list of Relationship mutations that
  * should be applied to the service. If the optional_preconditions parameter
  * is included, all of the specified preconditions must also be satisfied before
- * the write will be committed.
+ * the write will be committed. All updates will be applied transactionally,
+ * and if any preconditions fail, the entire transaction will be reverted.
  *
  * @generated from protobuf message authzed.api.v1.WriteRelationshipsRequest
  */
@@ -277,6 +278,14 @@ export interface WriteRelationshipsRequest {
      * @generated from protobuf field: repeated authzed.api.v1.Precondition optional_preconditions = 2;
      */
     optionalPreconditions: Precondition[]; // To be bounded by configuration
+    /**
+     * optional_transaction_metadata is an optional field that can be used to store metadata about the transaction.
+     * If specified, this metadata will be supplied in the WatchResponse for the updates associated with this
+     * transaction.
+     *
+     * @generated from protobuf field: google.protobuf.Struct optional_transaction_metadata = 3;
+     */
+    optionalTransactionMetadata?: Struct;
 }
 /**
  * @generated from protobuf message authzed.api.v1.WriteRelationshipsResponse
@@ -322,6 +331,14 @@ export interface DeleteRelationshipsRequest {
      * @generated from protobuf field: bool optional_allow_partial_deletions = 4;
      */
     optionalAllowPartialDeletions: boolean;
+    /**
+     * optional_transaction_metadata is an optional field that can be used to store metadata about the transaction.
+     * If specified, this metadata will be supplied in the WatchResponse for the deletions associated with
+     * this transaction.
+     *
+     * @generated from protobuf field: google.protobuf.Struct optional_transaction_metadata = 5;
+     */
+    optionalTransactionMetadata?: Struct;
 }
 /**
  * @generated from protobuf message authzed.api.v1.DeleteRelationshipsResponse
@@ -1450,7 +1467,8 @@ class WriteRelationshipsRequest$Type extends MessageType<WriteRelationshipsReque
     constructor() {
         super("authzed.api.v1.WriteRelationshipsRequest", [
             { no: 1, name: "updates", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RelationshipUpdate, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
-            { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
+            { no: 3, name: "optional_transaction_metadata", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<WriteRelationshipsRequest>): WriteRelationshipsRequest {
@@ -1472,6 +1490,9 @@ class WriteRelationshipsRequest$Type extends MessageType<WriteRelationshipsReque
                 case /* repeated authzed.api.v1.Precondition optional_preconditions */ 2:
                     message.optionalPreconditions.push(Precondition.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* google.protobuf.Struct optional_transaction_metadata */ 3:
+                    message.optionalTransactionMetadata = Struct.internalBinaryRead(reader, reader.uint32(), options, message.optionalTransactionMetadata);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1490,6 +1511,9 @@ class WriteRelationshipsRequest$Type extends MessageType<WriteRelationshipsReque
         /* repeated authzed.api.v1.Precondition optional_preconditions = 2; */
         for (let i = 0; i < message.optionalPreconditions.length; i++)
             Precondition.internalBinaryWrite(message.optionalPreconditions[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Struct optional_transaction_metadata = 3; */
+        if (message.optionalTransactionMetadata)
+            Struct.internalBinaryWrite(message.optionalTransactionMetadata, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1553,7 +1577,8 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
             { no: 1, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
             { no: 3, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { gte: 0 } } } },
-            { no: 4, name: "optional_allow_partial_deletions", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "optional_allow_partial_deletions", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "optional_transaction_metadata", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteRelationshipsRequest>): DeleteRelationshipsRequest {
@@ -1582,6 +1607,9 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
                 case /* bool optional_allow_partial_deletions */ 4:
                     message.optionalAllowPartialDeletions = reader.bool();
                     break;
+                case /* google.protobuf.Struct optional_transaction_metadata */ 5:
+                    message.optionalTransactionMetadata = Struct.internalBinaryRead(reader, reader.uint32(), options, message.optionalTransactionMetadata);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1606,6 +1634,9 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
         /* bool optional_allow_partial_deletions = 4; */
         if (message.optionalAllowPartialDeletions !== false)
             writer.tag(4, WireType.Varint).bool(message.optionalAllowPartialDeletions);
+        /* google.protobuf.Struct optional_transaction_metadata = 5; */
+        if (message.optionalTransactionMetadata)
+            Struct.internalBinaryWrite(message.optionalTransactionMetadata, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Struct } from "../../../google/protobuf/struct";
 import { RelationshipUpdate } from "./core";
 import { RelationshipFilter } from "./permission_service";
 import { ZedToken } from "./core";
@@ -63,13 +64,28 @@ export interface WatchRequest {
  */
 export interface WatchResponse {
     /**
+     * updates are the RelationshipUpdate events that have occurred since the
+     * last watch response.
+     *
      * @generated from protobuf field: repeated authzed.api.v1.RelationshipUpdate updates = 1;
      */
     updates: RelationshipUpdate[];
     /**
+     * changes_through is the ZedToken that represents the point in time
+     * that the watch response is current through. This token can be used
+     * in a subsequent WatchRequest to resume watching from this point.
+     *
      * @generated from protobuf field: authzed.api.v1.ZedToken changes_through = 2;
      */
     changesThrough?: ZedToken;
+    /**
+     * optional_transaction_metadata is an optional field that returns the transaction metadata
+     * given to SpiceDB during the transaction that produced the changes in this response.
+     * This field may not exist if no transaction metadata was provided.
+     *
+     * @generated from protobuf field: google.protobuf.Struct optional_transaction_metadata = 3;
+     */
+    optionalTransactionMetadata?: Struct;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class WatchRequest$Type extends MessageType<WatchRequest> {
@@ -138,7 +154,8 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
     constructor() {
         super("authzed.api.v1.WatchResponse", [
             { no: 1, name: "updates", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RelationshipUpdate },
-            { no: 2, name: "changes_through", kind: "message", T: () => ZedToken }
+            { no: 2, name: "changes_through", kind: "message", T: () => ZedToken },
+            { no: 3, name: "optional_transaction_metadata", kind: "message", T: () => Struct }
         ]);
     }
     create(value?: PartialMessage<WatchResponse>): WatchResponse {
@@ -159,6 +176,9 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
                 case /* authzed.api.v1.ZedToken changes_through */ 2:
                     message.changesThrough = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.changesThrough);
                     break;
+                case /* google.protobuf.Struct optional_transaction_metadata */ 3:
+                    message.optionalTransactionMetadata = Struct.internalBinaryRead(reader, reader.uint32(), options, message.optionalTransactionMetadata);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -177,6 +197,9 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
         /* authzed.api.v1.ZedToken changes_through = 2; */
         if (message.changesThrough)
             ZedToken.internalBinaryWrite(message.changesThrough, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Struct optional_transaction_metadata = 3; */
+        if (message.optionalTransactionMetadata)
+            Struct.internalBinaryWrite(message.optionalTransactionMetadata, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
