@@ -24,7 +24,7 @@
     "lint": "./node_modules/.bin/eslint src",
     "build": "tsc",
     "prepublish": "yarn build",
-    "build-js-client": "tsc --target es2018 --declaration false --outDir js-dist"
+    "build-js-client": "tsc --target es2022 --declaration false --outDir js-dist"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.12.5",
