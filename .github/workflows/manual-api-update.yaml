@@ -1,3 +1,4 @@
+---
 name: Update for API change
 on:
   workflow_dispatch:
@@ -20,41 +21,20 @@ jobs:
         with:
           api-commit: ${{ inputs.buftag }}
           spec-path: buf.gen.yaml
-          file-format: generate-shell-script
+          file-format: "buf-gen-yaml"
       - name: "Output update status"
         env:
           UPDATED_STATUS: ${{ steps.buf-update.outputs.updated }}
         run: |
           echo "Update status: $UPDATED_STATUS"
-      - name: "Update package version"
-        uses: authzed/actions/semver-update@main
-        if: steps.buf-update.outputs.updated == 'true'
-        with:
-          sourcefile-path: package.json
-          version-regex: '"version": "(.+)"'
-          version-change: minor
-      - name: "Update js-dist package version"
-        uses: authzed/actions/semver-update@main
-        if: steps.buf-update.outputs.updated == 'true'
-        with:
-          sourcefile-path: js-dist/package.json
-          version-regex: '"version": "(.+)"'
-          version-change: minor
-      - name: "Install NPM deps"
-        uses: bahmutov/npm-install@v1
-        if: steps.buf-update.outputs.updated == 'true'
-        with:
-          useLockFile: false
-          working-directory: ./
       - name: "Install buf"
-        uses: "bufbuild/buf-setup-action@v1.46.0"
-        if: steps.buf-update.outputs.updated == 'true'
+        uses: "bufbuild/buf-setup-action@v1.43.0"
         with:
-          version: "1.37.0"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        if: steps.buf-update.outputs.updated == 'true'
       - name: "Run buf generate"
         if: steps.buf-update.outputs.updated == 'true'
-        run: |
-          ./buf.gen.yaml
+        run: "buf generate"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7.0.5
         if: steps.buf-update.outputs.updated == 'true'
@@ -62,4 +42,5 @@ jobs:
           delete-branch: "true"
           title: Update API to ${{ inputs.buftag }}
           branch: api-change/${{ inputs.buftag }}
+          base: "main"
           token: ${{ secrets.GITHUB_TOKEN }}
