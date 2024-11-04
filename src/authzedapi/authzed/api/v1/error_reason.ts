@@ -486,5 +486,22 @@ export enum ErrorReason {
      *
      * @generated from protobuf enum value: ERROR_REASON_WILDCARD_NOT_ALLOWED = 28;
      */
-    WILDCARD_NOT_ALLOWED = 28
+    WILDCARD_NOT_ALLOWED = 28,
+    /**
+     * The request failed because the transaction metadata was too large.
+     *
+     * Example of an ErrorInfo:
+     *
+     *     {
+     *       "reason": "ERROR_REASON_TRANSACTION_METADATA_TOO_LARGE",
+     *       "domain": "authzed.com",
+     *       "metadata": {
+     *         "metadata_byte_size": "1024",
+     *         "maximum_allowed_metadata_byte_size": "512",
+     *       }
+     *     }
+     *
+     * @generated from protobuf enum value: ERROR_REASON_TRANSACTION_METADATA_TOO_LARGE = 29;
+     */
+    TRANSACTION_METADATA_TOO_LARGE = 29
 }

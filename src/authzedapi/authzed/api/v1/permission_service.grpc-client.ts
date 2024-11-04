@@ -116,7 +116,8 @@ export interface IPermissionsServiceClient {
      * performance, the caller should attempt to write relationships in as close
      * to relationship sort order as possible: (resource.object_type,
      * resource.object_id, relation, subject.object.object_type,
-     * subject.object.object_id, subject.optional_relation)
+     * subject.object.object_id, subject.optional_relation). All relationships
+     * written are done so under a single transaction.
      *
      * @generated from protobuf rpc: ImportBulkRelationships(stream authzed.api.v1.ImportBulkRelationshipsRequest) returns (authzed.api.v1.ImportBulkRelationshipsResponse);
      */
@@ -236,7 +237,8 @@ export class PermissionsServiceClient extends grpc.Client implements IPermission
      * performance, the caller should attempt to write relationships in as close
      * to relationship sort order as possible: (resource.object_type,
      * resource.object_id, relation, subject.object.object_type,
-     * subject.object.object_id, subject.optional_relation)
+     * subject.object.object_id, subject.optional_relation). All relationships
+     * written are done so under a single transaction.
      *
      * @generated from protobuf rpc: ImportBulkRelationships(stream authzed.api.v1.ImportBulkRelationshipsRequest) returns (authzed.api.v1.ImportBulkRelationshipsResponse);
      */
