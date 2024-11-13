@@ -201,8 +201,9 @@ class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface> {
     'lookupResources',
     'lookupSubjects',
     'bulkExportRelationships',
+    'exportBulkRelationships',
   ]);
-  private writableStreamMethods = new Set(['bulkImportRelationships']);
+  private writableStreamMethods = new Set(['bulkImportRelationships', 'importBulkRelationships']);
 
   constructor(client: ZedDefaultClientInterface) {
     this.client = client;
