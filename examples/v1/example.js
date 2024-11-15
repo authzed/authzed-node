@@ -1,4 +1,5 @@
 import { v1 } from '@authzed/authzed-node';
+const { promises: promiseClient } = client; // access client.promises
 // set up it on localhost like this:
 // const client = v1.NewClient('mytokenhere', 'localhost:50051', 1);
 const client = v1.NewClient('mytokenhere');
@@ -82,3 +83,26 @@ console.log(
   checkResult.permissionship ===
     v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION
 );
+
+// Lookup Resources
+
+const lookupResourcesRequest = v1.LookupResourcesRequest.create({
+  consistency: v1.Consistency.create({
+    requirement: {
+      oneofKind: 'fullyConsistent', 
+      fullyConsistent: true,
+    },
+  }),
+  resourceObjectType: 'test/document', 
+  permission: 'view', 
+  subject: v1.SubjectReference.create({
+    object: v1.ObjectReference.create({
+      objectType: 'test/user', 
+      objectId: 'fred', 
+    }),
+  }),
+});
+
+const results = await promiseClient.lookupResources(lookupResourcesRequest)
+
+console.log(results);
