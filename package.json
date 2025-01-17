@@ -1,12 +1,8 @@
 {
   "name": "@authzed/authzed-node",
   "author": "authzed",
-<<<<<<< HEAD
   "version": "0.19.0",
-=======
-  "version": "0.18.0",
   "type": "module",
->>>>>>> 5fe56ab (Set type to module, add fix tool, add fix tool to buf generate)
   "description": "authzed client for nodejs",
   "keywords": [
     "authorization",
