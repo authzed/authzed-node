@@ -4,19 +4,19 @@
 import { promisify } from "util";
 
 import * as grpc from "@grpc/grpc-js";
-import { ExperimentalServiceClient } from './authzedapi/authzed/api/v1/experimental_service.grpc-client';
-import { PermissionsServiceClient } from './authzedapi/authzed/api/v1/permission_service.grpc-client';
-import { SchemaServiceClient } from './authzedapi/authzed/api/v1/schema_service.grpc-client';
-import { WatchServiceClient } from './authzedapi/authzed/api/v1/watch_service.grpc-client';
-import * as util from './util';
+import { ExperimentalServiceClient } from './authzedapi/authzed/api/v1/experimental_service.grpc-client.js';
+import { PermissionsServiceClient } from './authzedapi/authzed/api/v1/permission_service.grpc-client.js';
+import { SchemaServiceClient } from './authzedapi/authzed/api/v1/schema_service.grpc-client.js';
+import { WatchServiceClient } from './authzedapi/authzed/api/v1/watch_service.grpc-client.js';
+import * as util from './util.js';
 import {
   ClientSecurity,
   PreconnectServices,
   deadlineInterceptor,
   promisifyStream,
-} from './util';
+} from './util.js';
 
-import type { OmitBaseMethods, PromisifiedClient } from './types';
+import type { OmitBaseMethods, PromisifiedClient } from './types.js';
 
 // A merge of the three generated gRPC clients, with their base methods omitted
 export type ZedDefaultClientInterface = OmitBaseMethods<
@@ -342,16 +342,16 @@ export function NewClientWithChannelCredentials(
   return ZedCombinedClient.create(endpoint, creds, preconnect, options);
 }
 
-export * from './authzedapi/authzed/api/v1/core';
-export * from './authzedapi/authzed/api/v1/experimental_service';
-export * from './authzedapi/authzed/api/v1/experimental_service.grpc-client';
-export * from './authzedapi/authzed/api/v1/permission_service';
-export * from './authzedapi/authzed/api/v1/permission_service.grpc-client';
-export * from './authzedapi/authzed/api/v1/schema_service';
-export * from './authzedapi/authzed/api/v1/schema_service.grpc-client';
-export * from './authzedapi/authzed/api/v1/watch_service';
-export * from './authzedapi/authzed/api/v1/watch_service.grpc-client';
-export { ClientSecurity } from "./util";
+export * from './authzedapi/authzed/api/v1/core.js';
+export * from './authzedapi/authzed/api/v1/experimental_service.js';
+export * from './authzedapi/authzed/api/v1/experimental_service.grpc-client.js';
+export * from './authzedapi/authzed/api/v1/permission_service.js';
+export * from './authzedapi/authzed/api/v1/permission_service.grpc-client.js';
+export * from './authzedapi/authzed/api/v1/schema_service.js';
+export * from './authzedapi/authzed/api/v1/schema_service.grpc-client.js';
+export * from './authzedapi/authzed/api/v1/watch_service.js';
+export * from './authzedapi/authzed/api/v1/watch_service.grpc-client.js';
+export { ClientSecurity } from "./util.js";
 
 export default {
   NewClient: NewClient,

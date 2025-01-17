@@ -1,5 +1,5 @@
 import * as grpc from "@grpc/grpc-js";
-import { NextCall } from "@grpc/grpc-js/build/src/client-interceptors";
+import { NextCall } from "@grpc/grpc-js/build/src/client-interceptors.js";
 import { ConnectionOptions } from "tls";
 
 // NOTE: Copied from channel-credentials.ts in gRPC Node package because its not exported:

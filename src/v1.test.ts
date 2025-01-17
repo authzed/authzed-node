@@ -1,7 +1,7 @@
 import * as grpc from "@grpc/grpc-js";
-import { generateTestToken } from "./__utils__/helpers";
-import { Struct } from "./authzedapi/google/protobuf/struct";
-import { PreconnectServices, deadlineInterceptor } from "./util";
+import { generateTestToken } from "./__utils__/helpers.js";
+import { Struct } from "./authzedapi/google/protobuf/struct.js";
+import { PreconnectServices, deadlineInterceptor } from "./util.js";
 import {
   BulkExportRelationshipsRequest,
   BulkExportRelationshipsResponse,
@@ -25,7 +25,7 @@ import {
   WriteRelationshipsRequest,
   WriteRelationshipsResponse,
   WriteSchemaRequest,
-} from "./v1";
+} from "./v1.js";
 import { describe, it, expect, beforeEach } from 'vitest'
 
 describe("a check with an unknown namespace", () => {
