@@ -9,3 +9,4 @@ yarn.lock
 package-lock.json
 js-dist/yarn.lock
 js-dist/package-lock.json
+js-dist/src
