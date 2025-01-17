@@ -1,3 +1,4 @@
+---
 services:
   spicedb-servetesting:
     image: quay.io/authzed/spicedb:latest
