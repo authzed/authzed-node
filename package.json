@@ -1,7 +1,12 @@
 {
   "name": "@authzed/authzed-node",
   "author": "authzed",
+<<<<<<< HEAD
   "version": "0.19.0",
+=======
+  "version": "0.18.0",
+  "type": "module",
+>>>>>>> 5fe56ab (Set type to module, add fix tool, add fix tool to buf generate)
   "description": "authzed client for nodejs",
   "keywords": [
     "authorization",
@@ -20,7 +25,7 @@
   "scripts": {
     "test": "./scripts/run-and-test.sh",
     "only-run-tests": "vitest",
-    "buf": "./buf.gen.yaml",
+    "buf": "buf generate && tsc-esm-fix --src src/authzedapi --ext='.js'",
     "lint": "./node_modules/.bin/eslint src",
     "build": "tsc",
     "prepublish": "yarn build",
@@ -41,6 +46,7 @@
     "@typescript-eslint/parser": "^8.19.0",
     "eslint": "^9.17.0",
     "grpc-tools": "^1.12.4",
+    "tsc-esm-fix": "^3.1.2",
     "typescript": "^5.7",
     "vitest": "^2.1.3"
   }
