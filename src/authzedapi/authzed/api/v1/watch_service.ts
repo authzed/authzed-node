@@ -12,7 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Struct } from "../../../google/protobuf/struct";
+import { Struct } from "../../../google/protobuf/struct.js";
 import { RelationshipUpdate } from "./core.js";
 import { RelationshipFilter } from "./permission_service.js";
 import { ZedToken } from "./core.js";

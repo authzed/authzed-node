@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { ZedToken } from "../../v1/core";
+import { ZedToken } from "../../v1/core.js";
 /**
  * @generated from protobuf message authzed.api.materialize.v0.WatchPermissionSetsRequest
  */

@@ -12,8 +12,8 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { PartialCaveatInfo } from "./core.js";
-import { Struct } from "../../../google/protobuf/struct";
-import { Duration } from "../../../google/protobuf/duration";
+import { Struct } from "../../../google/protobuf/struct.js";
+import { Duration } from "../../../google/protobuf/duration.js";
 import { SubjectReference } from "./core.js";
 import { ObjectReference } from "./core.js";
 /**
