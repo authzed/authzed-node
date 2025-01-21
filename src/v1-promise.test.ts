@@ -1,6 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
-import { generateTestToken } from './__utils__/helpers';
-import { Struct } from './authzedapi/google/protobuf/struct';
+import { generateTestToken } from './__utils__/helpers.js';
+import { Struct } from './authzedapi/google/protobuf/struct.js';
 import {
   BulkExportRelationshipsRequest,
   BulkImportRelationshipsRequest,
@@ -19,7 +19,8 @@ import {
   SubjectReference,
   WriteRelationshipsRequest,
   WriteSchemaRequest,
-} from './v1';
+} from './v1.js';
+import { describe, it, expect, beforeEach } from 'vitest'
 
 describe('a check with an unknown namespace', () => {
   it('should raise a failed precondition', async () => {
@@ -412,7 +413,7 @@ describe('Lookup APIs', () => {
     );
 
     const result = await client.lookupSubjects(lookupSubjectRequest);
-    expect(['someuser', 'someuser2']).toContain(result[0].subjectObjectId);
+    expect(['someuser', 'someuser2']).toContain(result[0].subject?.subjectObjectId);
     client.close();
   });
 
@@ -441,7 +442,7 @@ describe('Lookup APIs', () => {
       new grpc.Metadata(),
       {} as grpc.CallOptions
     );
-    expect(['someuser', 'someuser2']).toContain(result[0].subjectObjectId);
+    expect(['someuser', 'someuser2']).toContain(result[0].subject?.subjectObjectId);
 
     const resStream = await client.lookupResources(
       lookupResourceRequest,
@@ -479,7 +480,7 @@ describe('Experimental Service', () => {
     client.close();
   });
 
-  it('can bulk import relationships', (done) => {
+  it('can bulk import relationships', () => new Promise<void>((done, fail) => {
     const { promises: client } = NewClient(
       token,
       'localhost:50051',
@@ -488,7 +489,7 @@ describe('Experimental Service', () => {
 
     const writeStream = client.bulkImportRelationships((err, value) => {
       if (err) {
-        done.fail(err);
+        fail(err);
       }
 
       expect(value?.numLoaded).toEqual('2');
@@ -497,7 +498,7 @@ describe('Experimental Service', () => {
     });
 
     writeStream.on('error', (e) => {
-      done.fail(e);
+      fail(e);
     });
 
     const resource = ObjectReference.create({
@@ -532,7 +533,7 @@ describe('Experimental Service', () => {
     );
 
     writeStream.end();
-  });
+  }));
 
   it('can bulk export relationships', async () => {
     const { promises: client } = NewClient(

@@ -1,17 +1,14 @@
 {
+  "extends": "@tsconfig/node18/tsconfig.json",
+
   "compilerOptions": {
-    "target": "ES2020",
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "allowJs": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "module": "commonjs",
     "rootDir": "./",
     "declaration": true,
     "outDir": "./dist",
-    "esModuleInterop": true,
-    "strict": true,
     "typeRoots": [
       "node_modules/@types"
     ]

@@ -1,10 +1,11 @@
-import { ClientSecurity } from "./util";
-import * as v1 from "./v1";
-import { Consistency } from "./v1";
-import { generateTestToken } from './__utils__/helpers'
+import { ClientSecurity } from "./util.js";
+import * as v1 from "./v1.js";
+import { Consistency } from "./v1.js";
+import { generateTestToken } from './__utils__/helpers.js'
+import { describe, it, expect } from 'vitest'
 
 describe("a check following a write of schema and relationships", () => {
-  it("should succeed", (done) => {
+  it("should succeed", () => new Promise<void>((done) => {
     // Write the schema.
     const token = generateTestToken('full-test')
     const v1client = v1.NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
@@ -80,5 +81,5 @@ describe("a check following a write of schema and relationships", () => {
         });
       });
     });
-  });
+  }));
 });

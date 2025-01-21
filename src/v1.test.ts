@@ -1,7 +1,7 @@
 import * as grpc from "@grpc/grpc-js";
-import { generateTestToken } from "./__utils__/helpers";
-import { Struct } from "./authzedapi/google/protobuf/struct";
-import { PreconnectServices, deadlineInterceptor } from "./util";
+import { generateTestToken } from "./__utils__/helpers.js";
+import { Struct } from "./authzedapi/google/protobuf/struct.js";
+import { PreconnectServices, deadlineInterceptor } from "./util.js";
 import {
   BulkExportRelationshipsRequest,
   BulkExportRelationshipsResponse,
@@ -25,10 +25,11 @@ import {
   WriteRelationshipsRequest,
   WriteRelationshipsResponse,
   WriteSchemaRequest,
-} from "./v1";
+} from "./v1.js";
+import { describe, it, expect, beforeEach } from 'vitest'
 
 describe("a check with an unknown namespace", () => {
-  it("should raise a failed precondition", (done) => {
+  it("should raise a failed precondition", () => new Promise<void>((done) => {
     const resource = ObjectReference.create({
       objectType: "test/somenamespace",
       objectId: "bar",
@@ -58,11 +59,11 @@ describe("a check with an unknown namespace", () => {
       client.close();
       done();
     });
-  });
+  }));
 });
 
 describe("a check with an known namespace", () => {
-  it("should succeed", (done) => {
+  it("should succeed", () => new Promise<void>((done) => {
     // Write some schema.
     const client = NewClient(
       generateTestToken("v1-namespace"),
@@ -165,10 +166,10 @@ describe("a check with an known namespace", () => {
         client.close();
         done();
       });
-  });
+  }));
 
   describe("with caveated relations", () => {
-    it("should succeed", (done) => {
+    it("should succeed", () => new Promise<void>((done) => {
       // Write some schema.
       const client = NewClient(
         generateTestToken("v1-namespace-caveats"),
@@ -279,14 +280,14 @@ describe("a check with an known namespace", () => {
           client.close();
           done();
         });
-    });
+    }));
   });
 });
 
 describe("Lookup APIs", () => {
   let token: string;
 
-  beforeEach((done) => {
+  beforeEach(() => new Promise<void>((done) => {
     token = generateTestToken("v1-lookup");
     const client = NewClient(
       token,
@@ -348,9 +349,9 @@ describe("Lookup APIs", () => {
         done();
       });
     });
-  });
+  }));
 
-  it("can lookup subjects", (done) => {
+  it("can lookup subjects", () => new Promise<void>((done, fail) => {
     const client = NewClient(
       token,
       "localhost:50051",
@@ -375,7 +376,7 @@ describe("Lookup APIs", () => {
     const resStream = client.lookupSubjects(request);
 
     resStream.on("data", function (subject: LookupSubjectsResponse) {
-      expect(["someuser", "someuser2"]).toContain(subject.subjectObjectId);
+      expect(["someuser", "someuser2"]).toContain(subject.subject?.subjectObjectId);
     });
 
     resStream.on("end", function () {
@@ -385,15 +386,15 @@ describe("Lookup APIs", () => {
 
     resStream.on("error", function (e) {
       client.close();
-      done.fail(e);
+      fail(e);
     });
 
     resStream.on("status", function (status) {
       expect(status.code).toEqual(grpc.status.OK);
     });
-  });
+  }));
 
-  it("can lookup resources", (done) => {
+  it("can lookup resources", () => new Promise<void>((done, fail) => {
     const client = NewClient(
       token,
       "localhost:50051",
@@ -430,17 +431,17 @@ describe("Lookup APIs", () => {
 
     resStream.on("error", function (e) {
       client.close();
-      done.fail(e);
+      fail(e);
     });
 
     resStream.on("status", function (status) {
       expect(status.code).toEqual(grpc.status.OK);
     });
-  });
+  }));
 });
 
 describe("a check with a negative timeout", () => {
-  it("should fail immediately", (done) => {
+  it("should fail immediately", () => new Promise<void>((done) => {
     const resource = ObjectReference.create({
       objectType: "test/somenamespace",
       objectId: "bar",
@@ -474,13 +475,13 @@ describe("a check with a negative timeout", () => {
       client.close();
       done();
     });
-  });
+  }));
 });
 
 describe("Experimental Service", () => {
   let token: string;
 
-  beforeEach((done) => {
+  beforeEach(() => new Promise<void>((done) => {
     token = generateTestToken("v1-experimental-service");
     const client = NewClient(
       token,
@@ -503,9 +504,9 @@ describe("Experimental Service", () => {
       client.close();
       done();
     });
-  });
+  }));
 
-  it("can bulk import relationships", (done) => {
+  it("can bulk import relationships", () => new Promise<void>((done, fail) => {
     const client = NewClient(
       token,
       "localhost:50051",
@@ -514,7 +515,7 @@ describe("Experimental Service", () => {
 
     const writeStream = client.bulkImportRelationships((err, value) => {
       if (err) {
-        done.fail(err);
+        fail(err);
       }
 
       expect(value?.numLoaded).toEqual("2");
@@ -523,7 +524,7 @@ describe("Experimental Service", () => {
     });
 
     writeStream.on("error", (e) => {
-      done.fail(e);
+      fail(e);
     });
 
     const resource = ObjectReference.create({
@@ -559,9 +560,9 @@ describe("Experimental Service", () => {
     );
 
     writeStream.end();
-  });
+  }));
 
-  it("can bulk export relationships", (done) => {
+  it("can bulk export relationships", () => new Promise<void>((done, fail) => {
     const client = NewClient(
       token,
       "localhost:50051",
@@ -655,12 +656,12 @@ describe("Experimental Service", () => {
 
       resStream.on("error", function (e) {
         client.close();
-        done.fail(e);
+        fail(e);
       });
 
       resStream.on("status", function (status) {
         expect(status.code).toEqual(grpc.status.OK);
       });
     });
-  });
+  }));
 });
