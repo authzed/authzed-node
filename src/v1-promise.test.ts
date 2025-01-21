@@ -1,5 +1,12 @@
 import * as grpc from '@grpc/grpc-js';
-import { generateTestToken } from './__utils__/helpers.js';
+import { getOneofValue } from '@protobuf-ts/runtime';
+import {
+    generateTestToken,
+    testClient,
+    writeTestSchema,
+    writeTestTuples,
+    assert,
+} from './__utils__/helpers.js';
 import { Struct } from './authzedapi/google/protobuf/struct.js';
 import {
   BulkExportRelationshipsRequest,
@@ -22,6 +29,8 @@ import {
 } from './v1.js';
 import { describe, it, expect, beforeEach } from 'vitest'
 
+const fullyConsistent: Consistency = { requirement: { oneofKind: "fullyConsistent", fullyConsistent: true }};
+
 describe('a check with an unknown namespace', () => {
   it('should raise a failed precondition', async () => {
     const resource = ObjectReference.create({
@@ -43,7 +52,7 @@ describe('a check with an unknown namespace', () => {
     });
 
     const { promises: client } = NewClient(
-      generateTestToken('v1-promise-test-unknown'),
+      generateTestToken(),
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
@@ -111,7 +120,7 @@ describe('a check with an known namespace', () => {
 
   it('should succeed', async () => {
     const { promises: client } = NewClient(
-      generateTestToken('v1-promise-namespace'),
+      generateTestToken(),
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
@@ -132,7 +141,7 @@ describe('a check with an known namespace', () => {
 
   it('should succeed with full signatures', async () => {
     const { promises: client } = NewClient(
-      generateTestToken('v1-promise-namespace'),
+      generateTestToken(),
       'localhost:50051',
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
@@ -167,7 +176,7 @@ describe('a check with an known namespace', () => {
     it('should succeed', async () => {
       // Write some schema.
       const { promises: client } = NewClient(
-        generateTestToken('v1-promise-caveats'),
+        generateTestToken(),
         'localhost:50051',
         ClientSecurity.INSECURE_LOCALHOST_ALLOWED
       );
@@ -310,6 +319,61 @@ describe('a check with an known namespace', () => {
   });
 });
 
+describe("checkBulkPermissions", () => {
+    it("can check bulk permissions", async () => {
+        const client = testClient();
+        await writeTestSchema(client);
+        const { emilia, postOne } = await writeTestTuples(client);
+        const response = await client.promises.checkBulkPermissions({
+            consistency: fullyConsistent,
+            items: [
+                {
+                    resource: postOne,
+                    permission: "view",
+                    subject: emilia,
+                }
+            ]
+        })
+        expect(response.pairs.length).to.equal(2)
+        // These assertions are annoying but necessary to keep typescript happy.
+        assert(!(response.pairs[0].response.oneofKind === "error"))
+        assert(response.pairs[0].response.oneofKind)
+        expect(response.pairs[0].response.item.permissionship === CheckPermissionResponse_Permissionship.HAS_PERMISSION)
+
+        assert(!(response.pairs[1].response.oneofKind === "error"))
+        assert(response.pairs[1].response.oneofKind)
+        expect(response.pairs[1].response.item.permissionship === CheckPermissionResponse_Permissionship.HAS_PERMISSION)
+    })
+
+    it("can check bulk permissions with a deadline", async () => {
+        const client = testClient();
+        await writeTestSchema(client);
+        const { emilia, postOne } = await writeTestTuples(client);
+        const response = await client.promises.checkBulkPermissions(
+            {
+                consistency: fullyConsistent,
+                items: [
+                    {
+                        resource: postOne,
+                        permission: "view",
+                        subject: emilia,
+                    }
+                ]
+            },
+            {deadline: Date.now() + 5000},
+        )
+        expect(response.pairs.length).to.equal(2)
+        // These assertions are annoying but necessary to keep typescript happy.
+        assert(!(response.pairs[0].response.oneofKind === "error"))
+        assert(response.pairs[0].response.oneofKind)
+        expect(response.pairs[0].response.item.permissionship === CheckPermissionResponse_Permissionship.HAS_PERMISSION)
+
+        assert(!(response.pairs[1].response.oneofKind === "error"))
+        assert(response.pairs[1].response.oneofKind)
+        expect(response.pairs[1].response.item.permissionship === CheckPermissionResponse_Permissionship.HAS_PERMISSION)
+    })
+})
+
 describe('Lookup APIs', () => {
   let token: string;
 
@@ -346,7 +410,7 @@ describe('Lookup APIs', () => {
   });
 
   beforeEach(async () => {
-    token = generateTestToken('v1-promise-lookup');
+    token = generateTestToken();
     const { promises: client } = NewClient(
       token,
       'localhost:50051',
@@ -459,7 +523,7 @@ describe('Experimental Service', () => {
   let token: string;
 
   beforeEach(async () => {
-    token = generateTestToken('v1-experimental-service');
+    token = generateTestToken();
     const { promises: client } = NewClient(
       token,
       'localhost:50051',
