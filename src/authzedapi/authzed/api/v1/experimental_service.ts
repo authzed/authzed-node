@@ -12,17 +12,17 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Cursor } from "./core.js";
-import { Relationship } from "./core.js";
-import { PartialCaveatInfo } from "./core.js";
-import { CheckPermissionResponse_Permissionship } from "./permission_service.js";
-import { Status } from "../../../google/rpc/status.js";
-import { Struct } from "../../../google/protobuf/struct.js";
-import { SubjectReference } from "./core.js";
-import { ObjectReference } from "./core.js";
-import { Consistency } from "./permission_service.js";
-import { ZedToken } from "./core.js";
-import { RelationshipFilter } from "./permission_service.js";
+import { Cursor } from "./core";
+import { Relationship } from "./core";
+import { PartialCaveatInfo } from "./core";
+import { CheckPermissionResponse_Permissionship } from "./permission_service";
+import { Status } from "../../../google/rpc/status";
+import { Struct } from "../../../google/protobuf/struct";
+import { SubjectReference } from "./core";
+import { ObjectReference } from "./core";
+import { Consistency } from "./permission_service";
+import { ZedToken } from "./core";
+import { RelationshipFilter } from "./permission_service";
 /**
  * @generated from protobuf message authzed.api.v1.ExperimentalRegisterRelationshipCounterRequest
  */
@@ -211,9 +211,10 @@ export interface BulkCheckPermissionResponseItem {
  * BulkImportRelationshipsRequest represents one batch of the streaming
  * BulkImportRelationships API. The maximum size is only limited by the backing
  * datastore, and optimal size should be determined by the calling client
- * experimentally. Any relationships within the same request are guaranteed to
- * be written in a single transaction. If any of the relationships already
- * exist, the transaction will fail and no relationships will be written.
+ * experimentally. When BulkImport is invoked and receives its first request message,
+ * a transaction is opened to import the relationships. All requests sent to the same
+ * invocation are executed under this single transaction. If a relationship already
+ * exists within the datastore, the entire transaction will fail with an error.
  *
  * @generated from protobuf message authzed.api.v1.BulkImportRelationshipsRequest
  */

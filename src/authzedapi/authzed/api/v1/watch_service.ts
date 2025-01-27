@@ -12,10 +12,10 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Struct } from "../../../google/protobuf/struct.js";
-import { RelationshipUpdate } from "./core.js";
-import { RelationshipFilter } from "./permission_service.js";
-import { ZedToken } from "./core.js";
+import { Struct } from "../../../google/protobuf/struct";
+import { RelationshipUpdate } from "./core";
+import { RelationshipFilter } from "./permission_service";
+import { ZedToken } from "./core";
 /**
  * WatchRequest specifies the object definitions for which we want to start
  * watching mutations, and an optional start snapshot for when to start

@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Value } from "../../google/protobuf/struct.js";
+import { Value } from "../../google/protobuf/struct";
 /**
  * `Swagger` is a representation of OpenAPI v2 specification's Swagger object.
  *
