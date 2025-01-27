@@ -12,17 +12,17 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Cursor } from "./core";
-import { Relationship } from "./core";
-import { PartialCaveatInfo } from "./core";
-import { CheckPermissionResponse_Permissionship } from "./permission_service";
-import { Status } from "../../../google/rpc/status";
-import { Struct } from "../../../google/protobuf/struct";
-import { SubjectReference } from "./core";
-import { ObjectReference } from "./core";
-import { Consistency } from "./permission_service";
-import { ZedToken } from "./core";
-import { RelationshipFilter } from "./permission_service";
+import { Cursor } from "./core.js";
+import { Relationship } from "./core.js";
+import { PartialCaveatInfo } from "./core.js";
+import { CheckPermissionResponse_Permissionship } from "./permission_service.js";
+import { Status } from "../../../google/rpc/status.js";
+import { Struct } from "../../../google/protobuf/struct.js";
+import { SubjectReference } from "./core.js";
+import { ObjectReference } from "./core.js";
+import { Consistency } from "./permission_service.js";
+import { ZedToken } from "./core.js";
+import { RelationshipFilter } from "./permission_service.js";
 /**
  * @generated from protobuf message authzed.api.v1.ExperimentalRegisterRelationshipCounterRequest
  */

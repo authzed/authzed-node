@@ -11,12 +11,12 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { PartialCaveatInfo } from "./core";
-import { Struct } from "../../../google/protobuf/struct";
-import { Timestamp } from "../../../google/protobuf/timestamp";
-import { Duration } from "../../../google/protobuf/duration";
-import { SubjectReference } from "./core";
-import { ObjectReference } from "./core";
+import { PartialCaveatInfo } from "./core.js";
+import { Struct } from "../../../google/protobuf/struct.js";
+import { Timestamp } from "../../../google/protobuf/timestamp.js";
+import { Duration } from "../../../google/protobuf/duration.js";
+import { SubjectReference } from "./core.js";
+import { ObjectReference } from "./core.js";
 /**
  * DebugInformation defines debug information returned by an API call in a footer when
  * requested with a specific debugging header.

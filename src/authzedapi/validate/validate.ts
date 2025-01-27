@@ -11,8 +11,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp } from "../google/protobuf/timestamp";
-import { Duration } from "../google/protobuf/duration";
+import { Timestamp } from "../google/protobuf/timestamp.js";
+import { Duration } from "../google/protobuf/duration.js";
 /**
  * FieldRules encapsulates the rules for each type of field. Depending on the
  * field, the correct set should be used to ensure proper validations.

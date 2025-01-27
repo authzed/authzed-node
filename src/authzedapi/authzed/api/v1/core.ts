@@ -11,8 +11,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Struct } from "../../../google/protobuf/struct";
-import { Timestamp } from "../../../google/protobuf/timestamp";
+import { Struct } from "../../../google/protobuf/struct.js";
+import { Timestamp } from "../../../google/protobuf/timestamp.js";
 /**
  * Relationship specifies how a resource relates to a subject. Relationships
  * form the data for the graph over which all permissions questions are

@@ -12,18 +12,18 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { PermissionRelationshipTree } from "./core";
-import { Status } from "../../../google/rpc/status";
-import { Timestamp } from "../../../google/protobuf/timestamp";
-import { DebugInformation } from "./debug";
-import { PartialCaveatInfo } from "./core";
-import { SubjectReference } from "./core";
-import { ObjectReference } from "./core";
-import { Struct } from "../../../google/protobuf/struct";
-import { RelationshipUpdate } from "./core";
-import { Relationship } from "./core";
-import { Cursor } from "./core";
-import { ZedToken } from "./core";
+import { PermissionRelationshipTree } from "./core.js";
+import { Status } from "../../../google/rpc/status.js";
+import { Timestamp } from "../../../google/protobuf/timestamp.js";
+import { DebugInformation } from "./debug.js";
+import { PartialCaveatInfo } from "./core.js";
+import { SubjectReference } from "./core.js";
+import { ObjectReference } from "./core.js";
+import { Struct } from "../../../google/protobuf/struct.js";
+import { RelationshipUpdate } from "./core.js";
+import { Relationship } from "./core.js";
+import { Cursor } from "./core.js";
+import { ZedToken } from "./core.js";
 /**
  * Consistency will define how a request is handled by the backend.
  * By defining a consistency requirement, and a token at which those
