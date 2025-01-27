@@ -1,3 +1,4 @@
+---
 name: "Called update for API change"
 on:
   repository_dispatch:
@@ -10,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+      - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
       - name: "Update Buf Script"
         id: buf-update
         uses: authzed/actions/buf-api-update@main
@@ -29,7 +33,7 @@ jobs:
         if: steps.buf-update.outputs.updated == 'true'
       - name: "Run buf generate"
         if: steps.buf-update.outputs.updated == 'true'
-        run: "buf generate"
+        run: "yarn run buf"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7.0.6
         if: steps.buf-update.outputs.updated == 'true'
