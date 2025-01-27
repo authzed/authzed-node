@@ -14,6 +14,7 @@ import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { PermissionRelationshipTree } from "./core.js";
 import { Status } from "../../../google/rpc/status.js";
+import { Timestamp } from "../../../google/protobuf/timestamp.js";
 import { DebugInformation } from "./debug.js";
 import { PartialCaveatInfo } from "./core.js";
 import { SubjectReference } from "./core.js";
@@ -461,6 +462,13 @@ export interface CheckPermissionResponse {
      * @generated from protobuf field: authzed.api.v1.DebugInformation debug_trace = 4;
      */
     debugTrace?: DebugInformation;
+    /**
+     * optional_expires_at is the time at which at least one of the relationships used to
+     * compute this result, expires (if any). This is *not* related to the caching window.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp optional_expires_at = 5;
+     */
+    optionalExpiresAt?: Timestamp;
 }
 /**
  * @generated from protobuf enum authzed.api.v1.CheckPermissionResponse.Permissionship
@@ -501,6 +509,14 @@ export interface CheckBulkPermissionsRequest {
      * @generated from protobuf field: repeated authzed.api.v1.CheckBulkPermissionsRequestItem items = 2;
      */
     items: CheckBulkPermissionsRequestItem[];
+    /**
+     * with_tracing, if true, indicates that each response should include a debug trace.
+     * This can be useful for debugging and performance analysis, but adds a small amount
+     * of compute overhead to the request.
+     *
+     * @generated from protobuf field: bool with_tracing = 3;
+     */
+    withTracing: boolean;
 }
 /**
  * @generated from protobuf message authzed.api.v1.CheckBulkPermissionsRequestItem
@@ -575,6 +591,12 @@ export interface CheckBulkPermissionsResponseItem {
      * @generated from protobuf field: authzed.api.v1.PartialCaveatInfo partial_caveat_info = 2;
      */
     partialCaveatInfo?: PartialCaveatInfo;
+    /**
+     * debug_trace is the debugging trace of this check, if requested.
+     *
+     * @generated from protobuf field: authzed.api.v1.DebugInformation debug_trace = 3;
+     */
+    debugTrace?: DebugInformation;
 }
 /**
  * ExpandPermissionTreeRequest returns a tree representing the expansion of all
@@ -919,7 +941,10 @@ export interface ResolvedSubject {
  * ImportBulkRelationshipsRequest represents one batch of the streaming
  * ImportBulkRelationships API. The maximum size is only limited by the backing
  * datastore, and optimal size should be determined by the calling client
- * experimentally.
+ * experimentally. When ImportBulk is invoked and receives its first request message,
+ * a transaction is opened to import the relationships. All requests sent to the same
+ * invocation are executed under this single transaction. If a relationship already
+ * exists within the datastore, the entire transaction will fail with an error.
  *
  * @generated from protobuf message authzed.api.v1.ImportBulkRelationshipsRequest
  */
@@ -1786,7 +1811,8 @@ class CheckPermissionResponse$Type extends MessageType<CheckPermissionResponse> 
             { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: false } } } },
             { no: 2, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
             { no: 3, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
-            { no: 4, name: "debug_trace", kind: "message", T: () => DebugInformation }
+            { no: 4, name: "debug_trace", kind: "message", T: () => DebugInformation },
+            { no: 5, name: "optional_expires_at", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<CheckPermissionResponse>): CheckPermissionResponse {
@@ -1813,6 +1839,9 @@ class CheckPermissionResponse$Type extends MessageType<CheckPermissionResponse> 
                 case /* authzed.api.v1.DebugInformation debug_trace */ 4:
                     message.debugTrace = DebugInformation.internalBinaryRead(reader, reader.uint32(), options, message.debugTrace);
                     break;
+                case /* google.protobuf.Timestamp optional_expires_at */ 5:
+                    message.optionalExpiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.optionalExpiresAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1837,6 +1866,9 @@ class CheckPermissionResponse$Type extends MessageType<CheckPermissionResponse> 
         /* authzed.api.v1.DebugInformation debug_trace = 4; */
         if (message.debugTrace)
             DebugInformation.internalBinaryWrite(message.debugTrace, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp optional_expires_at = 5; */
+        if (message.optionalExpiresAt)
+            Timestamp.internalBinaryWrite(message.optionalExpiresAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1852,11 +1884,12 @@ class CheckBulkPermissionsRequest$Type extends MessageType<CheckBulkPermissionsR
     constructor() {
         super("authzed.api.v1.CheckBulkPermissionsRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CheckBulkPermissionsRequestItem, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 2, name: "items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CheckBulkPermissionsRequestItem, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
+            { no: 3, name: "with_tracing", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<CheckBulkPermissionsRequest>): CheckBulkPermissionsRequest {
-        const message = { items: [] };
+        const message = { items: [], withTracing: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<CheckBulkPermissionsRequest>(this, message, value);
@@ -1872,6 +1905,9 @@ class CheckBulkPermissionsRequest$Type extends MessageType<CheckBulkPermissionsR
                     break;
                 case /* repeated authzed.api.v1.CheckBulkPermissionsRequestItem items */ 2:
                     message.items.push(CheckBulkPermissionsRequestItem.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* bool with_tracing */ 3:
+                    message.withTracing = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1891,6 +1927,9 @@ class CheckBulkPermissionsRequest$Type extends MessageType<CheckBulkPermissionsR
         /* repeated authzed.api.v1.CheckBulkPermissionsRequestItem items = 2; */
         for (let i = 0; i < message.items.length; i++)
             CheckBulkPermissionsRequestItem.internalBinaryWrite(message.items[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* bool with_tracing = 3; */
+        if (message.withTracing !== false)
+            writer.tag(3, WireType.Varint).bool(message.withTracing);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2095,7 +2134,8 @@ class CheckBulkPermissionsResponseItem$Type extends MessageType<CheckBulkPermiss
     constructor() {
         super("authzed.api.v1.CheckBulkPermissionsResponseItem", [
             { no: 1, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 2, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } }
+            { no: 2, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
+            { no: 3, name: "debug_trace", kind: "message", T: () => DebugInformation }
         ]);
     }
     create(value?: PartialMessage<CheckBulkPermissionsResponseItem>): CheckBulkPermissionsResponseItem {
@@ -2116,6 +2156,9 @@ class CheckBulkPermissionsResponseItem$Type extends MessageType<CheckBulkPermiss
                 case /* authzed.api.v1.PartialCaveatInfo partial_caveat_info */ 2:
                     message.partialCaveatInfo = PartialCaveatInfo.internalBinaryRead(reader, reader.uint32(), options, message.partialCaveatInfo);
                     break;
+                case /* authzed.api.v1.DebugInformation debug_trace */ 3:
+                    message.debugTrace = DebugInformation.internalBinaryRead(reader, reader.uint32(), options, message.debugTrace);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2134,6 +2177,9 @@ class CheckBulkPermissionsResponseItem$Type extends MessageType<CheckBulkPermiss
         /* authzed.api.v1.PartialCaveatInfo partial_caveat_info = 2; */
         if (message.partialCaveatInfo)
             PartialCaveatInfo.internalBinaryWrite(message.partialCaveatInfo, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.DebugInformation debug_trace = 3; */
+        if (message.debugTrace)
+            DebugInformation.internalBinaryWrite(message.debugTrace, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2911,6 +2957,6 @@ export const PermissionsService = new ServiceType("authzed.api.v1.PermissionsSer
     { name: "ExpandPermissionTree", options: { "google.api.http": { post: "/v1/permissions/expand", body: "*" } }, I: ExpandPermissionTreeRequest, O: ExpandPermissionTreeResponse },
     { name: "LookupResources", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/resources", body: "*" } }, I: LookupResourcesRequest, O: LookupResourcesResponse },
     { name: "LookupSubjects", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/subjects", body: "*" } }, I: LookupSubjectsRequest, O: LookupSubjectsResponse },
-    { name: "ImportBulkRelationships", clientStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkimport", body: "*" } }, I: ImportBulkRelationshipsRequest, O: ImportBulkRelationshipsResponse },
-    { name: "ExportBulkRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkexport", body: "*" } }, I: ExportBulkRelationshipsRequest, O: ExportBulkRelationshipsResponse }
+    { name: "ImportBulkRelationships", clientStreaming: true, options: { "google.api.http": { post: "/v1/relationships/importbulk", body: "*" } }, I: ImportBulkRelationshipsRequest, O: ImportBulkRelationshipsResponse },
+    { name: "ExportBulkRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/relationships/exportbulk", body: "*" } }, I: ExportBulkRelationshipsRequest, O: ExportBulkRelationshipsResponse }
 ]);
