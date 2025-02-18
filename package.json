@@ -19,9 +19,9 @@
   "exports": {
     "./package.json": "./package.json",
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js"
+      "types": "./dist/src/index.d.ts",
+      "require": "./dist/src/index.cjs",
+      "import": "./dist/src/index.js"
     }
   },
   "repository": "https://github.com/authzed/authzed-node",
