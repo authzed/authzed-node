@@ -13,8 +13,17 @@
     "spicedb",
     "zanzibar"
   ],
-  "main": "dist/src/index.js",
+  "main": "dist/src/index.cjs",
+  "module": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js"
+    }
+  },
   "repository": "https://github.com/authzed/authzed-node",
   "license": "Apache-2.0",
   "private": false,
@@ -24,6 +33,7 @@
     "buf": "buf generate && tsc-esm-fix --src src/authzedapi --ext='.js'",
     "lint": "./node_modules/.bin/eslint src",
     "build": "tsc",
+    "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs",
     "prepublish": "yarn build",
     "build-js-client": "tsc --declaration false --outDir js-dist"
   },
@@ -42,6 +52,7 @@
     "@typescript-eslint/parser": "^8.22.0",
     "eslint": "^9.19.0",
     "grpc-tools": "^1.12.4",
+    "rollup": "^4.34.8",
     "tsc-esm-fix": "^3.1.2",
     "typescript": "^5.7",
     "vitest": "^3.0.4"
