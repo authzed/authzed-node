@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Consistency } from "./permission_service.js";
 import { ZedToken } from "./core.js";
 /**
  * ReadSchemaRequest returns the schema from the database.
@@ -68,6 +69,518 @@ export interface WriteSchemaResponse {
      * @generated from protobuf field: authzed.api.v1.ZedToken written_at = 1;
      */
     writtenAt?: ZedToken;
+}
+// Reflection types ////////////////////////////////////////////
+
+/**
+ * @generated from protobuf message authzed.api.v1.ReflectSchemaRequest
+ */
+export interface ReflectSchemaRequest {
+    /**
+     * @generated from protobuf field: authzed.api.v1.Consistency consistency = 1;
+     */
+    consistency?: Consistency;
+    /**
+     * optional_filters defines optional filters that are applied in
+     * an OR fashion to the schema, before being returned
+     *
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionSchemaFilter optional_filters = 2;
+     */
+    optionalFilters: ReflectionSchemaFilter[];
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ReflectSchemaResponse
+ */
+export interface ReflectSchemaResponse {
+    /**
+     * definitions are the definitions defined in the schema.
+     *
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionDefinition definitions = 1;
+     */
+    definitions: ReflectionDefinition[];
+    /**
+     * caveats are the caveats defined in the schema.
+     *
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionCaveat caveats = 2;
+     */
+    caveats: ReflectionCaveat[];
+    /**
+     * read_at is the ZedToken at which the schema was read.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken read_at = 3;
+     */
+    readAt?: ZedToken;
+}
+/**
+ * ReflectionSchemaFilter is a filter that can be applied to the schema on reflection.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionSchemaFilter
+ */
+export interface ReflectionSchemaFilter {
+    /**
+     * optional_definition_name_filter is a prefix that is matched against the definition name.
+     *
+     * @generated from protobuf field: string optional_definition_name_filter = 1;
+     */
+    optionalDefinitionNameFilter: string;
+    /**
+     * optional_caveat_name_filter is a prefix that is matched against the caveat name.
+     *
+     * @generated from protobuf field: string optional_caveat_name_filter = 2;
+     */
+    optionalCaveatNameFilter: string;
+    /**
+     * optional_relation_name_filter is a prefix that is matched against the relation name.
+     *
+     * @generated from protobuf field: string optional_relation_name_filter = 3;
+     */
+    optionalRelationNameFilter: string;
+    /**
+     * optional_permission_name_filter is a prefix that is matched against the permission name.
+     *
+     * @generated from protobuf field: string optional_permission_name_filter = 4;
+     */
+    optionalPermissionNameFilter: string;
+}
+/**
+ * ReflectionDefinition is the representation of a definition in the schema.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionDefinition
+ */
+export interface ReflectionDefinition {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * comment is a human-readable comments on the definition. Will include
+     * delimiter characters.
+     *
+     * @generated from protobuf field: string comment = 2;
+     */
+    comment: string;
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionRelation relations = 3;
+     */
+    relations: ReflectionRelation[];
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionPermission permissions = 4;
+     */
+    permissions: ReflectionPermission[];
+}
+/**
+ * ReflectionCaveat is the representation of a caveat in the schema.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionCaveat
+ */
+export interface ReflectionCaveat {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * comment is a human-readable comments on the caveat. Will include
+     * delimiter characters.
+     *
+     * @generated from protobuf field: string comment = 2;
+     */
+    comment: string;
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionCaveatParameter parameters = 3;
+     */
+    parameters: ReflectionCaveatParameter[];
+    /**
+     * @generated from protobuf field: string expression = 4;
+     */
+    expression: string;
+}
+/**
+ * ReflectionCaveatParameter is the representation of a parameter in a caveat.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionCaveatParameter
+ */
+export interface ReflectionCaveatParameter {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * type is the type of the parameter. Will be a string representing the
+     * type, e.g. `int` or `list<string>`
+     *
+     * @generated from protobuf field: string type = 2;
+     */
+    type: string;
+    /**
+     * @generated from protobuf field: string parent_caveat_name = 3;
+     */
+    parentCaveatName: string;
+}
+/**
+ * ReflectionRelation is the representation of a relation in the schema.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionRelation
+ */
+export interface ReflectionRelation {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string comment = 2;
+     */
+    comment: string;
+    /**
+     * @generated from protobuf field: string parent_definition_name = 3;
+     */
+    parentDefinitionName: string;
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionTypeReference subject_types = 4;
+     */
+    subjectTypes: ReflectionTypeReference[];
+}
+/**
+ * ReflectionTypeReference is the representation of a type reference in the schema.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionTypeReference
+ */
+export interface ReflectionTypeReference {
+    /**
+     * subject_definition_name is the name of the subject's definition.
+     *
+     * @generated from protobuf field: string subject_definition_name = 1;
+     */
+    subjectDefinitionName: string;
+    /**
+     * optional_caveat_name is the name of the caveat that is applied to the subject, if any.
+     *
+     * @generated from protobuf field: string optional_caveat_name = 2;
+     */
+    optionalCaveatName: string;
+    /**
+     * @generated from protobuf oneof: typeref
+     */
+    typeref: {
+        oneofKind: "isTerminalSubject";
+        /**
+         * is_terminal_subject is true if the subject is terminal, meaning it is referenced directly vs a sub-relation.
+         *
+         * @generated from protobuf field: bool is_terminal_subject = 3;
+         */
+        isTerminalSubject: boolean;
+    } | {
+        oneofKind: "optionalRelationName";
+        /**
+         * optional_relation_name is the name of the relation that is applied to the subject, if any.
+         *
+         * @generated from protobuf field: string optional_relation_name = 4;
+         */
+        optionalRelationName: string;
+    } | {
+        oneofKind: "isPublicWildcard";
+        /**
+         * is_public_wildcard is true if the subject is a public wildcard.
+         *
+         * @generated from protobuf field: bool is_public_wildcard = 5;
+         */
+        isPublicWildcard: boolean;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * ReflectionPermission is the representation of a permission in the schema.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionPermission
+ */
+export interface ReflectionPermission {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * comment is a human-readable comments on the permission. Will include
+     * delimiter characters.
+     *
+     * @generated from protobuf field: string comment = 2;
+     */
+    comment: string;
+    /**
+     * @generated from protobuf field: string parent_definition_name = 3;
+     */
+    parentDefinitionName: string;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ComputablePermissionsRequest
+ */
+export interface ComputablePermissionsRequest {
+    /**
+     * @generated from protobuf field: authzed.api.v1.Consistency consistency = 1;
+     */
+    consistency?: Consistency;
+    /**
+     * @generated from protobuf field: string definition_name = 2;
+     */
+    definitionName: string;
+    /**
+     * @generated from protobuf field: string relation_name = 3;
+     */
+    relationName: string;
+    /**
+     * optional_definition_name_match is a prefix that is matched against the definition name(s)
+     * for the permissions returned.
+     * If not specified, will be ignored.
+     *
+     * @generated from protobuf field: string optional_definition_name_filter = 4;
+     */
+    optionalDefinitionNameFilter: string;
+}
+/**
+ * ReflectionRelationReference is a reference to a relation or permission in the schema.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionRelationReference
+ */
+export interface ReflectionRelationReference {
+    /**
+     * @generated from protobuf field: string definition_name = 1;
+     */
+    definitionName: string;
+    /**
+     * @generated from protobuf field: string relation_name = 2;
+     */
+    relationName: string;
+    /**
+     * @generated from protobuf field: bool is_permission = 3;
+     */
+    isPermission: boolean;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ComputablePermissionsResponse
+ */
+export interface ComputablePermissionsResponse {
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionRelationReference permissions = 1;
+     */
+    permissions: ReflectionRelationReference[];
+    /**
+     * read_at is the ZedToken at which the schema was read.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken read_at = 2;
+     */
+    readAt?: ZedToken;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.DependentRelationsRequest
+ */
+export interface DependentRelationsRequest {
+    /**
+     * @generated from protobuf field: authzed.api.v1.Consistency consistency = 1;
+     */
+    consistency?: Consistency;
+    /**
+     * @generated from protobuf field: string definition_name = 2;
+     */
+    definitionName: string;
+    /**
+     * @generated from protobuf field: string permission_name = 3;
+     */
+    permissionName: string;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.DependentRelationsResponse
+ */
+export interface DependentRelationsResponse {
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionRelationReference relations = 1;
+     */
+    relations: ReflectionRelationReference[];
+    /**
+     * read_at is the ZedToken at which the schema was read.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken read_at = 2;
+     */
+    readAt?: ZedToken;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.DiffSchemaRequest
+ */
+export interface DiffSchemaRequest {
+    /**
+     * @generated from protobuf field: authzed.api.v1.Consistency consistency = 1;
+     */
+    consistency?: Consistency;
+    /**
+     * @generated from protobuf field: string comparison_schema = 2;
+     */
+    comparisonSchema: string;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.DiffSchemaResponse
+ */
+export interface DiffSchemaResponse {
+    /**
+     * @generated from protobuf field: repeated authzed.api.v1.ReflectionSchemaDiff diffs = 1;
+     */
+    diffs: ReflectionSchemaDiff[];
+    /**
+     * read_at is the ZedToken at which the schema was read.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken read_at = 2;
+     */
+    readAt?: ZedToken;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ReflectionRelationSubjectTypeChange
+ */
+export interface ReflectionRelationSubjectTypeChange {
+    /**
+     * @generated from protobuf field: authzed.api.v1.ReflectionRelation relation = 1;
+     */
+    relation?: ReflectionRelation;
+    /**
+     * @generated from protobuf field: authzed.api.v1.ReflectionTypeReference changed_subject_type = 2;
+     */
+    changedSubjectType?: ReflectionTypeReference;
+}
+/**
+ * @generated from protobuf message authzed.api.v1.ReflectionCaveatParameterTypeChange
+ */
+export interface ReflectionCaveatParameterTypeChange {
+    /**
+     * @generated from protobuf field: authzed.api.v1.ReflectionCaveatParameter parameter = 1;
+     */
+    parameter?: ReflectionCaveatParameter;
+    /**
+     * @generated from protobuf field: string previous_type = 2;
+     */
+    previousType: string;
+}
+/**
+ * ReflectionSchemaDiff is the representation of a diff between two schemas.
+ *
+ * @generated from protobuf message authzed.api.v1.ReflectionSchemaDiff
+ */
+export interface ReflectionSchemaDiff {
+    /**
+     * @generated from protobuf oneof: diff
+     */
+    diff: {
+        oneofKind: "definitionAdded";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionDefinition definition_added = 1;
+         */
+        definitionAdded: ReflectionDefinition;
+    } | {
+        oneofKind: "definitionRemoved";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionDefinition definition_removed = 2;
+         */
+        definitionRemoved: ReflectionDefinition;
+    } | {
+        oneofKind: "definitionDocCommentChanged";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionDefinition definition_doc_comment_changed = 3;
+         */
+        definitionDocCommentChanged: ReflectionDefinition;
+    } | {
+        oneofKind: "relationAdded";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionRelation relation_added = 4;
+         */
+        relationAdded: ReflectionRelation;
+    } | {
+        oneofKind: "relationRemoved";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionRelation relation_removed = 5;
+         */
+        relationRemoved: ReflectionRelation;
+    } | {
+        oneofKind: "relationDocCommentChanged";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionRelation relation_doc_comment_changed = 6;
+         */
+        relationDocCommentChanged: ReflectionRelation;
+    } | {
+        oneofKind: "relationSubjectTypeAdded";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionRelationSubjectTypeChange relation_subject_type_added = 7;
+         */
+        relationSubjectTypeAdded: ReflectionRelationSubjectTypeChange;
+    } | {
+        oneofKind: "relationSubjectTypeRemoved";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionRelationSubjectTypeChange relation_subject_type_removed = 8;
+         */
+        relationSubjectTypeRemoved: ReflectionRelationSubjectTypeChange;
+    } | {
+        oneofKind: "permissionAdded";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionPermission permission_added = 9;
+         */
+        permissionAdded: ReflectionPermission;
+    } | {
+        oneofKind: "permissionRemoved";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionPermission permission_removed = 10;
+         */
+        permissionRemoved: ReflectionPermission;
+    } | {
+        oneofKind: "permissionDocCommentChanged";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionPermission permission_doc_comment_changed = 11;
+         */
+        permissionDocCommentChanged: ReflectionPermission;
+    } | {
+        oneofKind: "permissionExprChanged";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionPermission permission_expr_changed = 12;
+         */
+        permissionExprChanged: ReflectionPermission;
+    } | {
+        oneofKind: "caveatAdded";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionCaveat caveat_added = 13;
+         */
+        caveatAdded: ReflectionCaveat;
+    } | {
+        oneofKind: "caveatRemoved";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionCaveat caveat_removed = 14;
+         */
+        caveatRemoved: ReflectionCaveat;
+    } | {
+        oneofKind: "caveatDocCommentChanged";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionCaveat caveat_doc_comment_changed = 15;
+         */
+        caveatDocCommentChanged: ReflectionCaveat;
+    } | {
+        oneofKind: "caveatExprChanged";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionCaveat caveat_expr_changed = 16;
+         */
+        caveatExprChanged: ReflectionCaveat;
+    } | {
+        oneofKind: "caveatParameterAdded";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionCaveatParameter caveat_parameter_added = 17;
+         */
+        caveatParameterAdded: ReflectionCaveatParameter;
+    } | {
+        oneofKind: "caveatParameterRemoved";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionCaveatParameter caveat_parameter_removed = 18;
+         */
+        caveatParameterRemoved: ReflectionCaveatParameter;
+    } | {
+        oneofKind: "caveatParameterTypeChanged";
+        /**
+         * @generated from protobuf field: authzed.api.v1.ReflectionCaveatParameterTypeChange caveat_parameter_type_changed = 19;
+         */
+        caveatParameterTypeChanged: ReflectionCaveatParameterTypeChange;
+    } | {
+        oneofKind: undefined;
+    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ReadSchemaRequest$Type extends MessageType<ReadSchemaRequest> {
@@ -243,10 +756,1351 @@ class WriteSchemaResponse$Type extends MessageType<WriteSchemaResponse> {
  * @generated MessageType for protobuf message authzed.api.v1.WriteSchemaResponse
  */
 export const WriteSchemaResponse = new WriteSchemaResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectSchemaRequest$Type extends MessageType<ReflectSchemaRequest> {
+    constructor() {
+        super("authzed.api.v1.ReflectSchemaRequest", [
+            { no: 1, name: "consistency", kind: "message", T: () => Consistency },
+            { no: 2, name: "optional_filters", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionSchemaFilter }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectSchemaRequest>): ReflectSchemaRequest {
+        const message = { optionalFilters: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectSchemaRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectSchemaRequest): ReflectSchemaRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.Consistency consistency */ 1:
+                    message.consistency = Consistency.internalBinaryRead(reader, reader.uint32(), options, message.consistency);
+                    break;
+                case /* repeated authzed.api.v1.ReflectionSchemaFilter optional_filters */ 2:
+                    message.optionalFilters.push(ReflectionSchemaFilter.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectSchemaRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.Consistency consistency = 1; */
+        if (message.consistency)
+            Consistency.internalBinaryWrite(message.consistency, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated authzed.api.v1.ReflectionSchemaFilter optional_filters = 2; */
+        for (let i = 0; i < message.optionalFilters.length; i++)
+            ReflectionSchemaFilter.internalBinaryWrite(message.optionalFilters[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectSchemaRequest
+ */
+export const ReflectSchemaRequest = new ReflectSchemaRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectSchemaResponse$Type extends MessageType<ReflectSchemaResponse> {
+    constructor() {
+        super("authzed.api.v1.ReflectSchemaResponse", [
+            { no: 1, name: "definitions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionDefinition },
+            { no: 2, name: "caveats", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionCaveat },
+            { no: 3, name: "read_at", kind: "message", T: () => ZedToken }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectSchemaResponse>): ReflectSchemaResponse {
+        const message = { definitions: [], caveats: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectSchemaResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectSchemaResponse): ReflectSchemaResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated authzed.api.v1.ReflectionDefinition definitions */ 1:
+                    message.definitions.push(ReflectionDefinition.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated authzed.api.v1.ReflectionCaveat caveats */ 2:
+                    message.caveats.push(ReflectionCaveat.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* authzed.api.v1.ZedToken read_at */ 3:
+                    message.readAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.readAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectSchemaResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated authzed.api.v1.ReflectionDefinition definitions = 1; */
+        for (let i = 0; i < message.definitions.length; i++)
+            ReflectionDefinition.internalBinaryWrite(message.definitions[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated authzed.api.v1.ReflectionCaveat caveats = 2; */
+        for (let i = 0; i < message.caveats.length; i++)
+            ReflectionCaveat.internalBinaryWrite(message.caveats[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ZedToken read_at = 3; */
+        if (message.readAt)
+            ZedToken.internalBinaryWrite(message.readAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectSchemaResponse
+ */
+export const ReflectSchemaResponse = new ReflectSchemaResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionSchemaFilter$Type extends MessageType<ReflectionSchemaFilter> {
+    constructor() {
+        super("authzed.api.v1.ReflectionSchemaFilter", [
+            { no: 1, name: "optional_definition_name_filter", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "optional_caveat_name_filter", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "optional_relation_name_filter", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "optional_permission_name_filter", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionSchemaFilter>): ReflectionSchemaFilter {
+        const message = { optionalDefinitionNameFilter: "", optionalCaveatNameFilter: "", optionalRelationNameFilter: "", optionalPermissionNameFilter: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionSchemaFilter>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionSchemaFilter): ReflectionSchemaFilter {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string optional_definition_name_filter */ 1:
+                    message.optionalDefinitionNameFilter = reader.string();
+                    break;
+                case /* string optional_caveat_name_filter */ 2:
+                    message.optionalCaveatNameFilter = reader.string();
+                    break;
+                case /* string optional_relation_name_filter */ 3:
+                    message.optionalRelationNameFilter = reader.string();
+                    break;
+                case /* string optional_permission_name_filter */ 4:
+                    message.optionalPermissionNameFilter = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionSchemaFilter, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string optional_definition_name_filter = 1; */
+        if (message.optionalDefinitionNameFilter !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.optionalDefinitionNameFilter);
+        /* string optional_caveat_name_filter = 2; */
+        if (message.optionalCaveatNameFilter !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.optionalCaveatNameFilter);
+        /* string optional_relation_name_filter = 3; */
+        if (message.optionalRelationNameFilter !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.optionalRelationNameFilter);
+        /* string optional_permission_name_filter = 4; */
+        if (message.optionalPermissionNameFilter !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.optionalPermissionNameFilter);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionSchemaFilter
+ */
+export const ReflectionSchemaFilter = new ReflectionSchemaFilter$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionDefinition$Type extends MessageType<ReflectionDefinition> {
+    constructor() {
+        super("authzed.api.v1.ReflectionDefinition", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "relations", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionRelation },
+            { no: 4, name: "permissions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionPermission }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionDefinition>): ReflectionDefinition {
+        const message = { name: "", comment: "", relations: [], permissions: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionDefinition>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionDefinition): ReflectionDefinition {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string comment */ 2:
+                    message.comment = reader.string();
+                    break;
+                case /* repeated authzed.api.v1.ReflectionRelation relations */ 3:
+                    message.relations.push(ReflectionRelation.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated authzed.api.v1.ReflectionPermission permissions */ 4:
+                    message.permissions.push(ReflectionPermission.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionDefinition, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string comment = 2; */
+        if (message.comment !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.comment);
+        /* repeated authzed.api.v1.ReflectionRelation relations = 3; */
+        for (let i = 0; i < message.relations.length; i++)
+            ReflectionRelation.internalBinaryWrite(message.relations[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated authzed.api.v1.ReflectionPermission permissions = 4; */
+        for (let i = 0; i < message.permissions.length; i++)
+            ReflectionPermission.internalBinaryWrite(message.permissions[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionDefinition
+ */
+export const ReflectionDefinition = new ReflectionDefinition$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionCaveat$Type extends MessageType<ReflectionCaveat> {
+    constructor() {
+        super("authzed.api.v1.ReflectionCaveat", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "parameters", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionCaveatParameter },
+            { no: 4, name: "expression", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionCaveat>): ReflectionCaveat {
+        const message = { name: "", comment: "", parameters: [], expression: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionCaveat>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionCaveat): ReflectionCaveat {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string comment */ 2:
+                    message.comment = reader.string();
+                    break;
+                case /* repeated authzed.api.v1.ReflectionCaveatParameter parameters */ 3:
+                    message.parameters.push(ReflectionCaveatParameter.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* string expression */ 4:
+                    message.expression = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionCaveat, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string comment = 2; */
+        if (message.comment !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.comment);
+        /* repeated authzed.api.v1.ReflectionCaveatParameter parameters = 3; */
+        for (let i = 0; i < message.parameters.length; i++)
+            ReflectionCaveatParameter.internalBinaryWrite(message.parameters[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string expression = 4; */
+        if (message.expression !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.expression);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionCaveat
+ */
+export const ReflectionCaveat = new ReflectionCaveat$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionCaveatParameter$Type extends MessageType<ReflectionCaveatParameter> {
+    constructor() {
+        super("authzed.api.v1.ReflectionCaveatParameter", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "parent_caveat_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionCaveatParameter>): ReflectionCaveatParameter {
+        const message = { name: "", type: "", parentCaveatName: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionCaveatParameter>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionCaveatParameter): ReflectionCaveatParameter {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string type */ 2:
+                    message.type = reader.string();
+                    break;
+                case /* string parent_caveat_name */ 3:
+                    message.parentCaveatName = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionCaveatParameter, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string type = 2; */
+        if (message.type !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.type);
+        /* string parent_caveat_name = 3; */
+        if (message.parentCaveatName !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.parentCaveatName);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionCaveatParameter
+ */
+export const ReflectionCaveatParameter = new ReflectionCaveatParameter$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionRelation$Type extends MessageType<ReflectionRelation> {
+    constructor() {
+        super("authzed.api.v1.ReflectionRelation", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "parent_definition_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "subject_types", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionTypeReference }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionRelation>): ReflectionRelation {
+        const message = { name: "", comment: "", parentDefinitionName: "", subjectTypes: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionRelation>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionRelation): ReflectionRelation {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string comment */ 2:
+                    message.comment = reader.string();
+                    break;
+                case /* string parent_definition_name */ 3:
+                    message.parentDefinitionName = reader.string();
+                    break;
+                case /* repeated authzed.api.v1.ReflectionTypeReference subject_types */ 4:
+                    message.subjectTypes.push(ReflectionTypeReference.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionRelation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string comment = 2; */
+        if (message.comment !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.comment);
+        /* string parent_definition_name = 3; */
+        if (message.parentDefinitionName !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.parentDefinitionName);
+        /* repeated authzed.api.v1.ReflectionTypeReference subject_types = 4; */
+        for (let i = 0; i < message.subjectTypes.length; i++)
+            ReflectionTypeReference.internalBinaryWrite(message.subjectTypes[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionRelation
+ */
+export const ReflectionRelation = new ReflectionRelation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionTypeReference$Type extends MessageType<ReflectionTypeReference> {
+    constructor() {
+        super("authzed.api.v1.ReflectionTypeReference", [
+            { no: 1, name: "subject_definition_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "optional_caveat_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "is_terminal_subject", kind: "scalar", oneof: "typeref", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "optional_relation_name", kind: "scalar", oneof: "typeref", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "is_public_wildcard", kind: "scalar", oneof: "typeref", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionTypeReference>): ReflectionTypeReference {
+        const message = { subjectDefinitionName: "", optionalCaveatName: "", typeref: { oneofKind: undefined } };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionTypeReference>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionTypeReference): ReflectionTypeReference {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string subject_definition_name */ 1:
+                    message.subjectDefinitionName = reader.string();
+                    break;
+                case /* string optional_caveat_name */ 2:
+                    message.optionalCaveatName = reader.string();
+                    break;
+                case /* bool is_terminal_subject */ 3:
+                    message.typeref = {
+                        oneofKind: "isTerminalSubject",
+                        isTerminalSubject: reader.bool()
+                    };
+                    break;
+                case /* string optional_relation_name */ 4:
+                    message.typeref = {
+                        oneofKind: "optionalRelationName",
+                        optionalRelationName: reader.string()
+                    };
+                    break;
+                case /* bool is_public_wildcard */ 5:
+                    message.typeref = {
+                        oneofKind: "isPublicWildcard",
+                        isPublicWildcard: reader.bool()
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionTypeReference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string subject_definition_name = 1; */
+        if (message.subjectDefinitionName !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.subjectDefinitionName);
+        /* string optional_caveat_name = 2; */
+        if (message.optionalCaveatName !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.optionalCaveatName);
+        /* bool is_terminal_subject = 3; */
+        if (message.typeref.oneofKind === "isTerminalSubject")
+            writer.tag(3, WireType.Varint).bool(message.typeref.isTerminalSubject);
+        /* string optional_relation_name = 4; */
+        if (message.typeref.oneofKind === "optionalRelationName")
+            writer.tag(4, WireType.LengthDelimited).string(message.typeref.optionalRelationName);
+        /* bool is_public_wildcard = 5; */
+        if (message.typeref.oneofKind === "isPublicWildcard")
+            writer.tag(5, WireType.Varint).bool(message.typeref.isPublicWildcard);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionTypeReference
+ */
+export const ReflectionTypeReference = new ReflectionTypeReference$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionPermission$Type extends MessageType<ReflectionPermission> {
+    constructor() {
+        super("authzed.api.v1.ReflectionPermission", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "parent_definition_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionPermission>): ReflectionPermission {
+        const message = { name: "", comment: "", parentDefinitionName: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionPermission>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionPermission): ReflectionPermission {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string comment */ 2:
+                    message.comment = reader.string();
+                    break;
+                case /* string parent_definition_name */ 3:
+                    message.parentDefinitionName = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionPermission, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string comment = 2; */
+        if (message.comment !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.comment);
+        /* string parent_definition_name = 3; */
+        if (message.parentDefinitionName !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.parentDefinitionName);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionPermission
+ */
+export const ReflectionPermission = new ReflectionPermission$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ComputablePermissionsRequest$Type extends MessageType<ComputablePermissionsRequest> {
+    constructor() {
+        super("authzed.api.v1.ComputablePermissionsRequest", [
+            { no: 1, name: "consistency", kind: "message", T: () => Consistency },
+            { no: 2, name: "definition_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "relation_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "optional_definition_name_filter", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ComputablePermissionsRequest>): ComputablePermissionsRequest {
+        const message = { definitionName: "", relationName: "", optionalDefinitionNameFilter: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ComputablePermissionsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ComputablePermissionsRequest): ComputablePermissionsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.Consistency consistency */ 1:
+                    message.consistency = Consistency.internalBinaryRead(reader, reader.uint32(), options, message.consistency);
+                    break;
+                case /* string definition_name */ 2:
+                    message.definitionName = reader.string();
+                    break;
+                case /* string relation_name */ 3:
+                    message.relationName = reader.string();
+                    break;
+                case /* string optional_definition_name_filter */ 4:
+                    message.optionalDefinitionNameFilter = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ComputablePermissionsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.Consistency consistency = 1; */
+        if (message.consistency)
+            Consistency.internalBinaryWrite(message.consistency, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string definition_name = 2; */
+        if (message.definitionName !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.definitionName);
+        /* string relation_name = 3; */
+        if (message.relationName !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.relationName);
+        /* string optional_definition_name_filter = 4; */
+        if (message.optionalDefinitionNameFilter !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.optionalDefinitionNameFilter);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ComputablePermissionsRequest
+ */
+export const ComputablePermissionsRequest = new ComputablePermissionsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionRelationReference$Type extends MessageType<ReflectionRelationReference> {
+    constructor() {
+        super("authzed.api.v1.ReflectionRelationReference", [
+            { no: 1, name: "definition_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "relation_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "is_permission", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionRelationReference>): ReflectionRelationReference {
+        const message = { definitionName: "", relationName: "", isPermission: false };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionRelationReference>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionRelationReference): ReflectionRelationReference {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string definition_name */ 1:
+                    message.definitionName = reader.string();
+                    break;
+                case /* string relation_name */ 2:
+                    message.relationName = reader.string();
+                    break;
+                case /* bool is_permission */ 3:
+                    message.isPermission = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionRelationReference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string definition_name = 1; */
+        if (message.definitionName !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.definitionName);
+        /* string relation_name = 2; */
+        if (message.relationName !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.relationName);
+        /* bool is_permission = 3; */
+        if (message.isPermission !== false)
+            writer.tag(3, WireType.Varint).bool(message.isPermission);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionRelationReference
+ */
+export const ReflectionRelationReference = new ReflectionRelationReference$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ComputablePermissionsResponse$Type extends MessageType<ComputablePermissionsResponse> {
+    constructor() {
+        super("authzed.api.v1.ComputablePermissionsResponse", [
+            { no: 1, name: "permissions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionRelationReference },
+            { no: 2, name: "read_at", kind: "message", T: () => ZedToken }
+        ]);
+    }
+    create(value?: PartialMessage<ComputablePermissionsResponse>): ComputablePermissionsResponse {
+        const message = { permissions: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ComputablePermissionsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ComputablePermissionsResponse): ComputablePermissionsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated authzed.api.v1.ReflectionRelationReference permissions */ 1:
+                    message.permissions.push(ReflectionRelationReference.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* authzed.api.v1.ZedToken read_at */ 2:
+                    message.readAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.readAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ComputablePermissionsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated authzed.api.v1.ReflectionRelationReference permissions = 1; */
+        for (let i = 0; i < message.permissions.length; i++)
+            ReflectionRelationReference.internalBinaryWrite(message.permissions[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ZedToken read_at = 2; */
+        if (message.readAt)
+            ZedToken.internalBinaryWrite(message.readAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ComputablePermissionsResponse
+ */
+export const ComputablePermissionsResponse = new ComputablePermissionsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DependentRelationsRequest$Type extends MessageType<DependentRelationsRequest> {
+    constructor() {
+        super("authzed.api.v1.DependentRelationsRequest", [
+            { no: 1, name: "consistency", kind: "message", T: () => Consistency },
+            { no: 2, name: "definition_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "permission_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DependentRelationsRequest>): DependentRelationsRequest {
+        const message = { definitionName: "", permissionName: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<DependentRelationsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DependentRelationsRequest): DependentRelationsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.Consistency consistency */ 1:
+                    message.consistency = Consistency.internalBinaryRead(reader, reader.uint32(), options, message.consistency);
+                    break;
+                case /* string definition_name */ 2:
+                    message.definitionName = reader.string();
+                    break;
+                case /* string permission_name */ 3:
+                    message.permissionName = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DependentRelationsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.Consistency consistency = 1; */
+        if (message.consistency)
+            Consistency.internalBinaryWrite(message.consistency, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string definition_name = 2; */
+        if (message.definitionName !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.definitionName);
+        /* string permission_name = 3; */
+        if (message.permissionName !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.permissionName);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.DependentRelationsRequest
+ */
+export const DependentRelationsRequest = new DependentRelationsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DependentRelationsResponse$Type extends MessageType<DependentRelationsResponse> {
+    constructor() {
+        super("authzed.api.v1.DependentRelationsResponse", [
+            { no: 1, name: "relations", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionRelationReference },
+            { no: 2, name: "read_at", kind: "message", T: () => ZedToken }
+        ]);
+    }
+    create(value?: PartialMessage<DependentRelationsResponse>): DependentRelationsResponse {
+        const message = { relations: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<DependentRelationsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DependentRelationsResponse): DependentRelationsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated authzed.api.v1.ReflectionRelationReference relations */ 1:
+                    message.relations.push(ReflectionRelationReference.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* authzed.api.v1.ZedToken read_at */ 2:
+                    message.readAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.readAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DependentRelationsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated authzed.api.v1.ReflectionRelationReference relations = 1; */
+        for (let i = 0; i < message.relations.length; i++)
+            ReflectionRelationReference.internalBinaryWrite(message.relations[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ZedToken read_at = 2; */
+        if (message.readAt)
+            ZedToken.internalBinaryWrite(message.readAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.DependentRelationsResponse
+ */
+export const DependentRelationsResponse = new DependentRelationsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DiffSchemaRequest$Type extends MessageType<DiffSchemaRequest> {
+    constructor() {
+        super("authzed.api.v1.DiffSchemaRequest", [
+            { no: 1, name: "consistency", kind: "message", T: () => Consistency },
+            { no: 2, name: "comparison_schema", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DiffSchemaRequest>): DiffSchemaRequest {
+        const message = { comparisonSchema: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<DiffSchemaRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DiffSchemaRequest): DiffSchemaRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.Consistency consistency */ 1:
+                    message.consistency = Consistency.internalBinaryRead(reader, reader.uint32(), options, message.consistency);
+                    break;
+                case /* string comparison_schema */ 2:
+                    message.comparisonSchema = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DiffSchemaRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.Consistency consistency = 1; */
+        if (message.consistency)
+            Consistency.internalBinaryWrite(message.consistency, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string comparison_schema = 2; */
+        if (message.comparisonSchema !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.comparisonSchema);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.DiffSchemaRequest
+ */
+export const DiffSchemaRequest = new DiffSchemaRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DiffSchemaResponse$Type extends MessageType<DiffSchemaResponse> {
+    constructor() {
+        super("authzed.api.v1.DiffSchemaResponse", [
+            { no: 1, name: "diffs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ReflectionSchemaDiff },
+            { no: 2, name: "read_at", kind: "message", T: () => ZedToken }
+        ]);
+    }
+    create(value?: PartialMessage<DiffSchemaResponse>): DiffSchemaResponse {
+        const message = { diffs: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<DiffSchemaResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DiffSchemaResponse): DiffSchemaResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated authzed.api.v1.ReflectionSchemaDiff diffs */ 1:
+                    message.diffs.push(ReflectionSchemaDiff.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* authzed.api.v1.ZedToken read_at */ 2:
+                    message.readAt = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.readAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DiffSchemaResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated authzed.api.v1.ReflectionSchemaDiff diffs = 1; */
+        for (let i = 0; i < message.diffs.length; i++)
+            ReflectionSchemaDiff.internalBinaryWrite(message.diffs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ZedToken read_at = 2; */
+        if (message.readAt)
+            ZedToken.internalBinaryWrite(message.readAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.DiffSchemaResponse
+ */
+export const DiffSchemaResponse = new DiffSchemaResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionRelationSubjectTypeChange$Type extends MessageType<ReflectionRelationSubjectTypeChange> {
+    constructor() {
+        super("authzed.api.v1.ReflectionRelationSubjectTypeChange", [
+            { no: 1, name: "relation", kind: "message", T: () => ReflectionRelation },
+            { no: 2, name: "changed_subject_type", kind: "message", T: () => ReflectionTypeReference }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionRelationSubjectTypeChange>): ReflectionRelationSubjectTypeChange {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionRelationSubjectTypeChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionRelationSubjectTypeChange): ReflectionRelationSubjectTypeChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.ReflectionRelation relation */ 1:
+                    message.relation = ReflectionRelation.internalBinaryRead(reader, reader.uint32(), options, message.relation);
+                    break;
+                case /* authzed.api.v1.ReflectionTypeReference changed_subject_type */ 2:
+                    message.changedSubjectType = ReflectionTypeReference.internalBinaryRead(reader, reader.uint32(), options, message.changedSubjectType);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionRelationSubjectTypeChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.ReflectionRelation relation = 1; */
+        if (message.relation)
+            ReflectionRelation.internalBinaryWrite(message.relation, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionTypeReference changed_subject_type = 2; */
+        if (message.changedSubjectType)
+            ReflectionTypeReference.internalBinaryWrite(message.changedSubjectType, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionRelationSubjectTypeChange
+ */
+export const ReflectionRelationSubjectTypeChange = new ReflectionRelationSubjectTypeChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionCaveatParameterTypeChange$Type extends MessageType<ReflectionCaveatParameterTypeChange> {
+    constructor() {
+        super("authzed.api.v1.ReflectionCaveatParameterTypeChange", [
+            { no: 1, name: "parameter", kind: "message", T: () => ReflectionCaveatParameter },
+            { no: 2, name: "previous_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionCaveatParameterTypeChange>): ReflectionCaveatParameterTypeChange {
+        const message = { previousType: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionCaveatParameterTypeChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionCaveatParameterTypeChange): ReflectionCaveatParameterTypeChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.ReflectionCaveatParameter parameter */ 1:
+                    message.parameter = ReflectionCaveatParameter.internalBinaryRead(reader, reader.uint32(), options, message.parameter);
+                    break;
+                case /* string previous_type */ 2:
+                    message.previousType = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionCaveatParameterTypeChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.ReflectionCaveatParameter parameter = 1; */
+        if (message.parameter)
+            ReflectionCaveatParameter.internalBinaryWrite(message.parameter, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string previous_type = 2; */
+        if (message.previousType !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.previousType);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionCaveatParameterTypeChange
+ */
+export const ReflectionCaveatParameterTypeChange = new ReflectionCaveatParameterTypeChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReflectionSchemaDiff$Type extends MessageType<ReflectionSchemaDiff> {
+    constructor() {
+        super("authzed.api.v1.ReflectionSchemaDiff", [
+            { no: 1, name: "definition_added", kind: "message", oneof: "diff", T: () => ReflectionDefinition },
+            { no: 2, name: "definition_removed", kind: "message", oneof: "diff", T: () => ReflectionDefinition },
+            { no: 3, name: "definition_doc_comment_changed", kind: "message", oneof: "diff", T: () => ReflectionDefinition },
+            { no: 4, name: "relation_added", kind: "message", oneof: "diff", T: () => ReflectionRelation },
+            { no: 5, name: "relation_removed", kind: "message", oneof: "diff", T: () => ReflectionRelation },
+            { no: 6, name: "relation_doc_comment_changed", kind: "message", oneof: "diff", T: () => ReflectionRelation },
+            { no: 7, name: "relation_subject_type_added", kind: "message", oneof: "diff", T: () => ReflectionRelationSubjectTypeChange },
+            { no: 8, name: "relation_subject_type_removed", kind: "message", oneof: "diff", T: () => ReflectionRelationSubjectTypeChange },
+            { no: 9, name: "permission_added", kind: "message", oneof: "diff", T: () => ReflectionPermission },
+            { no: 10, name: "permission_removed", kind: "message", oneof: "diff", T: () => ReflectionPermission },
+            { no: 11, name: "permission_doc_comment_changed", kind: "message", oneof: "diff", T: () => ReflectionPermission },
+            { no: 12, name: "permission_expr_changed", kind: "message", oneof: "diff", T: () => ReflectionPermission },
+            { no: 13, name: "caveat_added", kind: "message", oneof: "diff", T: () => ReflectionCaveat },
+            { no: 14, name: "caveat_removed", kind: "message", oneof: "diff", T: () => ReflectionCaveat },
+            { no: 15, name: "caveat_doc_comment_changed", kind: "message", oneof: "diff", T: () => ReflectionCaveat },
+            { no: 16, name: "caveat_expr_changed", kind: "message", oneof: "diff", T: () => ReflectionCaveat },
+            { no: 17, name: "caveat_parameter_added", kind: "message", oneof: "diff", T: () => ReflectionCaveatParameter },
+            { no: 18, name: "caveat_parameter_removed", kind: "message", oneof: "diff", T: () => ReflectionCaveatParameter },
+            { no: 19, name: "caveat_parameter_type_changed", kind: "message", oneof: "diff", T: () => ReflectionCaveatParameterTypeChange }
+        ]);
+    }
+    create(value?: PartialMessage<ReflectionSchemaDiff>): ReflectionSchemaDiff {
+        const message = { diff: { oneofKind: undefined } };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<ReflectionSchemaDiff>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReflectionSchemaDiff): ReflectionSchemaDiff {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.ReflectionDefinition definition_added */ 1:
+                    message.diff = {
+                        oneofKind: "definitionAdded",
+                        definitionAdded: ReflectionDefinition.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).definitionAdded)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionDefinition definition_removed */ 2:
+                    message.diff = {
+                        oneofKind: "definitionRemoved",
+                        definitionRemoved: ReflectionDefinition.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).definitionRemoved)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionDefinition definition_doc_comment_changed */ 3:
+                    message.diff = {
+                        oneofKind: "definitionDocCommentChanged",
+                        definitionDocCommentChanged: ReflectionDefinition.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).definitionDocCommentChanged)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionRelation relation_added */ 4:
+                    message.diff = {
+                        oneofKind: "relationAdded",
+                        relationAdded: ReflectionRelation.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).relationAdded)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionRelation relation_removed */ 5:
+                    message.diff = {
+                        oneofKind: "relationRemoved",
+                        relationRemoved: ReflectionRelation.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).relationRemoved)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionRelation relation_doc_comment_changed */ 6:
+                    message.diff = {
+                        oneofKind: "relationDocCommentChanged",
+                        relationDocCommentChanged: ReflectionRelation.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).relationDocCommentChanged)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionRelationSubjectTypeChange relation_subject_type_added */ 7:
+                    message.diff = {
+                        oneofKind: "relationSubjectTypeAdded",
+                        relationSubjectTypeAdded: ReflectionRelationSubjectTypeChange.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).relationSubjectTypeAdded)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionRelationSubjectTypeChange relation_subject_type_removed */ 8:
+                    message.diff = {
+                        oneofKind: "relationSubjectTypeRemoved",
+                        relationSubjectTypeRemoved: ReflectionRelationSubjectTypeChange.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).relationSubjectTypeRemoved)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionPermission permission_added */ 9:
+                    message.diff = {
+                        oneofKind: "permissionAdded",
+                        permissionAdded: ReflectionPermission.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).permissionAdded)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionPermission permission_removed */ 10:
+                    message.diff = {
+                        oneofKind: "permissionRemoved",
+                        permissionRemoved: ReflectionPermission.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).permissionRemoved)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionPermission permission_doc_comment_changed */ 11:
+                    message.diff = {
+                        oneofKind: "permissionDocCommentChanged",
+                        permissionDocCommentChanged: ReflectionPermission.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).permissionDocCommentChanged)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionPermission permission_expr_changed */ 12:
+                    message.diff = {
+                        oneofKind: "permissionExprChanged",
+                        permissionExprChanged: ReflectionPermission.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).permissionExprChanged)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionCaveat caveat_added */ 13:
+                    message.diff = {
+                        oneofKind: "caveatAdded",
+                        caveatAdded: ReflectionCaveat.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).caveatAdded)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionCaveat caveat_removed */ 14:
+                    message.diff = {
+                        oneofKind: "caveatRemoved",
+                        caveatRemoved: ReflectionCaveat.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).caveatRemoved)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionCaveat caveat_doc_comment_changed */ 15:
+                    message.diff = {
+                        oneofKind: "caveatDocCommentChanged",
+                        caveatDocCommentChanged: ReflectionCaveat.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).caveatDocCommentChanged)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionCaveat caveat_expr_changed */ 16:
+                    message.diff = {
+                        oneofKind: "caveatExprChanged",
+                        caveatExprChanged: ReflectionCaveat.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).caveatExprChanged)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionCaveatParameter caveat_parameter_added */ 17:
+                    message.diff = {
+                        oneofKind: "caveatParameterAdded",
+                        caveatParameterAdded: ReflectionCaveatParameter.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).caveatParameterAdded)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionCaveatParameter caveat_parameter_removed */ 18:
+                    message.diff = {
+                        oneofKind: "caveatParameterRemoved",
+                        caveatParameterRemoved: ReflectionCaveatParameter.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).caveatParameterRemoved)
+                    };
+                    break;
+                case /* authzed.api.v1.ReflectionCaveatParameterTypeChange caveat_parameter_type_changed */ 19:
+                    message.diff = {
+                        oneofKind: "caveatParameterTypeChanged",
+                        caveatParameterTypeChanged: ReflectionCaveatParameterTypeChange.internalBinaryRead(reader, reader.uint32(), options, (message.diff as any).caveatParameterTypeChanged)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ReflectionSchemaDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.ReflectionDefinition definition_added = 1; */
+        if (message.diff.oneofKind === "definitionAdded")
+            ReflectionDefinition.internalBinaryWrite(message.diff.definitionAdded, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionDefinition definition_removed = 2; */
+        if (message.diff.oneofKind === "definitionRemoved")
+            ReflectionDefinition.internalBinaryWrite(message.diff.definitionRemoved, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionDefinition definition_doc_comment_changed = 3; */
+        if (message.diff.oneofKind === "definitionDocCommentChanged")
+            ReflectionDefinition.internalBinaryWrite(message.diff.definitionDocCommentChanged, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionRelation relation_added = 4; */
+        if (message.diff.oneofKind === "relationAdded")
+            ReflectionRelation.internalBinaryWrite(message.diff.relationAdded, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionRelation relation_removed = 5; */
+        if (message.diff.oneofKind === "relationRemoved")
+            ReflectionRelation.internalBinaryWrite(message.diff.relationRemoved, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionRelation relation_doc_comment_changed = 6; */
+        if (message.diff.oneofKind === "relationDocCommentChanged")
+            ReflectionRelation.internalBinaryWrite(message.diff.relationDocCommentChanged, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionRelationSubjectTypeChange relation_subject_type_added = 7; */
+        if (message.diff.oneofKind === "relationSubjectTypeAdded")
+            ReflectionRelationSubjectTypeChange.internalBinaryWrite(message.diff.relationSubjectTypeAdded, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionRelationSubjectTypeChange relation_subject_type_removed = 8; */
+        if (message.diff.oneofKind === "relationSubjectTypeRemoved")
+            ReflectionRelationSubjectTypeChange.internalBinaryWrite(message.diff.relationSubjectTypeRemoved, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionPermission permission_added = 9; */
+        if (message.diff.oneofKind === "permissionAdded")
+            ReflectionPermission.internalBinaryWrite(message.diff.permissionAdded, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionPermission permission_removed = 10; */
+        if (message.diff.oneofKind === "permissionRemoved")
+            ReflectionPermission.internalBinaryWrite(message.diff.permissionRemoved, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionPermission permission_doc_comment_changed = 11; */
+        if (message.diff.oneofKind === "permissionDocCommentChanged")
+            ReflectionPermission.internalBinaryWrite(message.diff.permissionDocCommentChanged, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionPermission permission_expr_changed = 12; */
+        if (message.diff.oneofKind === "permissionExprChanged")
+            ReflectionPermission.internalBinaryWrite(message.diff.permissionExprChanged, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionCaveat caveat_added = 13; */
+        if (message.diff.oneofKind === "caveatAdded")
+            ReflectionCaveat.internalBinaryWrite(message.diff.caveatAdded, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionCaveat caveat_removed = 14; */
+        if (message.diff.oneofKind === "caveatRemoved")
+            ReflectionCaveat.internalBinaryWrite(message.diff.caveatRemoved, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionCaveat caveat_doc_comment_changed = 15; */
+        if (message.diff.oneofKind === "caveatDocCommentChanged")
+            ReflectionCaveat.internalBinaryWrite(message.diff.caveatDocCommentChanged, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionCaveat caveat_expr_changed = 16; */
+        if (message.diff.oneofKind === "caveatExprChanged")
+            ReflectionCaveat.internalBinaryWrite(message.diff.caveatExprChanged, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionCaveatParameter caveat_parameter_added = 17; */
+        if (message.diff.oneofKind === "caveatParameterAdded")
+            ReflectionCaveatParameter.internalBinaryWrite(message.diff.caveatParameterAdded, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionCaveatParameter caveat_parameter_removed = 18; */
+        if (message.diff.oneofKind === "caveatParameterRemoved")
+            ReflectionCaveatParameter.internalBinaryWrite(message.diff.caveatParameterRemoved, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.ReflectionCaveatParameterTypeChange caveat_parameter_type_changed = 19; */
+        if (message.diff.oneofKind === "caveatParameterTypeChanged")
+            ReflectionCaveatParameterTypeChange.internalBinaryWrite(message.diff.caveatParameterTypeChanged, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.v1.ReflectionSchemaDiff
+ */
+export const ReflectionSchemaDiff = new ReflectionSchemaDiff$Type();
 /**
  * @generated ServiceType for protobuf service authzed.api.v1.SchemaService
  */
 export const SchemaService = new ServiceType("authzed.api.v1.SchemaService", [
     { name: "ReadSchema", options: { "google.api.http": { post: "/v1/schema/read", body: "*" } }, I: ReadSchemaRequest, O: ReadSchemaResponse },
-    { name: "WriteSchema", options: { "google.api.http": { post: "/v1/schema/write", body: "*" } }, I: WriteSchemaRequest, O: WriteSchemaResponse }
+    { name: "WriteSchema", options: { "google.api.http": { post: "/v1/schema/write", body: "*" } }, I: WriteSchemaRequest, O: WriteSchemaResponse },
+    { name: "ReflectSchema", options: { "google.api.http": { post: "/v1/schema/reflectschema", body: "*" } }, I: ReflectSchemaRequest, O: ReflectSchemaResponse },
+    { name: "ComputablePermissions", options: { "google.api.http": { post: "/v1/schema/permissions/computable", body: "*" } }, I: ComputablePermissionsRequest, O: ComputablePermissionsResponse },
+    { name: "DependentRelations", options: { "google.api.http": { post: "/v1/schema/permissions/dependent", body: "*" } }, I: DependentRelationsRequest, O: DependentRelationsResponse },
+    { name: "DiffSchema", options: { "google.api.http": { post: "/v1/schema/diffschema", body: "*" } }, I: DiffSchemaRequest, O: DiffSchemaResponse }
 ]);
