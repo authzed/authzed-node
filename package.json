@@ -39,22 +39,22 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "~1.12.5",
-    "@protobuf-ts/runtime": "^2.9.4",
-    "@protobuf-ts/runtime-rpc": "^2.9.4",
+    "@protobuf-ts/runtime": "^2.9.6",
+    "@protobuf-ts/runtime-rpc": "^2.9.6",
     "google-protobuf": "^3.21.4"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.19.0",
-    "@protobuf-ts/plugin": "^2.9.4",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.23.0",
+    "@protobuf-ts/plugin": "^2.9.6",
     "@tsconfig/node18": "^18.2.4",
-    "@typescript-eslint/eslint-plugin": "^8.22.0",
-    "@typescript-eslint/parser": "^8.22.0",
-    "eslint": "^9.19.0",
-    "grpc-tools": "^1.12.4",
-    "rollup": "^4.34.8",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "eslint": "^9.23.0",
+    "grpc-tools": "^1.13.0",
+    "rollup": "^4.37.0",
     "tsc-esm-fix": "^3.1.2",
-    "typescript": "^5.7",
-    "vitest": "^3.0.4"
+    "typescript": "^5.8",
+    "vitest": "^3.0.9"
   }
 }
