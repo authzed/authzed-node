@@ -49,7 +49,7 @@ describe("a check with an unknown namespace", () => {
     });
 
     const client = NewClient(
-      generateTestToken("v1-test-unknown"),
+      generateTestToken(),
       "localhost:50051",
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED
     );
@@ -66,7 +66,7 @@ describe("a check with an known namespace", () => {
   it("should succeed", () => new Promise<void>((done) => {
     // Write some schema.
     const client = NewClient(
-      generateTestToken("v1-namespace"),
+      generateTestToken(),
       "localhost:50051",
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
       PreconnectServices.PERMISSIONS_SERVICE | PreconnectServices.SCHEMA_SERVICE
@@ -172,7 +172,7 @@ describe("a check with an known namespace", () => {
     it("should succeed", () => new Promise<void>((done) => {
       // Write some schema.
       const client = NewClient(
-        generateTestToken("v1-namespace-caveats"),
+        generateTestToken(),
         "localhost:50051",
         ClientSecurity.INSECURE_LOCALHOST_ALLOWED
       );
@@ -288,7 +288,7 @@ describe("Lookup APIs", () => {
   let token: string;
 
   beforeEach(() => new Promise<void>((done) => {
-    token = generateTestToken("v1-lookup");
+    token = generateTestToken();
     const client = NewClient(
       token,
       "localhost:50051",
@@ -461,7 +461,7 @@ describe("a check with a negative timeout", () => {
     });
 
     const client = NewClient(
-      generateTestToken("v1-test-unknown"),
+      generateTestToken(),
       "localhost:50051",
       ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
       PreconnectServices.NONE,
@@ -482,7 +482,7 @@ describe("Experimental Service", () => {
   let token: string;
 
   beforeEach(() => new Promise<void>((done) => {
-    token = generateTestToken("v1-experimental-service");
+    token = generateTestToken();
     const client = NewClient(
       token,
       "localhost:50051",
