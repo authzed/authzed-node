@@ -1,3 +1,4 @@
+---
 name: "Called update for API change"
 on:
   repository_dispatch:
@@ -10,6 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+      - uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false
       - name: "Update Buf Script"
         id: buf-update
         uses: authzed/actions/buf-api-update@main
@@ -23,19 +27,21 @@ jobs:
         run: |
           echo "Update status: $UPDATED_STATUS"
       - name: "Install buf"
-        uses: "bufbuild/buf-setup-action@v1.48.0"
+        uses: "bufbuild/buf-setup-action@v1.50.0"
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
         if: steps.buf-update.outputs.updated == 'true'
       - name: "Run buf generate"
         if: steps.buf-update.outputs.updated == 'true'
-        run: "buf generate"
+        run: "yarn run buf"
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7.0.6
+        uses: peter-evans/create-pull-request@v7.0.7
         if: steps.buf-update.outputs.updated == 'true'
         with:
           delete-branch: "true"
           title: "Update API to ${{ github.event.client_payload.BUFTAG }}"
+          # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs
+          draft: "always-true"
           branch: "api-change/${{ github.event.client_payload.BUFTAG }}"
           base: "main"
           token: ${{ secrets.GITHUB_TOKEN }}

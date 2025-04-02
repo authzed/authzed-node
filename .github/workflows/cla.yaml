@@ -1,3 +1,4 @@
+---
 name: "CLA"
 on:  # yamllint disable-line rule:truthy
   issue_comment:

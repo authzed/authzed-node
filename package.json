@@ -13,8 +13,17 @@
     "spicedb",
     "zanzibar"
   ],
-  "main": "dist/src/index.js",
+  "main": "dist/src/index.cjs",
+  "module": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "require": "./dist/src/index.cjs",
+      "import": "./dist/src/index.js"
+    }
+  },
   "repository": "https://github.com/authzed/authzed-node",
   "license": "Apache-2.0",
   "private": false,
@@ -24,26 +33,28 @@
     "buf": "buf generate && tsc-esm-fix --src src/authzedapi --ext='.js'",
     "lint": "./node_modules/.bin/eslint src",
     "build": "tsc",
+    "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs",
     "prepublish": "yarn build",
     "build-js-client": "tsc --declaration false --outDir js-dist"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.12.5",
-    "@protobuf-ts/runtime": "^2.9.4",
-    "@protobuf-ts/runtime-rpc": "^2.9.4",
+    "@grpc/grpc-js": "~1.12.5",
+    "@protobuf-ts/runtime": "^2.9.6",
+    "@protobuf-ts/runtime-rpc": "^2.9.6",
     "google-protobuf": "^3.21.4"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.17.0",
-    "@protobuf-ts/plugin": "^2.9.4",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.23.0",
+    "@protobuf-ts/plugin": "^2.9.6",
     "@tsconfig/node18": "^18.2.4",
-    "@typescript-eslint/eslint-plugin": "^8.19.0",
-    "@typescript-eslint/parser": "^8.19.0",
-    "eslint": "^9.17.0",
-    "grpc-tools": "^1.12.4",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "eslint": "^9.23.0",
+    "grpc-tools": "^1.13.0",
+    "rollup": "^4.37.0",
     "tsc-esm-fix": "^3.1.2",
-    "typescript": "^5.7",
-    "vitest": "^2.1.3"
+    "typescript": "^5.8",
+    "vitest": "^3.0.9"
   }
 }

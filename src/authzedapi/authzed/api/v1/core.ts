@@ -12,6 +12,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Struct } from "../../../google/protobuf/struct.js";
+import { Timestamp } from "../../../google/protobuf/timestamp.js";
 /**
  * Relationship specifies how a resource relates to a subject. Relationships
  * form the data for the graph over which all permissions questions are
@@ -39,11 +40,17 @@ export interface Relationship {
      */
     subject?: SubjectReference;
     /**
-     * optional_caveat is a reference to a the caveat that must be enforced over the relationship
+     * optional_caveat is a reference to a the caveat that must be enforced over the relationship.
      *
      * @generated from protobuf field: authzed.api.v1.ContextualizedCaveat optional_caveat = 4;
      */
     optionalCaveat?: ContextualizedCaveat;
+    /**
+     * optional_expires_at is the time at which the relationship expires, if any.
+     *
+     * @generated from protobuf field: google.protobuf.Timestamp optional_expires_at = 5;
+     */
+    optionalExpiresAt?: Timestamp;
 }
 /**
  * ContextualizedCaveat represents a reference to a caveat to be used by caveated relationships.
@@ -282,7 +289,8 @@ class Relationship$Type extends MessageType<Relationship> {
             { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
             { no: 3, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 4, name: "optional_caveat", kind: "message", T: () => ContextualizedCaveat, options: { "validate.rules": { message: { required: false } } } }
+            { no: 4, name: "optional_caveat", kind: "message", T: () => ContextualizedCaveat, options: { "validate.rules": { message: { required: false } } } },
+            { no: 5, name: "optional_expires_at", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<Relationship>): Relationship {
@@ -309,6 +317,9 @@ class Relationship$Type extends MessageType<Relationship> {
                 case /* authzed.api.v1.ContextualizedCaveat optional_caveat */ 4:
                     message.optionalCaveat = ContextualizedCaveat.internalBinaryRead(reader, reader.uint32(), options, message.optionalCaveat);
                     break;
+                case /* google.protobuf.Timestamp optional_expires_at */ 5:
+                    message.optionalExpiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.optionalExpiresAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -333,6 +344,9 @@ class Relationship$Type extends MessageType<Relationship> {
         /* authzed.api.v1.ContextualizedCaveat optional_caveat = 4; */
         if (message.optionalCaveat)
             ContextualizedCaveat.internalBinaryWrite(message.optionalCaveat, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Timestamp optional_expires_at = 5; */
+        if (message.optionalExpiresAt)
+            Timestamp.internalBinaryWrite(message.optionalExpiresAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
