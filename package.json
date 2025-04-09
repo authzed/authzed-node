@@ -38,7 +38,7 @@
     "build-js-client": "tsc --declaration false --outDir js-dist"
   },
   "dependencies": {
-    "@grpc/grpc-js": "~1.12.5",
+    "@grpc/grpc-js": "^1.13.0",
     "@protobuf-ts/runtime": "^2.9.6",
     "@protobuf-ts/runtime-rpc": "^2.9.6",
     "google-protobuf": "^3.21.4"
