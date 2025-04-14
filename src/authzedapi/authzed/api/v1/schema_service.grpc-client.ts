@@ -4,6 +4,14 @@
 import { SchemaService } from "./schema_service.js";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
+import type { DiffSchemaResponse } from "./schema_service.js";
+import type { DiffSchemaRequest } from "./schema_service.js";
+import type { DependentRelationsResponse } from "./schema_service.js";
+import type { DependentRelationsRequest } from "./schema_service.js";
+import type { ComputablePermissionsResponse } from "./schema_service.js";
+import type { ComputablePermissionsRequest } from "./schema_service.js";
+import type { ReflectSchemaResponse } from "./schema_service.js";
+import type { ReflectSchemaRequest } from "./schema_service.js";
 import type { WriteSchemaResponse } from "./schema_service.js";
 import type { WriteSchemaRequest } from "./schema_service.js";
 import type { ReadSchemaResponse } from "./schema_service.js";
@@ -37,6 +45,49 @@ export interface ISchemaServiceClient {
     writeSchema(input: WriteSchemaRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: WriteSchemaResponse) => void): grpc.ClientUnaryCall;
     writeSchema(input: WriteSchemaRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: WriteSchemaResponse) => void): grpc.ClientUnaryCall;
     writeSchema(input: WriteSchemaRequest, callback: (err: grpc.ServiceError | null, value?: WriteSchemaResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * ReflectSchema reflects the current schema stored in SpiceDB, returning a structural
+     * form of the schema for use by client tooling.
+     *
+     * @generated from protobuf rpc: ReflectSchema(authzed.api.v1.ReflectSchemaRequest) returns (authzed.api.v1.ReflectSchemaResponse);
+     */
+    reflectSchema(input: ReflectSchemaRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReflectSchemaResponse) => void): grpc.ClientUnaryCall;
+    reflectSchema(input: ReflectSchemaRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ReflectSchemaResponse) => void): grpc.ClientUnaryCall;
+    reflectSchema(input: ReflectSchemaRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ReflectSchemaResponse) => void): grpc.ClientUnaryCall;
+    reflectSchema(input: ReflectSchemaRequest, callback: (err: grpc.ServiceError | null, value?: ReflectSchemaResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * ComputablePermissions returns the set of permissions that compute based off a relation
+     * in the current schema. For example, if the schema has a relation `viewer` and a permission
+     * `view` defined as `permission view = viewer + editor`, then the
+     * computable permissions for the relation `viewer` will include `view`.
+     *
+     * @generated from protobuf rpc: ComputablePermissions(authzed.api.v1.ComputablePermissionsRequest) returns (authzed.api.v1.ComputablePermissionsResponse);
+     */
+    computablePermissions(input: ComputablePermissionsRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ComputablePermissionsResponse) => void): grpc.ClientUnaryCall;
+    computablePermissions(input: ComputablePermissionsRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: ComputablePermissionsResponse) => void): grpc.ClientUnaryCall;
+    computablePermissions(input: ComputablePermissionsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ComputablePermissionsResponse) => void): grpc.ClientUnaryCall;
+    computablePermissions(input: ComputablePermissionsRequest, callback: (err: grpc.ServiceError | null, value?: ComputablePermissionsResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * DependentRelations returns the set of relations and permissions that used
+     * to compute a permission, recursively, in the current schema. It is the
+     * inverse of the ComputablePermissions API.
+     *
+     * @generated from protobuf rpc: DependentRelations(authzed.api.v1.DependentRelationsRequest) returns (authzed.api.v1.DependentRelationsResponse);
+     */
+    dependentRelations(input: DependentRelationsRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DependentRelationsResponse) => void): grpc.ClientUnaryCall;
+    dependentRelations(input: DependentRelationsRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: DependentRelationsResponse) => void): grpc.ClientUnaryCall;
+    dependentRelations(input: DependentRelationsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DependentRelationsResponse) => void): grpc.ClientUnaryCall;
+    dependentRelations(input: DependentRelationsRequest, callback: (err: grpc.ServiceError | null, value?: DependentRelationsResponse) => void): grpc.ClientUnaryCall;
+    /**
+     * DiffSchema returns the difference between the specified schema and the current
+     * schema stored in SpiceDB.
+     *
+     * @generated from protobuf rpc: DiffSchema(authzed.api.v1.DiffSchemaRequest) returns (authzed.api.v1.DiffSchemaResponse);
+     */
+    diffSchema(input: DiffSchemaRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DiffSchemaResponse) => void): grpc.ClientUnaryCall;
+    diffSchema(input: DiffSchemaRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: DiffSchemaResponse) => void): grpc.ClientUnaryCall;
+    diffSchema(input: DiffSchemaRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DiffSchemaResponse) => void): grpc.ClientUnaryCall;
+    diffSchema(input: DiffSchemaRequest, callback: (err: grpc.ServiceError | null, value?: DiffSchemaResponse) => void): grpc.ClientUnaryCall;
 }
 /**
  * SchemaService implements operations on a Permissions System's Schema.
@@ -70,5 +121,48 @@ export class SchemaServiceClient extends grpc.Client implements ISchemaServiceCl
     writeSchema(input: WriteSchemaRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: WriteSchemaResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: WriteSchemaResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: WriteSchemaResponse) => void)): grpc.ClientUnaryCall {
         const method = SchemaService.methods[1];
         return this.makeUnaryRequest<WriteSchemaRequest, WriteSchemaResponse>(`/${SchemaService.typeName}/${method.name}`, (value: WriteSchemaRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): WriteSchemaResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * ReflectSchema reflects the current schema stored in SpiceDB, returning a structural
+     * form of the schema for use by client tooling.
+     *
+     * @generated from protobuf rpc: ReflectSchema(authzed.api.v1.ReflectSchemaRequest) returns (authzed.api.v1.ReflectSchemaResponse);
+     */
+    reflectSchema(input: ReflectSchemaRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReflectSchemaResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ReflectSchemaResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ReflectSchemaResponse) => void)): grpc.ClientUnaryCall {
+        const method = SchemaService.methods[2];
+        return this.makeUnaryRequest<ReflectSchemaRequest, ReflectSchemaResponse>(`/${SchemaService.typeName}/${method.name}`, (value: ReflectSchemaRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ReflectSchemaResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * ComputablePermissions returns the set of permissions that compute based off a relation
+     * in the current schema. For example, if the schema has a relation `viewer` and a permission
+     * `view` defined as `permission view = viewer + editor`, then the
+     * computable permissions for the relation `viewer` will include `view`.
+     *
+     * @generated from protobuf rpc: ComputablePermissions(authzed.api.v1.ComputablePermissionsRequest) returns (authzed.api.v1.ComputablePermissionsResponse);
+     */
+    computablePermissions(input: ComputablePermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ComputablePermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ComputablePermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ComputablePermissionsResponse) => void)): grpc.ClientUnaryCall {
+        const method = SchemaService.methods[3];
+        return this.makeUnaryRequest<ComputablePermissionsRequest, ComputablePermissionsResponse>(`/${SchemaService.typeName}/${method.name}`, (value: ComputablePermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ComputablePermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * DependentRelations returns the set of relations and permissions that used
+     * to compute a permission, recursively, in the current schema. It is the
+     * inverse of the ComputablePermissions API.
+     *
+     * @generated from protobuf rpc: DependentRelations(authzed.api.v1.DependentRelationsRequest) returns (authzed.api.v1.DependentRelationsResponse);
+     */
+    dependentRelations(input: DependentRelationsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DependentRelationsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DependentRelationsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DependentRelationsResponse) => void)): grpc.ClientUnaryCall {
+        const method = SchemaService.methods[4];
+        return this.makeUnaryRequest<DependentRelationsRequest, DependentRelationsResponse>(`/${SchemaService.typeName}/${method.name}`, (value: DependentRelationsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DependentRelationsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
+    }
+    /**
+     * DiffSchema returns the difference between the specified schema and the current
+     * schema stored in SpiceDB.
+     *
+     * @generated from protobuf rpc: DiffSchema(authzed.api.v1.DiffSchemaRequest) returns (authzed.api.v1.DiffSchemaResponse);
+     */
+    diffSchema(input: DiffSchemaRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DiffSchemaResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DiffSchemaResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DiffSchemaResponse) => void)): grpc.ClientUnaryCall {
+        const method = SchemaService.methods[5];
+        return this.makeUnaryRequest<DiffSchemaRequest, DiffSchemaResponse>(`/${SchemaService.typeName}/${method.name}`, (value: DiffSchemaRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DiffSchemaResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }

@@ -70,9 +70,9 @@ export interface IExperimentalServiceClient {
     bulkCheckPermission(input: BulkCheckPermissionRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: BulkCheckPermissionResponse) => void): grpc.ClientUnaryCall;
     bulkCheckPermission(input: BulkCheckPermissionRequest, callback: (err: grpc.ServiceError | null, value?: BulkCheckPermissionResponse) => void): grpc.ClientUnaryCall;
     /**
-     * EXPERIMENTAL: ReflectSchema is an API that allows clients to reflect the schema stored in
-     * SpiceDB. This is useful for clients that need to introspect the schema of a SpiceDB instance.
+     * DEPRECATED: Promoted to ReflectSchema in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: ExperimentalReflectSchema(authzed.api.v1.ExperimentalReflectSchemaRequest) returns (authzed.api.v1.ExperimentalReflectSchemaResponse);
      */
     experimentalReflectSchema(input: ExperimentalReflectSchemaRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalReflectSchemaResponse) => void): grpc.ClientUnaryCall;
@@ -80,11 +80,9 @@ export interface IExperimentalServiceClient {
     experimentalReflectSchema(input: ExperimentalReflectSchemaRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalReflectSchemaResponse) => void): grpc.ClientUnaryCall;
     experimentalReflectSchema(input: ExperimentalReflectSchemaRequest, callback: (err: grpc.ServiceError | null, value?: ExperimentalReflectSchemaResponse) => void): grpc.ClientUnaryCall;
     /**
-     * EXPERIMENTAL: ComputablePermissions is an API that allows clients to request the set of
-     * permissions that compute based off a relation. For example, if a schema has a relation
-     * `viewer` and a permission `view` defined as `permission view = viewer + editor`, then the
-     * computable permissions for the relation `viewer` will include `view`.
+     * DEPRECATED: Promoted to ComputablePermissions in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: ExperimentalComputablePermissions(authzed.api.v1.ExperimentalComputablePermissionsRequest) returns (authzed.api.v1.ExperimentalComputablePermissionsResponse);
      */
     experimentalComputablePermissions(input: ExperimentalComputablePermissionsRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalComputablePermissionsResponse) => void): grpc.ClientUnaryCall;
@@ -92,10 +90,9 @@ export interface IExperimentalServiceClient {
     experimentalComputablePermissions(input: ExperimentalComputablePermissionsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalComputablePermissionsResponse) => void): grpc.ClientUnaryCall;
     experimentalComputablePermissions(input: ExperimentalComputablePermissionsRequest, callback: (err: grpc.ServiceError | null, value?: ExperimentalComputablePermissionsResponse) => void): grpc.ClientUnaryCall;
     /**
-     * EXPERIMENTAL: DependentRelations is an API that allows clients to request the set of
-     * relations and permissions that used to compute a permission, recursively. It is the
-     * inverse of the ComputablePermissions API.
+     * DEPRECATED: Promoted to DependentRelations in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: ExperimentalDependentRelations(authzed.api.v1.ExperimentalDependentRelationsRequest) returns (authzed.api.v1.ExperimentalDependentRelationsResponse);
      */
     experimentalDependentRelations(input: ExperimentalDependentRelationsRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalDependentRelationsResponse) => void): grpc.ClientUnaryCall;
@@ -103,10 +100,9 @@ export interface IExperimentalServiceClient {
     experimentalDependentRelations(input: ExperimentalDependentRelationsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalDependentRelationsResponse) => void): grpc.ClientUnaryCall;
     experimentalDependentRelations(input: ExperimentalDependentRelationsRequest, callback: (err: grpc.ServiceError | null, value?: ExperimentalDependentRelationsResponse) => void): grpc.ClientUnaryCall;
     /**
-     * EXPERIMENTAL: DiffSchema is an API that allows clients to request the difference between the
-     * specified schema and the schema stored in SpiceDB. This is useful for clients that need to
-     * introspect the schema of a SpiceDB instance.
+     * DEPRECATED: Promoted to DiffSchema in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: ExperimentalDiffSchema(authzed.api.v1.ExperimentalDiffSchemaRequest) returns (authzed.api.v1.ExperimentalDiffSchemaResponse);
      */
     experimentalDiffSchema(input: ExperimentalDiffSchemaRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void): grpc.ClientUnaryCall;
@@ -194,9 +190,9 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
         return this.makeUnaryRequest<BulkCheckPermissionRequest, BulkCheckPermissionResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: BulkCheckPermissionRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): BulkCheckPermissionResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * EXPERIMENTAL: ReflectSchema is an API that allows clients to reflect the schema stored in
-     * SpiceDB. This is useful for clients that need to introspect the schema of a SpiceDB instance.
+     * DEPRECATED: Promoted to ReflectSchema in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: ExperimentalReflectSchema(authzed.api.v1.ExperimentalReflectSchemaRequest) returns (authzed.api.v1.ExperimentalReflectSchemaResponse);
      */
     experimentalReflectSchema(input: ExperimentalReflectSchemaRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalReflectSchemaResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalReflectSchemaResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ExperimentalReflectSchemaResponse) => void)): grpc.ClientUnaryCall {
@@ -204,11 +200,9 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
         return this.makeUnaryRequest<ExperimentalReflectSchemaRequest, ExperimentalReflectSchemaResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: ExperimentalReflectSchemaRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExperimentalReflectSchemaResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * EXPERIMENTAL: ComputablePermissions is an API that allows clients to request the set of
-     * permissions that compute based off a relation. For example, if a schema has a relation
-     * `viewer` and a permission `view` defined as `permission view = viewer + editor`, then the
-     * computable permissions for the relation `viewer` will include `view`.
+     * DEPRECATED: Promoted to ComputablePermissions in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: ExperimentalComputablePermissions(authzed.api.v1.ExperimentalComputablePermissionsRequest) returns (authzed.api.v1.ExperimentalComputablePermissionsResponse);
      */
     experimentalComputablePermissions(input: ExperimentalComputablePermissionsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalComputablePermissionsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalComputablePermissionsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ExperimentalComputablePermissionsResponse) => void)): grpc.ClientUnaryCall {
@@ -216,10 +210,9 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
         return this.makeUnaryRequest<ExperimentalComputablePermissionsRequest, ExperimentalComputablePermissionsResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: ExperimentalComputablePermissionsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExperimentalComputablePermissionsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * EXPERIMENTAL: DependentRelations is an API that allows clients to request the set of
-     * relations and permissions that used to compute a permission, recursively. It is the
-     * inverse of the ComputablePermissions API.
+     * DEPRECATED: Promoted to DependentRelations in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: ExperimentalDependentRelations(authzed.api.v1.ExperimentalDependentRelationsRequest) returns (authzed.api.v1.ExperimentalDependentRelationsResponse);
      */
     experimentalDependentRelations(input: ExperimentalDependentRelationsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalDependentRelationsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalDependentRelationsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ExperimentalDependentRelationsResponse) => void)): grpc.ClientUnaryCall {
@@ -227,10 +220,9 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
         return this.makeUnaryRequest<ExperimentalDependentRelationsRequest, ExperimentalDependentRelationsResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: ExperimentalDependentRelationsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): ExperimentalDependentRelationsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
     /**
-     * EXPERIMENTAL: DiffSchema is an API that allows clients to request the difference between the
-     * specified schema and the schema stored in SpiceDB. This is useful for clients that need to
-     * introspect the schema of a SpiceDB instance.
+     * DEPRECATED: Promoted to DiffSchema in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: ExperimentalDiffSchema(authzed.api.v1.ExperimentalDiffSchemaRequest) returns (authzed.api.v1.ExperimentalDiffSchemaResponse);
      */
     experimentalDiffSchema(input: ExperimentalDiffSchemaRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: ExperimentalDiffSchemaResponse) => void)): grpc.ClientUnaryCall {
