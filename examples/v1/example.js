@@ -1,8 +1,8 @@
 import { v1 } from '@authzed/authzed-node';
-const { promises: promiseClient } = client; // access client.promises
 // set up it on localhost like this:
 // const client = v1.NewClient('mytokenhere', 'localhost:50051', 1);
 const client = v1.NewClient('mytokenhere');
+const { promises: promiseClient } = client; // access client.promises after instantiating client
 
 const writeRequest = v1.WriteSchemaRequest.create({
   schema: `definition test/user {}
