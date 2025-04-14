@@ -1,7 +1,9 @@
 version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+    directories:
+      - "/" # Location of package manifests
+      - "js-dist"
     schedule:
       interval: "monthly"
     versioning-strategy: increase
