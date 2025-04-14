@@ -22,7 +22,7 @@
     "only-run-tests": "vitest"
   },
   "dependencies": {
-    "@grpc/grpc-js": "~1.12.5",
+    "@grpc/grpc-js": "~1.13.1",
     "google-protobuf": "^3.15.3"
   },
   "devDependencies": {
