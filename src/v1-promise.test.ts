@@ -144,18 +144,10 @@ describe("a check with an known namespace", () => {
     );
     expect(schemaResponse).toBeTruthy();
 
-    const response = await client.writeRelationships(
-      writeRequest,
-      new grpc.Metadata(),
-      {} as grpc.CallOptions,
-    );
+    const response = await client.writeRelationships(writeRequest);
     expect(response).toBeTruthy();
 
-    const checkResponse = await client.checkPermission(
-      checkPermissionRequest,
-      new grpc.Metadata(),
-      {} as grpc.CallOptions,
-    );
+    const checkResponse = await client.checkPermission(checkPermissionRequest);
     expect(checkResponse?.permissionship).toBe(
       CheckPermissionResponse_Permissionship.HAS_PERMISSION,
     );
@@ -164,7 +156,7 @@ describe("a check with an known namespace", () => {
   });
 
   describe("with caveated relations", () => {
-    it("should succeed", async () => {
+    it("should succeed when caveat context is provided by request", async () => {
       // Write some schema.
       const { promises: client } = NewClient(
         generateTestToken("v1-promise-caveats"),
@@ -223,11 +215,7 @@ describe("a check with an known namespace", () => {
         ],
       });
 
-      const response = await client.writeRelationships(
-        writeRequest,
-        new grpc.Metadata(),
-        {} as grpc.CallOptions,
-      );
+      const response = await client.writeRelationships(writeRequest);
       expect(response).toBeTruthy();
 
       // Call check when user has special attribute.
@@ -246,11 +234,7 @@ describe("a check with an known namespace", () => {
         context: Struct.fromJson({ special: true }),
       });
 
-      let checkResponse = await client.checkPermission(
-        checkPermissionRequest,
-        new grpc.Metadata(),
-        {} as grpc.CallOptions,
-      );
+      let checkResponse = await client.checkPermission(checkPermissionRequest);
       expect(checkResponse?.permissionship).toBe(
         CheckPermissionResponse_Permissionship.HAS_PERMISSION,
       );
@@ -271,11 +255,7 @@ describe("a check with an known namespace", () => {
         context: Struct.fromJson({ special: false }),
       });
 
-      checkResponse = await client.checkPermission(
-        checkPermissionRequest,
-        new grpc.Metadata(),
-        {} as grpc.CallOptions,
-      );
+      checkResponse = await client.checkPermission(checkPermissionRequest);
       expect(checkResponse?.permissionship).toBe(
         CheckPermissionResponse_Permissionship.NO_PERMISSION,
       );
@@ -296,13 +276,94 @@ describe("a check with an known namespace", () => {
         context: {},
       });
 
-      checkResponse = await client.checkPermission(
-        checkPermissionRequest,
-        new grpc.Metadata(),
-        {} as grpc.CallOptions,
-      );
+      checkResponse = await client.checkPermission(checkPermissionRequest);
       expect(checkResponse?.permissionship).toBe(
         CheckPermissionResponse_Permissionship.CONDITIONAL_PERMISSION,
+      );
+
+      client.close();
+    });
+    it("should succeed when caveat context is provided by relation", async () => {
+      // Write some schema.
+      const { promises: client } = NewClient(
+        generateTestToken("v1-promise-caveats"),
+        "localhost:50051",
+        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+      );
+
+      const schemaRequest = WriteSchemaRequest.create({
+        schema: `definition test/user {}
+
+          caveat has_special_attribute(special bool) {
+            special == true
+          }
+
+          definition test/document {
+            relation viewer: test/user
+            relation caveated_viewer: test/user with has_special_attribute
+            permission view = viewer + caveated_viewer
+          }
+      `,
+      });
+
+      const schemaResponse = await client.writeSchema(schemaRequest);
+      expect(schemaResponse).toBeTruthy();
+
+      // Write a relationship.
+      const resource = ObjectReference.create({
+        objectType: "test/document",
+        objectId: "somedocument",
+      });
+
+      const testUser = ObjectReference.create({
+        objectType: "test/user",
+        objectId: "specialuser",
+      });
+
+      const writeRequest = WriteRelationshipsRequest.create({
+        updates: [
+          RelationshipUpdate.create({
+            relationship: Relationship.create({
+              resource: resource,
+              relation: "caveated_viewer",
+              subject: SubjectReference.create({
+                object: testUser,
+              }),
+              optionalCaveat: ContextualizedCaveat.create({
+                caveatName: "has_special_attribute",
+                context: Struct.fromJson({
+                  special: true,
+                }),
+              }),
+            }),
+            operation: RelationshipUpdate_Operation.CREATE,
+          }),
+        ],
+      });
+
+      const response = await client.writeRelationships(writeRequest);
+      expect(response).toBeTruthy();
+
+      // Call check when user has special attribute.
+      const checkPermissionRequest = CheckPermissionRequest.create({
+        resource,
+        permission: "view",
+        subject: SubjectReference.create({
+          object: testUser,
+        }),
+        consistency: Consistency.create({
+          requirement: {
+            oneofKind: "fullyConsistent",
+            fullyConsistent: true,
+          },
+        }),
+      });
+
+      const checkResponse = await client.checkPermission(
+        checkPermissionRequest,
+      );
+      expect(checkResponse?.permissionship).toBe(
+        CheckPermissionResponse_Permissionship.HAS_PERMISSION,
       );
 
       client.close();

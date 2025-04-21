@@ -36,6 +36,7 @@
     "only-run-tests": "vitest",
     "buf": "buf generate && tsc-esm-fix --src src/authzedapi --ext='.js'",
     "lint": "./node_modules/.bin/eslint src",
+    "format": "prettier -w src",
     "build": "tsc",
     "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs && cp dist/src/index.d.ts dist/src/index.d.cts",
     "prepublish": "yarn build",
