@@ -21,6 +21,7 @@ import {
   WriteSchemaRequest,
 } from "./v1.js";
 import { describe, it, expect, beforeEach } from "vitest";
+import { PreconnectServices } from "./util.js";
 
 describe("a check with an unknown namespace", () => {
   it("should raise a failed precondition", async () => {
@@ -622,5 +623,31 @@ describe("Experimental Service", () => {
     ]);
 
     client.close();
+  });
+  describe("load balancing configuration", () => {
+    it("can use round-robin load balancing", async () => {
+      const { promises: client } = NewClient(
+        generateTestToken("v1-promise-namespace"),
+        "localhost:50051",
+        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+        PreconnectServices.SCHEMA_SERVICE,
+        {
+          "grpc.service_config": JSON.stringify({
+            loadBalancingConfig: [{ round_robin: {} }],
+          }),
+        },
+      );
+
+      const schemaResponse = await client.writeSchema({
+        schema: `definition test/user {}
+
+    definition test/document {
+      relation viewer: test/user
+      permission view = viewer
+    }
+    `,
+      });
+      expect(schemaResponse).toBeTruthy();
+    });
   });
 });
