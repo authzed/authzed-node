@@ -1,6 +1,6 @@
-import * as grpc from '@grpc/grpc-js';
-import { generateTestToken } from './__utils__/helpers.js';
-import { Struct } from './authzedapi/google/protobuf/struct.js';
+import * as grpc from "@grpc/grpc-js";
+import { generateTestToken } from "./__utils__/helpers.js";
+import { Struct } from "./authzedapi/google/protobuf/struct.js";
 import {
   BulkExportRelationshipsRequest,
   BulkImportRelationshipsRequest,
@@ -19,47 +19,47 @@ import {
   SubjectReference,
   WriteRelationshipsRequest,
   WriteSchemaRequest,
-} from './v1.js';
-import { describe, it, expect, beforeEach } from 'vitest'
+} from "./v1.js";
+import { describe, it, expect, beforeEach } from "vitest";
 
-describe('a check with an unknown namespace', () => {
-  it('should raise a failed precondition', async () => {
+describe("a check with an unknown namespace", () => {
+  it("should raise a failed precondition", async () => {
     const resource = ObjectReference.create({
-      objectType: 'test/somenamespace',
-      objectId: 'bar',
+      objectType: "test/somenamespace",
+      objectId: "bar",
     });
 
     const testUser = ObjectReference.create({
-      objectType: 'test/user',
-      objectId: 'someuser',
+      objectType: "test/user",
+      objectId: "someuser",
     });
 
     const checkPermissionRequest = CheckPermissionRequest.create({
       resource,
-      permission: 'someperm',
+      permission: "someperm",
       subject: SubjectReference.create({
         object: testUser,
       }),
     });
 
     const { promises: client } = NewClient(
-      generateTestToken('v1-promise-test-unknown'),
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      generateTestToken("v1-promise-test-unknown"),
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
     try {
       await client.checkPermission(checkPermissionRequest);
-      throw new Error('Error should be thrown');
+      throw new Error("Error should be thrown");
     } catch (err) {
       expect((err as grpc.ServiceError)?.code).toBe(
-        grpc.status.FAILED_PRECONDITION
+        grpc.status.FAILED_PRECONDITION,
       );
       client.close();
     }
   });
 });
 
-describe('a check with an known namespace', () => {
+describe("a check with an known namespace", () => {
   const schemaRequest = WriteSchemaRequest.create({
     schema: `definition test/user {}
 
@@ -71,13 +71,13 @@ describe('a check with an known namespace', () => {
   });
 
   const resource = ObjectReference.create({
-    objectType: 'test/document',
-    objectId: 'somedocument',
+    objectType: "test/document",
+    objectId: "somedocument",
   });
 
   const testUser = ObjectReference.create({
-    objectType: 'test/user',
-    objectId: 'someuser',
+    objectType: "test/user",
+    objectId: "someuser",
   });
 
   const writeRequest = WriteRelationshipsRequest.create({
@@ -85,7 +85,7 @@ describe('a check with an known namespace', () => {
       RelationshipUpdate.create({
         relationship: Relationship.create({
           resource: resource,
-          relation: 'viewer',
+          relation: "viewer",
           subject: SubjectReference.create({
             object: testUser,
           }),
@@ -97,23 +97,23 @@ describe('a check with an known namespace', () => {
 
   const checkPermissionRequest = CheckPermissionRequest.create({
     resource,
-    permission: 'view',
+    permission: "view",
     subject: SubjectReference.create({
       object: testUser,
     }),
     consistency: Consistency.create({
       requirement: {
-        oneofKind: 'fullyConsistent',
+        oneofKind: "fullyConsistent",
         fullyConsistent: true,
       },
     }),
   });
 
-  it('should succeed', async () => {
+  it("should succeed", async () => {
     const { promises: client } = NewClient(
-      generateTestToken('v1-promise-namespace'),
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      generateTestToken("v1-promise-namespace"),
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const schemaResponse = await client.writeSchema(schemaRequest);
@@ -124,52 +124,52 @@ describe('a check with an known namespace', () => {
 
     const checkResponse = await client.checkPermission(checkPermissionRequest);
     expect(checkResponse?.permissionship).toBe(
-      CheckPermissionResponse_Permissionship.HAS_PERMISSION
+      CheckPermissionResponse_Permissionship.HAS_PERMISSION,
     );
 
     client.close();
   });
 
-  it('should succeed with full signatures', async () => {
+  it("should succeed with full signatures", async () => {
     const { promises: client } = NewClient(
-      generateTestToken('v1-promise-namespace'),
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      generateTestToken("v1-promise-namespace"),
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const schemaResponse = await client.writeSchema(
       schemaRequest,
       new grpc.Metadata(),
-      {} as grpc.CallOptions
+      {} as grpc.CallOptions,
     );
     expect(schemaResponse).toBeTruthy();
 
     const response = await client.writeRelationships(
       writeRequest,
       new grpc.Metadata(),
-      {} as grpc.CallOptions
+      {} as grpc.CallOptions,
     );
     expect(response).toBeTruthy();
 
     const checkResponse = await client.checkPermission(
       checkPermissionRequest,
       new grpc.Metadata(),
-      {} as grpc.CallOptions
+      {} as grpc.CallOptions,
     );
     expect(checkResponse?.permissionship).toBe(
-      CheckPermissionResponse_Permissionship.HAS_PERMISSION
+      CheckPermissionResponse_Permissionship.HAS_PERMISSION,
     );
 
     client.close();
   });
 
-  describe('with caveated relations', () => {
-    it('should succeed', async () => {
+  describe("with caveated relations", () => {
+    it("should succeed", async () => {
       // Write some schema.
       const { promises: client } = NewClient(
-        generateTestToken('v1-promise-caveats'),
-        'localhost:50051',
-        ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+        generateTestToken("v1-promise-caveats"),
+        "localhost:50051",
+        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
       );
 
       const schemaRequest = WriteSchemaRequest.create({
@@ -190,19 +190,19 @@ describe('a check with an known namespace', () => {
       const schemaResponse = await client.writeSchema(
         schemaRequest,
         new grpc.Metadata(),
-        {} as grpc.CallOptions
+        {} as grpc.CallOptions,
       );
       expect(schemaResponse).toBeTruthy();
 
       // Write a relationship.
       const resource = ObjectReference.create({
-        objectType: 'test/document',
-        objectId: 'somedocument',
+        objectType: "test/document",
+        objectId: "somedocument",
       });
 
       const testUser = ObjectReference.create({
-        objectType: 'test/user',
-        objectId: 'specialuser',
+        objectType: "test/user",
+        objectId: "specialuser",
       });
 
       const writeRequest = WriteRelationshipsRequest.create({
@@ -210,12 +210,12 @@ describe('a check with an known namespace', () => {
           RelationshipUpdate.create({
             relationship: Relationship.create({
               resource: resource,
-              relation: 'caveated_viewer',
+              relation: "caveated_viewer",
               subject: SubjectReference.create({
                 object: testUser,
               }),
               optionalCaveat: ContextualizedCaveat.create({
-                caveatName: 'has_special_attribute',
+                caveatName: "has_special_attribute",
               }),
             }),
             operation: RelationshipUpdate_Operation.CREATE,
@@ -226,20 +226,20 @@ describe('a check with an known namespace', () => {
       const response = await client.writeRelationships(
         writeRequest,
         new grpc.Metadata(),
-        {} as grpc.CallOptions
+        {} as grpc.CallOptions,
       );
       expect(response).toBeTruthy();
 
       // Call check when user has special attribute.
       let checkPermissionRequest = CheckPermissionRequest.create({
         resource,
-        permission: 'view',
+        permission: "view",
         subject: SubjectReference.create({
           object: testUser,
         }),
         consistency: Consistency.create({
           requirement: {
-            oneofKind: 'fullyConsistent',
+            oneofKind: "fullyConsistent",
             fullyConsistent: true,
           },
         }),
@@ -249,22 +249,22 @@ describe('a check with an known namespace', () => {
       let checkResponse = await client.checkPermission(
         checkPermissionRequest,
         new grpc.Metadata(),
-        {} as grpc.CallOptions
+        {} as grpc.CallOptions,
       );
       expect(checkResponse?.permissionship).toBe(
-        CheckPermissionResponse_Permissionship.HAS_PERMISSION
+        CheckPermissionResponse_Permissionship.HAS_PERMISSION,
       );
 
       // Call check when user does not have the special attribute.
       checkPermissionRequest = CheckPermissionRequest.create({
         resource,
-        permission: 'view',
+        permission: "view",
         subject: SubjectReference.create({
           object: testUser,
         }),
         consistency: Consistency.create({
           requirement: {
-            oneofKind: 'fullyConsistent',
+            oneofKind: "fullyConsistent",
             fullyConsistent: true,
           },
         }),
@@ -274,22 +274,22 @@ describe('a check with an known namespace', () => {
       checkResponse = await client.checkPermission(
         checkPermissionRequest,
         new grpc.Metadata(),
-        {} as grpc.CallOptions
+        {} as grpc.CallOptions,
       );
       expect(checkResponse?.permissionship).toBe(
-        CheckPermissionResponse_Permissionship.NO_PERMISSION
+        CheckPermissionResponse_Permissionship.NO_PERMISSION,
       );
 
       // Call check when user's special attribute is unspecified.
       checkPermissionRequest = CheckPermissionRequest.create({
         resource,
-        permission: 'view',
+        permission: "view",
         subject: SubjectReference.create({
           object: testUser,
         }),
         consistency: Consistency.create({
           requirement: {
-            oneofKind: 'fullyConsistent',
+            oneofKind: "fullyConsistent",
             fullyConsistent: true,
           },
         }),
@@ -299,10 +299,10 @@ describe('a check with an known namespace', () => {
       checkResponse = await client.checkPermission(
         checkPermissionRequest,
         new grpc.Metadata(),
-        {} as grpc.CallOptions
+        {} as grpc.CallOptions,
       );
       expect(checkResponse?.permissionship).toBe(
-        CheckPermissionResponse_Permissionship.CONDITIONAL_PERMISSION
+        CheckPermissionResponse_Permissionship.CONDITIONAL_PERMISSION,
       );
 
       client.close();
@@ -310,19 +310,19 @@ describe('a check with an known namespace', () => {
   });
 });
 
-describe('Lookup APIs', () => {
+describe("Lookup APIs", () => {
   let token: string;
 
   const lookupSubjectRequest = LookupSubjectsRequest.create({
     resource: ObjectReference.create({
-      objectType: 'test/document',
-      objectId: 'somedocument',
+      objectType: "test/document",
+      objectId: "somedocument",
     }),
-    permission: 'view',
-    subjectObjectType: 'test/user',
+    permission: "view",
+    subjectObjectType: "test/user",
     consistency: Consistency.create({
       requirement: {
-        oneofKind: 'fullyConsistent',
+        oneofKind: "fullyConsistent",
         fullyConsistent: true,
       },
     }),
@@ -331,26 +331,26 @@ describe('Lookup APIs', () => {
   const lookupResourceRequest = LookupResourcesRequest.create({
     subject: SubjectReference.create({
       object: ObjectReference.create({
-        objectType: 'test/user',
-        objectId: 'someuser',
+        objectType: "test/user",
+        objectId: "someuser",
       }),
     }),
-    permission: 'view',
-    resourceObjectType: 'test/document',
+    permission: "view",
+    resourceObjectType: "test/document",
     consistency: Consistency.create({
       requirement: {
-        oneofKind: 'fullyConsistent',
+        oneofKind: "fullyConsistent",
         fullyConsistent: true,
       },
     }),
   });
 
   beforeEach(async () => {
-    token = generateTestToken('v1-promise-lookup');
+    token = generateTestToken("v1-promise-lookup");
     const { promises: client } = NewClient(
       token,
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const request = WriteSchemaRequest.create({
@@ -366,8 +366,8 @@ describe('Lookup APIs', () => {
     await client.writeSchema(request);
 
     const resource = ObjectReference.create({
-      objectType: 'test/document',
-      objectId: 'somedocument',
+      objectType: "test/document",
+      objectId: "somedocument",
     });
 
     const writeRequest = WriteRelationshipsRequest.create({
@@ -375,11 +375,11 @@ describe('Lookup APIs', () => {
         RelationshipUpdate.create({
           relationship: Relationship.create({
             resource: resource,
-            relation: 'viewer',
+            relation: "viewer",
             subject: SubjectReference.create({
               object: ObjectReference.create({
-                objectType: 'test/user',
-                objectId: 'someuser',
+                objectType: "test/user",
+                objectId: "someuser",
               }),
             }),
           }),
@@ -388,11 +388,11 @@ describe('Lookup APIs', () => {
         RelationshipUpdate.create({
           relationship: Relationship.create({
             resource: resource,
-            relation: 'viewer',
+            relation: "viewer",
             subject: SubjectReference.create({
               object: ObjectReference.create({
-                objectType: 'test/user',
-                objectId: 'someuser2',
+                objectType: "test/user",
+                objectId: "someuser2",
               }),
             }),
           }),
@@ -405,65 +405,69 @@ describe('Lookup APIs', () => {
     client.close();
   });
 
-  it('can lookup subjects', async () => {
+  it("can lookup subjects", async () => {
     const { promises: client } = NewClient(
       token,
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const result = await client.lookupSubjects(lookupSubjectRequest);
-    expect(['someuser', 'someuser2']).toContain(result[0].subject?.subjectObjectId);
+    expect(["someuser", "someuser2"]).toContain(
+      result[0].subject?.subjectObjectId,
+    );
     client.close();
   });
 
-  it('can lookup resources', async () => {
+  it("can lookup resources", async () => {
     const { promises: client } = NewClient(
       token,
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const resStream = await client.lookupResources(lookupResourceRequest);
-    expect(resStream[0].resourceObjectId).toEqual('somedocument');
+    expect(resStream[0].resourceObjectId).toEqual("somedocument");
 
     client.close();
   });
 
-  it('can lookup using full signatures', async () => {
+  it("can lookup using full signatures", async () => {
     const { promises: client } = NewClient(
       token,
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const result = await client.lookupSubjects(
       lookupSubjectRequest,
       new grpc.Metadata(),
-      {} as grpc.CallOptions
+      {} as grpc.CallOptions,
     );
-    expect(['someuser', 'someuser2']).toContain(result[0].subject?.subjectObjectId);
+    expect(["someuser", "someuser2"]).toContain(
+      result[0].subject?.subjectObjectId,
+    );
 
     const resStream = await client.lookupResources(
       lookupResourceRequest,
       new grpc.Metadata(),
-      {} as grpc.CallOptions
+      {} as grpc.CallOptions,
     );
-    expect(resStream[0].resourceObjectId).toEqual('somedocument');
+    expect(resStream[0].resourceObjectId).toEqual("somedocument");
 
     client.close();
   });
 });
 
-describe('Experimental Service', () => {
+describe("Experimental Service", () => {
   let token: string;
 
   beforeEach(async () => {
-    token = generateTestToken('v1-experimental-service');
+    token = generateTestToken("v1-experimental-service");
     const { promises: client } = NewClient(
       token,
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const request = WriteSchemaRequest.create({
@@ -480,71 +484,72 @@ describe('Experimental Service', () => {
     client.close();
   });
 
-  it('can bulk import relationships', () => new Promise<void>((done, fail) => {
-    const { promises: client } = NewClient(
-      token,
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
-    );
+  it("can bulk import relationships", () =>
+    new Promise<void>((done, fail) => {
+      const { promises: client } = NewClient(
+        token,
+        "localhost:50051",
+        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+      );
 
-    const writeStream = client.bulkImportRelationships((err, value) => {
-      if (err) {
-        fail(err);
-      }
+      const writeStream = client.bulkImportRelationships((err, value) => {
+        if (err) {
+          fail(err);
+        }
 
-      expect(value?.numLoaded).toEqual('2');
-      client.close();
-      done();
-    });
+        expect(value?.numLoaded).toEqual("2");
+        client.close();
+        done();
+      });
 
-    writeStream.on('error', (e) => {
-      fail(e);
-    });
+      writeStream.on("error", (e) => {
+        fail(e);
+      });
 
-    const resource = ObjectReference.create({
-      objectType: 'test/document',
-      objectId: 'somedocument',
-    });
-    writeStream.write(
-      BulkImportRelationshipsRequest.create({
-        relationships: [
-          Relationship.create({
-            resource: resource,
-            relation: 'viewer',
-            subject: SubjectReference.create({
-              object: ObjectReference.create({
-                objectType: 'test/user',
-                objectId: 'someuser',
+      const resource = ObjectReference.create({
+        objectType: "test/document",
+        objectId: "somedocument",
+      });
+      writeStream.write(
+        BulkImportRelationshipsRequest.create({
+          relationships: [
+            Relationship.create({
+              resource: resource,
+              relation: "viewer",
+              subject: SubjectReference.create({
+                object: ObjectReference.create({
+                  objectType: "test/user",
+                  objectId: "someuser",
+                }),
               }),
             }),
-          }),
-          Relationship.create({
-            resource: resource,
-            relation: 'viewer',
-            subject: SubjectReference.create({
-              object: ObjectReference.create({
-                objectType: 'test/user',
-                objectId: 'someuser2',
+            Relationship.create({
+              resource: resource,
+              relation: "viewer",
+              subject: SubjectReference.create({
+                object: ObjectReference.create({
+                  objectType: "test/user",
+                  objectId: "someuser2",
+                }),
               }),
             }),
-          }),
-        ],
-      })
-    );
+          ],
+        }),
+      );
 
-    writeStream.end();
-  }));
+      writeStream.end();
+    }));
 
-  it('can bulk export relationships', async () => {
+  it("can bulk export relationships", async () => {
     const { promises: client } = NewClient(
       token,
-      'localhost:50051',
-      ClientSecurity.INSECURE_LOCALHOST_ALLOWED
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
     );
 
     const resource = ObjectReference.create({
-      objectType: 'test/document',
-      objectId: 'somedocument',
+      objectType: "test/document",
+      objectId: "somedocument",
     });
 
     const writeRequest = WriteRelationshipsRequest.create({
@@ -552,11 +557,11 @@ describe('Experimental Service', () => {
         RelationshipUpdate.create({
           relationship: Relationship.create({
             resource: resource,
-            relation: 'viewer',
+            relation: "viewer",
             subject: SubjectReference.create({
               object: ObjectReference.create({
-                objectType: 'test/user',
-                objectId: 'someuser',
+                objectType: "test/user",
+                objectId: "someuser",
               }),
             }),
           }),
@@ -565,11 +570,11 @@ describe('Experimental Service', () => {
         RelationshipUpdate.create({
           relationship: Relationship.create({
             resource: resource,
-            relation: 'viewer',
+            relation: "viewer",
             subject: SubjectReference.create({
               object: ObjectReference.create({
-                objectType: 'test/user',
-                objectId: 'someuser2',
+                objectType: "test/user",
+                objectId: "someuser2",
               }),
             }),
           }),
@@ -584,34 +589,34 @@ describe('Experimental Service', () => {
       BulkExportRelationshipsRequest.create({
         consistency: Consistency.create({
           requirement: {
-            oneofKind: 'fullyConsistent',
+            oneofKind: "fullyConsistent",
             fullyConsistent: true,
           },
         }),
-      })
+      }),
     );
 
     expect(resStream[0].relationships).toEqual([
       {
-        relation: 'viewer',
+        relation: "viewer",
         resource: {
-          objectType: 'test/document',
-          objectId: 'somedocument',
+          objectType: "test/document",
+          objectId: "somedocument",
         },
         subject: {
-          optionalRelation: '',
-          object: { objectType: 'test/user', objectId: 'someuser' },
+          optionalRelation: "",
+          object: { objectType: "test/user", objectId: "someuser" },
         },
       },
       {
-        relation: 'viewer',
+        relation: "viewer",
         resource: {
-          objectType: 'test/document',
-          objectId: 'somedocument',
+          objectType: "test/document",
+          objectId: "somedocument",
         },
         subject: {
-          optionalRelation: '',
-          object: { objectType: 'test/user', objectId: 'someuser2' },
+          optionalRelation: "",
+          object: { objectType: "test/user", objectId: "someuser2" },
         },
       },
     ]);

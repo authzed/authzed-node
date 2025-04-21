@@ -9,7 +9,7 @@ import { GrpcUri } from "@grpc/grpc-js/build/src/uri-parser.js";
 class ComposedChannelCredentials extends grpc.ChannelCredentials {
   constructor(
     private channelCredentials: KnownInsecureChannelCredentialsImpl,
-    private callCreds: grpc.CallCredentials
+    private callCreds: grpc.CallCredentials,
   ) {
     super();
     // NOTE: leaving this here to show what changed from the upstream.
@@ -20,11 +20,10 @@ class ComposedChannelCredentials extends grpc.ChannelCredentials {
     */
   }
   compose(callCredentials: grpc.CallCredentials) {
-    const combinedCallCredentials =
-      this.callCreds.compose(callCredentials);
+    const combinedCallCredentials = this.callCreds.compose(callCredentials);
     return new ComposedChannelCredentials(
       this.channelCredentials,
-      combinedCallCredentials
+      combinedCallCredentials,
     );
   }
   _isSecure(): boolean {
@@ -35,7 +34,7 @@ class ComposedChannelCredentials extends grpc.ChannelCredentials {
   _createSecureConnector(
     channelTarget: GrpcUri,
     options: grpc.ChannelOptions,
-    callCredentials?: grpc.CallCredentials
+    callCredentials?: grpc.CallCredentials,
   ): SecureConnector {
     return {
       connect: async (socket: net.Socket) => {
@@ -43,7 +42,7 @@ class ComposedChannelCredentials extends grpc.ChannelCredentials {
       },
       waitForReady: async () => {},
       getCallCredentials: () => callCredentials || this.callCreds,
-      destroy: () => {}
+      destroy: () => {},
     };
   }
 
@@ -65,7 +64,6 @@ class ComposedChannelCredentials extends grpc.ChannelCredentials {
 // Create our own known insecure channel creds.
 // See https://github.com/grpc/grpc-node/issues/543 for why this is necessary.
 class KnownInsecureChannelCredentialsImpl extends grpc.ChannelCredentials {
-
   compose(callCredentials: grpc.CallCredentials): grpc.ChannelCredentials {
     return new ComposedChannelCredentials(this, callCredentials);
   }
@@ -77,10 +75,10 @@ class KnownInsecureChannelCredentialsImpl extends grpc.ChannelCredentials {
     return other instanceof KnownInsecureChannelCredentialsImpl;
   }
 
-   _createSecureConnector(
+  _createSecureConnector(
     channelTarget: GrpcUri,
     options: grpc.ChannelOptions,
-    callCredentials: grpc.CallCredentials
+    callCredentials: grpc.CallCredentials,
   ): SecureConnector {
     return {
       connect: async (socket: net.Socket) => {
@@ -88,7 +86,7 @@ class KnownInsecureChannelCredentialsImpl extends grpc.ChannelCredentials {
       },
       waitForReady: async () => {},
       getCallCredentials: () => callCredentials,
-      destroy: () => {}
+      destroy: () => {},
     };
   }
 }
@@ -110,10 +108,10 @@ export enum PreconnectServices {
 function createClientCreds(
   endpoint: string,
   token: string,
-  security: ClientSecurity = ClientSecurity.SECURE
+  security: ClientSecurity = ClientSecurity.SECURE,
 ): grpc.ChannelCredentials {
   const metadata = new grpc.Metadata();
-  metadata.set('authorization', 'Bearer ' + token);
+  metadata.set("authorization", "Bearer " + token);
 
   const creds = [];
 
@@ -121,12 +119,12 @@ function createClientCreds(
     security === ClientSecurity.SECURE ||
     security === ClientSecurity.INSECURE_PLAINTEXT_CREDENTIALS ||
     (security === ClientSecurity.INSECURE_LOCALHOST_ALLOWED &&
-      endpoint.startsWith('localhost:'))
+      endpoint.startsWith("localhost:"))
   ) {
     creds.push(
       grpc.credentials.createFromMetadataGenerator((_, callback) => {
         callback(null, metadata);
-      })
+      }),
     );
   }
 
@@ -134,52 +132,52 @@ function createClientCreds(
     security === ClientSecurity.SECURE
       ? grpc.credentials.createSsl()
       : new KnownInsecureChannelCredentialsImpl(),
-    ...creds
+    ...creds,
   );
 }
 
 function createClientCredsWithCustomCert(
   token: string,
-  certificate: Buffer
+  certificate: Buffer,
 ): grpc.ChannelCredentials {
   const metadata = new grpc.Metadata();
-  metadata.set('authorization', 'Bearer ' + token);
+  metadata.set("authorization", "Bearer " + token);
 
   const creds = [];
 
   creds.push(
     grpc.credentials.createFromMetadataGenerator((_, callback) => {
       callback(null, metadata);
-    })
+    }),
   );
 
   return grpc.credentials.combineChannelCredentials(
     grpc.credentials.createSsl(certificate),
-    ...creds
+    ...creds,
   );
 }
 
 function promisifyStream<P1, P2, P3>(
   fn: (req: P1) => grpc.ClientReadableStream<P2>,
-  bind: P3
+  bind: P3,
 ): (req: P1) => Promise<P2[]> {
   return (req: P1) => {
     return new Promise((resolve, reject) => {
       const results: P2[] = [];
       const stream = fn.bind(bind)(req);
-      stream.on('data', function (response: P2) {
+      stream.on("data", function (response: P2) {
         results.push(response);
       });
 
-      stream.on('error', function (e) {
+      stream.on("error", function (e) {
         return reject(e);
       });
 
-      stream.on('end', function () {
+      stream.on("end", function () {
         return resolve(results);
       });
 
-      stream.on('status', function (status) {
+      stream.on("status", function (status) {
         if (status.code !== grpc.status.OK) {
           return reject(status);
         }

@@ -6,7 +6,7 @@ import {
   ClientWritableStream,
   Metadata,
   ServiceError,
-} from '@grpc/grpc-js';
+} from "@grpc/grpc-js";
 
 /**
  * Picks all function properties of a type that except for those with a specific return type
@@ -37,7 +37,7 @@ export type OmitBaseMethods<C extends B, B> = {
 export type StreamCall<T, U> = (
   request: T,
   metadata?: Metadata | CallOptions,
-  options?: CallOptions
+  options?: CallOptions,
 ) => ClientReadableStream<U>;
 
 /**
@@ -54,8 +54,8 @@ export type WritableStreamCall<T, U> = (
     | undefined,
   callback?: (
     err: ServiceError | null,
-    value?: U | undefined
-  ) => void | undefined
+    value?: U | undefined,
+  ) => void | undefined,
 ) => ClientWritableStream<T>;
 
 /**
@@ -65,7 +65,7 @@ export type UnaryCall<T, U> = (
   request: T,
   metadata: Metadata | CallOptions,
   options: Partial<CallOptions>,
-  callback: (err: ServiceError | null, res?: U) => void
+  callback: (err: ServiceError | null, res?: U) => void,
 ) => ClientUnaryCall;
 
 /**
@@ -74,7 +74,7 @@ export type UnaryCall<T, U> = (
 export type PromisifiedCall<T, U> = (
   request: T,
   metadata?: Metadata,
-  options?: Partial<CallOptions>
+  options?: Partial<CallOptions>,
 ) => Promise<U>;
 
 /**

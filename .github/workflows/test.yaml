@@ -47,9 +47,11 @@ jobs:
         with:
           useLockFile: false
       - name: Run lint
-        run: CI=true yarn lint
+        run: "CI=true yarn lint"
+      - name: Run prettier
+        run: "CI=true yarn run prettier src -c"
       - name: Run Yarn tests
-        run: CI=true yarn only-run-tests
+        run: "CI=true yarn only-run-tests"
   build-js-client:
     name: Build and Test JS client
     runs-on: "depot-ubuntu-24.04-small"
