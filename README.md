@@ -140,6 +140,43 @@ const results = await promiseClient.readRelationships(/** req **/);
 console.log(results[0]); // first ReadRelationship result
 ```
 
+## Writing Caveats
+
+When writing caveat context to a relation, we've observed that you need to use
+the `Struct` object bundled with `authzed-node`, rather than importing it from
+the `google-protobuf` package. If you don't use the `authzed-node` version,
+writing context will fail silently and the relations won't reflect the context.
+
+An example:
+
+```js
+import { protobuf } from '@authzed/authzed-node';
+const { Struct } = protobuf;
+
+const writeRequest = WriteRelationshipsRequest.create({
+updates: [
+  RelationshipUpdate.create({
+    relationship: Relationship.create({
+      resource: resource,
+      relation: "caveated_viewer",
+      subject: SubjectReference.create({
+        object: testUser,
+      }),
+      optionalCaveat: ContextualizedCaveat.create({
+        caveatName: "has_special_attribute",
+        context: Struct.fromJson({
+          special: true,
+        }),
+      }),
+    }),
+    operation: RelationshipUpdate_Operation.CREATE,
+  }),
+],
+});
+
+const response = await client.writeRelationships(writeRequest);
+```
+
 ## Requirements
 
 Supported Node.js versions: 18, 20, 22
