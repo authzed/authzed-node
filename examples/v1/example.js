@@ -1,6 +1,6 @@
 import { v1 } from '@authzed/authzed-node';
 // set up it on localhost like this:
-// const client = v1.NewClient('mytokenhere', 'localhost:50051', 1);
+// const client = v1.NewClient('mytokenhere', 'localhost:50051', v1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
 const client = v1.NewClient('mytokenhere');
 const { promises: promiseClient } = client; // access client.promises after instantiating client
 
