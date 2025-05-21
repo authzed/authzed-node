@@ -19,7 +19,7 @@ import {
   LookupSubjectsResponse,
   NewClient,
   ObjectReference,
-PermissionsServiceClient,
+  PermissionsServiceClient,
   Relationship,
   RelationshipUpdate,
   RelationshipUpdate_Operation,
@@ -686,104 +686,118 @@ describe("Experimental Service", () => {
       });
     }));
 
-describe("WriteRelationships with transaction metadata (Integration Test)", () => {
-  it("should successfully write relationships with metadata and verify metadata transmission", () =>
-    new Promise<void>((done, fail) => {
-      const testToken = generateTestToken("v1-int-tx-metadata");
-      const client = NewClient(
-        testToken,
-        "localhost:50051",
-        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-        PreconnectServices.SCHEMA_SERVICE | PreconnectServices.PERMISSIONS_SERVICE,
-      );
+  describe("WriteRelationships with transaction metadata (Integration Test)", () => {
+    it("should successfully write relationships with metadata and verify metadata transmission", () =>
+      new Promise<void>((done, fail) => {
+        const testToken = generateTestToken("v1-int-tx-metadata");
+        const client = NewClient(
+          testToken,
+          "localhost:50051",
+          ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+          PreconnectServices.SCHEMA_SERVICE |
+            PreconnectServices.PERMISSIONS_SERVICE,
+        );
 
-      const writeSpy = vi.spyOn(PermissionsServiceClient.prototype, "writeRelationships");
+        const writeSpy = vi.spyOn(
+          PermissionsServiceClient.prototype,
+          "writeRelationships",
+        );
 
-      const schema = `
+        const schema = `
         definition test/user {}
         definition test/document {
           relation viewer: test/user
           permission view = viewer
         }
       `;
-      const writeSchemaRequest = WriteSchemaRequest.create({ schema });
+        const writeSchemaRequest = WriteSchemaRequest.create({ schema });
 
-      client.writeSchema(writeSchemaRequest, (schemaErr, schemaResponse) => {
-        if (schemaErr) {
-          client.close();
-          fail(schemaErr);
-          return;
-        }
-        expect(schemaResponse).toBeDefined();
-
-        const uniqueSuffix = Date.now();
-        const resource = ObjectReference.create({
-          objectType: "test/document",
-          objectId: `doc-${uniqueSuffix}`,
-        });
-
-        const user = ObjectReference.create({
-          objectType: "test/user",
-          objectId: `user-${uniqueSuffix}`,
-        });
-
-        const updates = [
-          RelationshipUpdate.create({
-            relationship: Relationship.create({
-              resource,
-              relation: "viewer",
-              subject: SubjectReference.create({ object: user }),
-            }),
-            operation: RelationshipUpdate_Operation.CREATE,
-          }),
-        ];
-
-        const metadataObject = { transaction_id: "test-tx-123", other_data: "sample" };
-        const transactionMetadata = createStructFromObject(metadataObject);
-
-        const writeRequest = WriteRelationshipsRequest.create({
-          updates,
-          optionalTransactionMetadata: transactionMetadata,
-        });
-
-        client.writeRelationships(writeRequest, (err, response) => {
-          if (err) {
+        client.writeSchema(writeSchemaRequest, (schemaErr, schemaResponse) => {
+          if (schemaErr) {
             client.close();
-            fail(err);
+            fail(schemaErr);
             return;
           }
+          expect(schemaResponse).toBeDefined();
 
-          expect(err).toBeNull();
-          expect(response).toBeDefined();
-          expect(response?.writtenAt).toBeDefined();
+          const uniqueSuffix = Date.now();
+          const resource = ObjectReference.create({
+            objectType: "test/document",
+            objectId: `doc-${uniqueSuffix}`,
+          });
 
-          expect(writeSpy).toHaveBeenCalledTimes(1);
+          const user = ObjectReference.create({
+            objectType: "test/user",
+            objectId: `user-${uniqueSuffix}`,
+          });
 
-          const actualRequest = writeSpy.mock.calls[0][0] as WriteRelationshipsRequest;
+          const updates = [
+            RelationshipUpdate.create({
+              relationship: Relationship.create({
+                resource,
+                relation: "viewer",
+                subject: SubjectReference.create({ object: user }),
+              }),
+              operation: RelationshipUpdate_Operation.CREATE,
+            }),
+          ];
 
-          expect(actualRequest.updates).toEqual(updates);
+          const metadataObject = {
+            transaction_id: "test-tx-123",
+            other_data: "sample",
+          };
+          const transactionMetadata = createStructFromObject(metadataObject);
 
-          expect(actualRequest.optionalTransactionMetadata).toBeDefined();
-          expect(actualRequest.optionalTransactionMetadata).toEqual(transactionMetadata);
+          const writeRequest = WriteRelationshipsRequest.create({
+            updates,
+            optionalTransactionMetadata: transactionMetadata,
+          });
 
-          const transactionIdField = actualRequest.optionalTransactionMetadata?.fields?.['transaction_id'];
-          expect(transactionIdField?.kind?.oneofKind).toBe('stringValue');
-          if (transactionIdField?.kind?.oneofKind === 'stringValue') {
-            expect(transactionIdField.kind.stringValue).toBe("test-tx-123");
-          }
+          client.writeRelationships(writeRequest, (err, response) => {
+            if (err) {
+              client.close();
+              fail(err);
+              return;
+            }
 
-          const otherDataField = actualRequest.optionalTransactionMetadata?.fields?.['other_data'];
-          expect(otherDataField?.kind?.oneofKind).toBe('stringValue');
-          if (otherDataField?.kind?.oneofKind === 'stringValue') {
-            expect(otherDataField.kind.stringValue).toBe("sample");
-          }
+            expect(err).toBeNull();
+            expect(response).toBeDefined();
+            expect(response?.writtenAt).toBeDefined();
 
-          client.close();
-          done();
+            expect(writeSpy).toHaveBeenCalledTimes(1);
+
+            const actualRequest = writeSpy.mock
+              .calls[0][0] as WriteRelationshipsRequest;
+
+            expect(actualRequest.updates).toEqual(updates);
+
+            expect(actualRequest.optionalTransactionMetadata).toBeDefined();
+            expect(actualRequest.optionalTransactionMetadata).toEqual(
+              transactionMetadata,
+            );
+
+            const transactionIdField =
+              actualRequest.optionalTransactionMetadata?.fields?.[
+                "transaction_id"
+              ];
+            expect(transactionIdField?.kind?.oneofKind).toBe("stringValue");
+            if (transactionIdField?.kind?.oneofKind === "stringValue") {
+              expect(transactionIdField.kind.stringValue).toBe("test-tx-123");
+            }
+
+            const otherDataField =
+              actualRequest.optionalTransactionMetadata?.fields?.["other_data"];
+            expect(otherDataField?.kind?.oneofKind).toBe("stringValue");
+            if (otherDataField?.kind?.oneofKind === "stringValue") {
+              expect(otherDataField.kind.stringValue).toBe("sample");
+            }
+
+            client.close();
+            done();
+          });
         });
-      });
-    }));
-});
+      }));
+  });
 });
 
 describe("createStructFromObject unit tests", () => {
@@ -794,12 +808,21 @@ describe("createStructFromObject unit tests", () => {
       booleanProp: true,
     };
     const struct = createStructFromObject(obj);
-    expect(struct.fields.stringProp?.kind.oneofKind).toBe('stringValue');
-    expect(struct.fields.stringProp?.kind.oneofKind === 'stringValue' && struct.fields.stringProp?.kind.stringValue).toBe("hello");
-    expect(struct.fields.numberProp?.kind.oneofKind).toBe('numberValue');
-    expect(struct.fields.numberProp?.kind.oneofKind === 'numberValue' && struct.fields.numberProp?.kind.numberValue).toBe(123);
-    expect(struct.fields.booleanProp?.kind.oneofKind).toBe('boolValue');
-    expect(struct.fields.booleanProp?.kind.oneofKind === 'boolValue' && struct.fields.booleanProp?.kind.boolValue).toBe(true);
+    expect(struct.fields.stringProp?.kind.oneofKind).toBe("stringValue");
+    expect(
+      struct.fields.stringProp?.kind.oneofKind === "stringValue" &&
+        struct.fields.stringProp?.kind.stringValue,
+    ).toBe("hello");
+    expect(struct.fields.numberProp?.kind.oneofKind).toBe("numberValue");
+    expect(
+      struct.fields.numberProp?.kind.oneofKind === "numberValue" &&
+        struct.fields.numberProp?.kind.numberValue,
+    ).toBe(123);
+    expect(struct.fields.booleanProp?.kind.oneofKind).toBe("boolValue");
+    expect(
+      struct.fields.booleanProp?.kind.oneofKind === "boolValue" &&
+        struct.fields.booleanProp?.kind.boolValue,
+    ).toBe(true);
   });
 
   it("should convert a JS object with null values", () => {
@@ -807,8 +830,11 @@ describe("createStructFromObject unit tests", () => {
       nullProp: null,
     };
     const struct = createStructFromObject(obj);
-    expect(struct.fields.nullProp?.kind.oneofKind).toBe('nullValue');
-    expect(struct.fields.nullProp?.kind.oneofKind === 'nullValue' && struct.fields.nullProp?.kind.nullValue).toBe(PbNullValue.NULL_VALUE);
+    expect(struct.fields.nullProp?.kind.oneofKind).toBe("nullValue");
+    expect(
+      struct.fields.nullProp?.kind.oneofKind === "nullValue" &&
+        struct.fields.nullProp?.kind.nullValue,
+    ).toBe(PbNullValue.NULL_VALUE);
   });
 
   it("should convert a JS object with nested objects", () => {
@@ -819,13 +845,25 @@ describe("createStructFromObject unit tests", () => {
       },
     };
     const struct = createStructFromObject(obj);
-    const nestedStruct = struct.fields.nestedProp?.kind.oneofKind === 'structValue' && struct.fields.nestedProp.kind.structValue;
+    const nestedStruct =
+      struct.fields.nestedProp?.kind.oneofKind === "structValue" &&
+      struct.fields.nestedProp.kind.structValue;
     expect(nestedStruct).toBeTruthy();
     if (nestedStruct) {
-      expect(nestedStruct.fields.innerString?.kind.oneofKind).toBe('stringValue');
-      expect(nestedStruct.fields.innerString?.kind.oneofKind === 'stringValue' && nestedStruct.fields.innerString?.kind.stringValue).toBe("world");
-      expect(nestedStruct.fields.innerNumber?.kind.oneofKind).toBe('numberValue');
-      expect(nestedStruct.fields.innerNumber?.kind.oneofKind === 'numberValue' && nestedStruct.fields.innerNumber?.kind.numberValue).toBe(456);
+      expect(nestedStruct.fields.innerString?.kind.oneofKind).toBe(
+        "stringValue",
+      );
+      expect(
+        nestedStruct.fields.innerString?.kind.oneofKind === "stringValue" &&
+          nestedStruct.fields.innerString?.kind.stringValue,
+      ).toBe("world");
+      expect(nestedStruct.fields.innerNumber?.kind.oneofKind).toBe(
+        "numberValue",
+      );
+      expect(
+        nestedStruct.fields.innerNumber?.kind.oneofKind === "numberValue" &&
+          nestedStruct.fields.innerNumber?.kind.numberValue,
+      ).toBe(456);
     }
   });
 
@@ -838,28 +876,28 @@ describe("createStructFromObject unit tests", () => {
   it("should throw an error for null input", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => createStructFromObject(null as any)).toThrow(
-      "Input data for createStructFromObject must be a non-null object."
+      "Input data for createStructFromObject must be a non-null object.",
     );
   });
 
   it("should throw an error for non-object input (string)", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => createStructFromObject("not an object" as any)).toThrow(
-      "Input data for createStructFromObject must be a non-null object."
+      "Input data for createStructFromObject must be a non-null object.",
     );
   });
 
   it("should throw an error for non-object input (number)", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => createStructFromObject(123 as any)).toThrow(
-      "Input data for createStructFromObject must be a non-null object."
+      "Input data for createStructFromObject must be a non-null object.",
     );
   });
 
   it("should throw an error for array input", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect(() => createStructFromObject([] as any)).toThrow(
-      "Input data for createStructFromObject must be a non-null object."
+      "Input data for createStructFromObject must be a non-null object.",
     );
   });
 });
