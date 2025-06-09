@@ -1001,7 +1001,7 @@ export interface StringRules {
      */
     maxBytes?: string;
     /**
-     * Pattern specifes that this field must match against the specified
+     * Pattern specifies that this field must match against the specified
      * regular expression (RE2 syntax). The included expression should elide
      * any delimiters.
      *
@@ -1197,7 +1197,7 @@ export interface BytesRules {
      */
     maxLen?: string;
     /**
-     * Pattern specifes that this field must match against the specified
+     * Pattern specifies that this field must match against the specified
      * regular expression (RE2 syntax). The included expression should elide
      * any delimiters.
      *
@@ -1357,14 +1357,14 @@ export interface RepeatedRules {
     maxItems?: string;
     /**
      * Unique specifies that all elements in this field must be unique. This
-     * contraint is only applicable to scalar and enum types (messages are not
+     * constraint is only applicable to scalar and enum types (messages are not
      * supported).
      *
      * @generated from protobuf field: optional bool unique = 3;
      */
     unique?: boolean;
     /**
-     * Items specifies the contraints to be applied to each item in the field.
+     * Items specifies the constraints to be applied to each item in the field.
      * Repeated message fields will still execute validation against each item
      * unless skip is specified here.
      *

@@ -806,8 +806,8 @@ export interface ExpSchemaDiff {
 class ExperimentalRegisterRelationshipCounterRequest$Type extends MessageType<ExperimentalRegisterRelationshipCounterRequest> {
     constructor() {
         super("authzed.api.v1.ExperimentalRegisterRelationshipCounterRequest", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
-            { no: 2, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 2, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<ExperimentalRegisterRelationshipCounterRequest>): ExperimentalRegisterRelationshipCounterRequest {
@@ -886,7 +886,7 @@ export const ExperimentalRegisterRelationshipCounterResponse = new ExperimentalR
 class ExperimentalCountRelationshipsRequest$Type extends MessageType<ExperimentalCountRelationshipsRequest> {
     constructor() {
         super("authzed.api.v1.ExperimentalCountRelationshipsRequest", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
         ]);
     }
     create(value?: PartialMessage<ExperimentalCountRelationshipsRequest>): ExperimentalCountRelationshipsRequest {
@@ -994,7 +994,7 @@ class ReadCounterValue$Type extends MessageType<ReadCounterValue> {
     constructor() {
         super("authzed.api.v1.ReadCounterValue", [
             { no: 1, name: "relationship_count", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "read_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "read_at", kind: "message", T: () => ZedToken, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<ReadCounterValue>): ReadCounterValue {
@@ -1047,7 +1047,7 @@ export const ReadCounterValue = new ReadCounterValue$Type();
 class ExperimentalUnregisterRelationshipCounterRequest$Type extends MessageType<ExperimentalUnregisterRelationshipCounterRequest> {
     constructor() {
         super("authzed.api.v1.ExperimentalUnregisterRelationshipCounterRequest", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
         ]);
     }
     create(value?: PartialMessage<ExperimentalUnregisterRelationshipCounterRequest>): ExperimentalUnregisterRelationshipCounterRequest {
@@ -1121,7 +1121,7 @@ class BulkCheckPermissionRequest$Type extends MessageType<BulkCheckPermissionReq
     constructor() {
         super("authzed.api.v1.BulkCheckPermissionRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BulkCheckPermissionRequestItem, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 2, name: "items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BulkCheckPermissionRequestItem, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<BulkCheckPermissionRequest>): BulkCheckPermissionRequest {
@@ -1174,10 +1174,10 @@ export const BulkCheckPermissionRequest = new BulkCheckPermissionRequest$Type();
 class BulkCheckPermissionRequestItem$Type extends MessageType<BulkCheckPermissionRequestItem> {
     constructor() {
         super("authzed.api.v1.BulkCheckPermissionRequestItem", [
-            { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
-            { no: 3, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 4, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
+            { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 3, name: "subject", kind: "message", T: () => SubjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "context", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<BulkCheckPermissionRequestItem>): BulkCheckPermissionRequestItem {
@@ -1242,8 +1242,8 @@ export const BulkCheckPermissionRequestItem = new BulkCheckPermissionRequestItem
 class BulkCheckPermissionResponse$Type extends MessageType<BulkCheckPermissionResponse> {
     constructor() {
         super("authzed.api.v1.BulkCheckPermissionResponse", [
-            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: false } } } },
-            { no: 2, name: "pairs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BulkCheckPermissionPair, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
+            { no: 2, name: "pairs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BulkCheckPermissionPair, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<BulkCheckPermissionResponse>): BulkCheckPermissionResponse {
@@ -1363,8 +1363,8 @@ export const BulkCheckPermissionPair = new BulkCheckPermissionPair$Type();
 class BulkCheckPermissionResponseItem$Type extends MessageType<BulkCheckPermissionResponseItem> {
     constructor() {
         super("authzed.api.v1.BulkCheckPermissionResponseItem", [
-            { no: 1, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 2, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } }
+            { no: 1, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 2, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<BulkCheckPermissionResponseItem>): BulkCheckPermissionResponseItem {
@@ -1417,7 +1417,7 @@ export const BulkCheckPermissionResponseItem = new BulkCheckPermissionResponseIt
 class BulkImportRelationshipsRequest$Type extends MessageType<BulkImportRelationshipsRequest> {
     constructor() {
         super("authzed.api.v1.BulkImportRelationshipsRequest", [
-            { no: 1, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relationship, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 1, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relationship, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<BulkImportRelationshipsRequest>): BulkImportRelationshipsRequest {
@@ -1512,7 +1512,7 @@ class BulkExportRelationshipsRequest$Type extends MessageType<BulkExportRelation
     constructor() {
         super("authzed.api.v1.BulkExportRelationshipsRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { gte: 0 } } } },
+            { no: 2, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { gte: 0 } }, "validate.rules": { uint32: { gte: 0 } } } },
             { no: 3, name: "optional_cursor", kind: "message", T: () => Cursor },
             { no: 4, name: "optional_relationship_filter", kind: "message", T: () => RelationshipFilter }
         ]);
@@ -2970,14 +2970,14 @@ export const ExpSchemaDiff = new ExpSchemaDiff$Type();
  * @generated ServiceType for protobuf service authzed.api.v1.ExperimentalService
  */
 export const ExperimentalService = new ServiceType("authzed.api.v1.ExperimentalService", [
-    { name: "BulkImportRelationships", clientStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkimport", body: "*" } }, I: BulkImportRelationshipsRequest, O: BulkImportRelationshipsResponse },
-    { name: "BulkExportRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkexport", body: "*" } }, I: BulkExportRelationshipsRequest, O: BulkExportRelationshipsResponse },
-    { name: "BulkCheckPermission", options: { "google.api.http": { post: "/v1/experimental/permissions/bulkcheckpermission", body: "*" } }, I: BulkCheckPermissionRequest, O: BulkCheckPermissionResponse },
-    { name: "ExperimentalReflectSchema", options: { "google.api.http": { post: "/v1/experimental/reflectschema", body: "*" } }, I: ExperimentalReflectSchemaRequest, O: ExperimentalReflectSchemaResponse },
-    { name: "ExperimentalComputablePermissions", options: { "google.api.http": { post: "/v1/experimental/permissions/computable", body: "*" } }, I: ExperimentalComputablePermissionsRequest, O: ExperimentalComputablePermissionsResponse },
-    { name: "ExperimentalDependentRelations", options: { "google.api.http": { post: "/v1/experimental/permissions/dependent", body: "*" } }, I: ExperimentalDependentRelationsRequest, O: ExperimentalDependentRelationsResponse },
-    { name: "ExperimentalDiffSchema", options: { "google.api.http": { post: "/v1/experimental/diffschema", body: "*" } }, I: ExperimentalDiffSchemaRequest, O: ExperimentalDiffSchemaResponse },
-    { name: "ExperimentalRegisterRelationshipCounter", options: { "google.api.http": { post: "/v1/experimental/registerrelationshipcounter", body: "*" } }, I: ExperimentalRegisterRelationshipCounterRequest, O: ExperimentalRegisterRelationshipCounterResponse },
-    { name: "ExperimentalCountRelationships", options: { "google.api.http": { post: "/v1/experimental/countrelationships", body: "*" } }, I: ExperimentalCountRelationshipsRequest, O: ExperimentalCountRelationshipsResponse },
-    { name: "ExperimentalUnregisterRelationshipCounter", options: { "google.api.http": { post: "/v1/experimental/unregisterrelationshipcounter", body: "*" } }, I: ExperimentalUnregisterRelationshipCounterRequest, O: ExperimentalUnregisterRelationshipCounterResponse }
+    { name: "BulkImportRelationships", clientStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkimport", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Deprecated"] } }, I: BulkImportRelationshipsRequest, O: BulkImportRelationshipsResponse },
+    { name: "BulkExportRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/experimental/relationships/bulkexport", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Deprecated"] } }, I: BulkExportRelationshipsRequest, O: BulkExportRelationshipsResponse },
+    { name: "BulkCheckPermission", options: { "google.api.http": { post: "/v1/experimental/permissions/bulkcheckpermission", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Deprecated"] } }, I: BulkCheckPermissionRequest, O: BulkCheckPermissionResponse },
+    { name: "ExperimentalReflectSchema", options: { "google.api.http": { post: "/v1/experimental/reflectschema", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Deprecated"] } }, I: ExperimentalReflectSchemaRequest, O: ExperimentalReflectSchemaResponse },
+    { name: "ExperimentalComputablePermissions", options: { "google.api.http": { post: "/v1/experimental/permissions/computable", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Deprecated"] } }, I: ExperimentalComputablePermissionsRequest, O: ExperimentalComputablePermissionsResponse },
+    { name: "ExperimentalDependentRelations", options: { "google.api.http": { post: "/v1/experimental/permissions/dependent", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Deprecated"] } }, I: ExperimentalDependentRelationsRequest, O: ExperimentalDependentRelationsResponse },
+    { name: "ExperimentalDiffSchema", options: { "google.api.http": { post: "/v1/experimental/diffschema", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Deprecated"] } }, I: ExperimentalDiffSchemaRequest, O: ExperimentalDiffSchemaResponse },
+    { name: "ExperimentalRegisterRelationshipCounter", options: { "google.api.http": { post: "/v1/experimental/registerrelationshipcounter", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Experimental"] } }, I: ExperimentalRegisterRelationshipCounterRequest, O: ExperimentalRegisterRelationshipCounterResponse },
+    { name: "ExperimentalCountRelationships", options: { "google.api.http": { post: "/v1/experimental/countrelationships", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Experimental"] } }, I: ExperimentalCountRelationshipsRequest, O: ExperimentalCountRelationshipsResponse },
+    { name: "ExperimentalUnregisterRelationshipCounter", options: { "google.api.http": { post: "/v1/experimental/unregisterrelationshipcounter", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Experimental"] } }, I: ExperimentalUnregisterRelationshipCounterRequest, O: ExperimentalUnregisterRelationshipCounterResponse }
 ]);
