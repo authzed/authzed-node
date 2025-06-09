@@ -2,7 +2,7 @@
 // @generated from protobuf file "google/rpc/status.proto" (package "google.rpc", syntax proto3)
 // tslint:disable
 //
-// Copyright 2020 Google LLC
+// Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,7 +40,8 @@ import { Any } from "../protobuf/any.js";
  */
 export interface Status {
     /**
-     * The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+     * The status code, which should be an enum value of
+     * [google.rpc.Code][google.rpc.Code].
      *
      * @generated from protobuf field: int32 code = 1;
      */
@@ -48,7 +49,8 @@ export interface Status {
     /**
      * A developer-facing error message, which should be in English. Any
      * user-facing error message should be localized and sent in the
-     * [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+     * [google.rpc.Status.details][google.rpc.Status.details] field, or localized
+     * by the client.
      *
      * @generated from protobuf field: string message = 2;
      */

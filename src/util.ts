@@ -103,6 +103,8 @@ export enum PreconnectServices {
   SCHEMA_SERVICE = 2,
   WATCH_SERVICE = 4,
   EXPERIMENTAL_SERVICE = 8,
+  WATCH_PERMISSIONS_SERVICE = 9,
+  WATCH_PERMISSIONSETS_SERVICE = 10,
 }
 
 function createClientCreds(

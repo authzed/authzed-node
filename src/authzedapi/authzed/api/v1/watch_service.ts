@@ -4,10 +4,10 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MESSAGE_TYPE } from "@protobuf-ts/runtime";
@@ -17,15 +17,14 @@ import { RelationshipUpdate } from "./core.js";
 import { RelationshipFilter } from "./permission_service.js";
 import { ZedToken } from "./core.js";
 /**
- * WatchRequest specifies the object definitions for which we want to start
- * watching mutations, and an optional start snapshot for when to start
+ * WatchRequest specifies what mutations to watch for, and an optional start snapshot for when to start
  * watching.
  *
  * @generated from protobuf message authzed.api.v1.WatchRequest
  */
 export interface WatchRequest {
     /**
-     * optional_object_types is a filter of resource object types to watch for changes.
+     * optional_object_types is a filter of resource object types to watch for relationship changes.
      * If specified, only changes to the specified object types will be returned and
      * optional_relationship_filters cannot be used.
      *
@@ -54,10 +53,16 @@ export interface WatchRequest {
      * @generated from protobuf field: repeated authzed.api.v1.RelationshipFilter optional_relationship_filters = 3;
      */
     optionalRelationshipFilters: RelationshipFilter[];
+    /**
+     * optional_update_kinds, if specified, indicates what kinds of mutations to include.
+     *
+     * @generated from protobuf field: repeated authzed.api.v1.WatchKind optional_update_kinds = 4;
+     */
+    optionalUpdateKinds: WatchKind[];
 }
 /**
- * WatchResponse contains all tuple modification events in ascending
- * timestamp order, from the requested start snapshot to a snapshot
+ * WatchResponse contains all mutation events in ascending timestamp order,
+ * from the requested start snapshot to a snapshot
  * encoded in the watch response. The client can use the snapshot to resume
  * watching where the previous watch response left off.
  *
@@ -87,18 +92,56 @@ export interface WatchResponse {
      * @generated from protobuf field: google.protobuf.Struct optional_transaction_metadata = 3;
      */
     optionalTransactionMetadata?: Struct;
+    /**
+     * schema_updated, if true, indicates that the schema was changed in this revision.
+     *
+     * @generated from protobuf field: bool schema_updated = 4;
+     */
+    schemaUpdated: boolean;
+    /**
+     * is_checkpoint, if true, indicates that a checkpoint was reached.
+     * A checkpoint indicates that the server guarantees that the client
+     * will not observe any changes at a revision below or equal to the revision in this response.
+     *
+     * @generated from protobuf field: bool is_checkpoint = 5;
+     */
+    isCheckpoint: boolean;
+}
+/**
+ * @generated from protobuf enum authzed.api.v1.WatchKind
+ */
+export enum WatchKind {
+    /**
+     * Default, just relationship updates (for backwards compatibility)
+     *
+     * @generated from protobuf enum value: WATCH_KIND_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: WATCH_KIND_INCLUDE_RELATIONSHIP_UPDATES = 1;
+     */
+    INCLUDE_RELATIONSHIP_UPDATES = 1,
+    /**
+     * @generated from protobuf enum value: WATCH_KIND_INCLUDE_SCHEMA_UPDATES = 2;
+     */
+    INCLUDE_SCHEMA_UPDATES = 2,
+    /**
+     * @generated from protobuf enum value: WATCH_KIND_INCLUDE_CHECKPOINTS = 3;
+     */
+    INCLUDE_CHECKPOINTS = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class WatchRequest$Type extends MessageType<WatchRequest> {
     constructor() {
         super("authzed.api.v1.WatchRequest", [
-            { no: 1, name: "optional_object_types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "0", items: { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } } } },
+            { no: 1, name: "optional_object_types", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { minItems: "0", items: { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } }, "validate.rules": { repeated: { minItems: "0", items: { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } } } },
             { no: 2, name: "optional_start_cursor", kind: "message", T: () => ZedToken },
-            { no: 3, name: "optional_relationship_filters", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RelationshipFilter }
+            { no: 3, name: "optional_relationship_filters", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RelationshipFilter },
+            { no: 4, name: "optional_update_kinds", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["authzed.api.v1.WatchKind", WatchKind, "WATCH_KIND_"] }
         ]);
     }
     create(value?: PartialMessage<WatchRequest>): WatchRequest {
-        const message = { optionalObjectTypes: [], optionalRelationshipFilters: [] };
+        const message = { optionalObjectTypes: [], optionalRelationshipFilters: [], optionalUpdateKinds: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WatchRequest>(this, message, value);
@@ -117,6 +160,13 @@ class WatchRequest$Type extends MessageType<WatchRequest> {
                     break;
                 case /* repeated authzed.api.v1.RelationshipFilter optional_relationship_filters */ 3:
                     message.optionalRelationshipFilters.push(RelationshipFilter.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated authzed.api.v1.WatchKind optional_update_kinds */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.optionalUpdateKinds.push(reader.int32());
+                    else
+                        message.optionalUpdateKinds.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -139,6 +189,13 @@ class WatchRequest$Type extends MessageType<WatchRequest> {
         /* repeated authzed.api.v1.RelationshipFilter optional_relationship_filters = 3; */
         for (let i = 0; i < message.optionalRelationshipFilters.length; i++)
             RelationshipFilter.internalBinaryWrite(message.optionalRelationshipFilters[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated authzed.api.v1.WatchKind optional_update_kinds = 4; */
+        if (message.optionalUpdateKinds.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.optionalUpdateKinds.length; i++)
+                writer.int32(message.optionalUpdateKinds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -155,11 +212,13 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
         super("authzed.api.v1.WatchResponse", [
             { no: 1, name: "updates", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RelationshipUpdate },
             { no: 2, name: "changes_through", kind: "message", T: () => ZedToken },
-            { no: 3, name: "optional_transaction_metadata", kind: "message", T: () => Struct }
+            { no: 3, name: "optional_transaction_metadata", kind: "message", T: () => Struct },
+            { no: 4, name: "schema_updated", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "is_checkpoint", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<WatchResponse>): WatchResponse {
-        const message = { updates: [] };
+        const message = { updates: [], schemaUpdated: false, isCheckpoint: false };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WatchResponse>(this, message, value);
@@ -178,6 +237,12 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
                     break;
                 case /* google.protobuf.Struct optional_transaction_metadata */ 3:
                     message.optionalTransactionMetadata = Struct.internalBinaryRead(reader, reader.uint32(), options, message.optionalTransactionMetadata);
+                    break;
+                case /* bool schema_updated */ 4:
+                    message.schemaUpdated = reader.bool();
+                    break;
+                case /* bool is_checkpoint */ 5:
+                    message.isCheckpoint = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -200,6 +265,12 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
         /* google.protobuf.Struct optional_transaction_metadata = 3; */
         if (message.optionalTransactionMetadata)
             Struct.internalBinaryWrite(message.optionalTransactionMetadata, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool schema_updated = 4; */
+        if (message.schemaUpdated !== false)
+            writer.tag(4, WireType.Varint).bool(message.schemaUpdated);
+        /* bool is_checkpoint = 5; */
+        if (message.isCheckpoint !== false)
+            writer.tag(5, WireType.Varint).bool(message.isCheckpoint);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -214,5 +285,5 @@ export const WatchResponse = new WatchResponse$Type();
  * @generated ServiceType for protobuf service authzed.api.v1.WatchService
  */
 export const WatchService = new ServiceType("authzed.api.v1.WatchService", [
-    { name: "Watch", serverStreaming: true, options: { "google.api.http": { post: "/v1/watch", body: "*" } }, I: WatchRequest, O: WatchResponse }
+    { name: "Watch", serverStreaming: true, options: { "google.api.http": { post: "/v1/watch", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Watch"] } }, I: WatchRequest, O: WatchResponse }
 ]);
