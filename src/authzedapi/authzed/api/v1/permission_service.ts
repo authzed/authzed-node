@@ -358,6 +358,12 @@ export interface DeleteRelationshipsResponse {
      * @generated from protobuf field: authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress deletion_progress = 2;
      */
     deletionProgress: DeleteRelationshipsResponse_DeletionProgress;
+    /**
+     * relationships_deleted_count is the number of relationships that were deleted.
+     *
+     * @generated from protobuf field: uint64 relationships_deleted_count = 3;
+     */
+    relationshipsDeletedCount: string;
 }
 /**
  * @generated from protobuf enum authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress
@@ -1043,10 +1049,10 @@ export enum LookupPermissionship {
 class Consistency$Type extends MessageType<Consistency> {
     constructor() {
         super("authzed.api.v1.Consistency", [
-            { no: 1, name: "minimize_latency", kind: "scalar", oneof: "requirement", T: 8 /*ScalarType.BOOL*/, options: { "validate.rules": { bool: { const: true } } } },
+            { no: 1, name: "minimize_latency", kind: "scalar", oneof: "requirement", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.field": { bool: { const: true } }, "validate.rules": { bool: { const: true } } } },
             { no: 2, name: "at_least_as_fresh", kind: "message", oneof: "requirement", T: () => ZedToken },
             { no: 3, name: "at_exact_snapshot", kind: "message", oneof: "requirement", T: () => ZedToken },
-            { no: 4, name: "fully_consistent", kind: "scalar", oneof: "requirement", T: 8 /*ScalarType.BOOL*/, options: { "validate.rules": { bool: { const: true } } } }
+            { no: 4, name: "fully_consistent", kind: "scalar", oneof: "requirement", T: 8 /*ScalarType.BOOL*/, options: { "buf.validate.field": { bool: { const: true } }, "validate.rules": { bool: { const: true } } } }
         ]);
     }
     create(value?: PartialMessage<Consistency>): Consistency {
@@ -1123,10 +1129,10 @@ export const Consistency = new Consistency$Type();
 class RelationshipFilter$Type extends MessageType<RelationshipFilter> {
     constructor() {
         super("authzed.api.v1.RelationshipFilter", [
-            { no: 1, name: "resource_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
-            { no: 2, name: "optional_resource_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024", pattern: "^([a-zA-Z0-9/_|\\-=+]{1,})?$" } } } },
-            { no: 5, name: "optional_resource_id_prefix", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024", pattern: "^([a-zA-Z0-9/_|\\-=+]{1,})?$" } } } },
-            { no: 3, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 1, name: "resource_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "128", pattern: "^(([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "128", pattern: "^(([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 2, name: "optional_resource_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024", pattern: "^([a-zA-Z0-9/_|\\-=+]{1,})?$" } }, "validate.rules": { string: { maxBytes: "1024", pattern: "^([a-zA-Z0-9/_|\\-=+]{1,})?$" } } } },
+            { no: 5, name: "optional_resource_id_prefix", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024", pattern: "^([a-zA-Z0-9/_|\\-=+]{1,})?$" } }, "validate.rules": { string: { maxBytes: "1024", pattern: "^([a-zA-Z0-9/_|\\-=+]{1,})?$" } } } },
+            { no: 3, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
             { no: 4, name: "optional_subject_filter", kind: "message", T: () => SubjectFilter }
         ]);
     }
@@ -1198,8 +1204,8 @@ export const RelationshipFilter = new RelationshipFilter$Type();
 class SubjectFilter$Type extends MessageType<SubjectFilter> {
     constructor() {
         super("authzed.api.v1.SubjectFilter", [
-            { no: 1, name: "subject_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024", pattern: "^(([a-zA-Z0-9/_|\\-=+]{1,})|\\*)?$" } } } },
+            { no: 1, name: "subject_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } }, "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 2, name: "optional_subject_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024", pattern: "^(([a-zA-Z0-9/_|\\-=+]{1,})|\\*)?$" } }, "validate.rules": { string: { maxBytes: "1024", pattern: "^(([a-zA-Z0-9/_|\\-=+]{1,})|\\*)?$" } } } },
             { no: 3, name: "optional_relation", kind: "message", T: () => SubjectFilter_RelationFilter }
         ]);
     }
@@ -1259,7 +1265,7 @@ export const SubjectFilter = new SubjectFilter$Type();
 class SubjectFilter_RelationFilter$Type extends MessageType<SubjectFilter_RelationFilter> {
     constructor() {
         super("authzed.api.v1.SubjectFilter.RelationFilter", [
-            { no: 1, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
+            { no: 1, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
         ]);
     }
     create(value?: PartialMessage<SubjectFilter_RelationFilter>): SubjectFilter_RelationFilter {
@@ -1307,8 +1313,8 @@ class ReadRelationshipsRequest$Type extends MessageType<ReadRelationshipsRequest
     constructor() {
         super("authzed.api.v1.ReadRelationshipsRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { gte: 0 } } } },
+            { no: 2, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { gte: 0 } }, "validate.rules": { uint32: { gte: 0 } } } },
             { no: 4, name: "optional_cursor", kind: "message", T: () => Cursor }
         ]);
     }
@@ -1374,8 +1380,8 @@ export const ReadRelationshipsRequest = new ReadRelationshipsRequest$Type();
 class ReadRelationshipsResponse$Type extends MessageType<ReadRelationshipsResponse> {
     constructor() {
         super("authzed.api.v1.ReadRelationshipsResponse", [
-            { no: 1, name: "read_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "relationship", kind: "message", T: () => Relationship, options: { "validate.rules": { message: { required: true } } } },
+            { no: 1, name: "read_at", kind: "message", T: () => ZedToken, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "relationship", kind: "message", T: () => Relationship, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
             { no: 3, name: "after_result_cursor", kind: "message", T: () => Cursor }
         ]);
     }
@@ -1435,8 +1441,8 @@ export const ReadRelationshipsResponse = new ReadRelationshipsResponse$Type();
 class Precondition$Type extends MessageType<Precondition> {
     constructor() {
         super("authzed.api.v1.Precondition", [
-            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.Precondition.Operation", Precondition_Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 2, name: "filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.Precondition.Operation", Precondition_Operation, "OPERATION_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 2, name: "filter", kind: "message", T: () => RelationshipFilter, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<Precondition>): Precondition {
@@ -1489,9 +1495,9 @@ export const Precondition = new Precondition$Type();
 class WriteRelationshipsRequest$Type extends MessageType<WriteRelationshipsRequest> {
     constructor() {
         super("authzed.api.v1.WriteRelationshipsRequest", [
-            { no: 1, name: "updates", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RelationshipUpdate, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
-            { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
-            { no: 3, name: "optional_transaction_metadata", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
+            { no: 1, name: "updates", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RelationshipUpdate, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } },
+            { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } },
+            { no: 3, name: "optional_transaction_metadata", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<WriteRelationshipsRequest>): WriteRelationshipsRequest {
@@ -1597,11 +1603,11 @@ export const WriteRelationshipsResponse = new WriteRelationshipsResponse$Type();
 class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsRequest> {
     constructor() {
         super("authzed.api.v1.DeleteRelationshipsRequest", [
-            { no: 1, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
-            { no: 3, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { gte: 0 } } } },
+            { no: 1, name: "relationship_filter", kind: "message", T: () => RelationshipFilter, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } },
+            { no: 3, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { gte: 0 } }, "validate.rules": { uint32: { gte: 0 } } } },
             { no: 4, name: "optional_allow_partial_deletions", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "optional_transaction_metadata", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
+            { no: 5, name: "optional_transaction_metadata", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteRelationshipsRequest>): DeleteRelationshipsRequest {
@@ -1673,11 +1679,12 @@ class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsRe
     constructor() {
         super("authzed.api.v1.DeleteRelationshipsResponse", [
             { no: 1, name: "deleted_at", kind: "message", T: () => ZedToken },
-            { no: 2, name: "deletion_progress", kind: "enum", T: () => ["authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress", DeleteRelationshipsResponse_DeletionProgress, "DELETION_PROGRESS_"] }
+            { no: 2, name: "deletion_progress", kind: "enum", T: () => ["authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress", DeleteRelationshipsResponse_DeletionProgress, "DELETION_PROGRESS_"] },
+            { no: 3, name: "relationships_deleted_count", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteRelationshipsResponse>): DeleteRelationshipsResponse {
-        const message = { deletionProgress: 0 };
+        const message = { deletionProgress: 0, relationshipsDeletedCount: "0" };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<DeleteRelationshipsResponse>(this, message, value);
@@ -1693,6 +1700,9 @@ class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsRe
                     break;
                 case /* authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress deletion_progress */ 2:
                     message.deletionProgress = reader.int32();
+                    break;
+                case /* uint64 relationships_deleted_count */ 3:
+                    message.relationshipsDeletedCount = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1712,6 +1722,9 @@ class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsRe
         /* authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress deletion_progress = 2; */
         if (message.deletionProgress !== 0)
             writer.tag(2, WireType.Varint).int32(message.deletionProgress);
+        /* uint64 relationships_deleted_count = 3; */
+        if (message.relationshipsDeletedCount !== "0")
+            writer.tag(3, WireType.Varint).uint64(message.relationshipsDeletedCount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1727,10 +1740,10 @@ class CheckPermissionRequest$Type extends MessageType<CheckPermissionRequest> {
     constructor() {
         super("authzed.api.v1.CheckPermissionRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
-            { no: 4, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 5, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } },
+            { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 4, name: "subject", kind: "message", T: () => SubjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 5, name: "context", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
             { no: 6, name: "with_tracing", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -1808,9 +1821,9 @@ export const CheckPermissionRequest = new CheckPermissionRequest$Type();
 class CheckPermissionResponse$Type extends MessageType<CheckPermissionResponse> {
     constructor() {
         super("authzed.api.v1.CheckPermissionResponse", [
-            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: false } } } },
-            { no: 2, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 3, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
+            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
+            { no: 2, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 3, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
             { no: 4, name: "debug_trace", kind: "message", T: () => DebugInformation },
             { no: 5, name: "optional_expires_at", kind: "message", T: () => Timestamp }
         ]);
@@ -1884,7 +1897,7 @@ class CheckBulkPermissionsRequest$Type extends MessageType<CheckBulkPermissionsR
     constructor() {
         super("authzed.api.v1.CheckBulkPermissionsRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CheckBulkPermissionsRequestItem, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
+            { no: 2, name: "items", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CheckBulkPermissionsRequestItem, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } },
             { no: 3, name: "with_tracing", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -1944,10 +1957,10 @@ export const CheckBulkPermissionsRequest = new CheckBulkPermissionsRequest$Type(
 class CheckBulkPermissionsRequestItem$Type extends MessageType<CheckBulkPermissionsRequestItem> {
     constructor() {
         super("authzed.api.v1.CheckBulkPermissionsRequestItem", [
-            { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
-            { no: 3, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 4, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
+            { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 3, name: "subject", kind: "message", T: () => SubjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "context", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<CheckBulkPermissionsRequestItem>): CheckBulkPermissionsRequestItem {
@@ -2012,8 +2025,8 @@ export const CheckBulkPermissionsRequestItem = new CheckBulkPermissionsRequestIt
 class CheckBulkPermissionsResponse$Type extends MessageType<CheckBulkPermissionsResponse> {
     constructor() {
         super("authzed.api.v1.CheckBulkPermissionsResponse", [
-            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: false } } } },
-            { no: 2, name: "pairs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CheckBulkPermissionsPair, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 1, name: "checked_at", kind: "message", T: () => ZedToken, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
+            { no: 2, name: "pairs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CheckBulkPermissionsPair, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<CheckBulkPermissionsResponse>): CheckBulkPermissionsResponse {
@@ -2133,8 +2146,8 @@ export const CheckBulkPermissionsPair = new CheckBulkPermissionsPair$Type();
 class CheckBulkPermissionsResponseItem$Type extends MessageType<CheckBulkPermissionsResponseItem> {
     constructor() {
         super("authzed.api.v1.CheckBulkPermissionsResponseItem", [
-            { no: 1, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 2, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
+            { no: 1, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.CheckPermissionResponse.Permissionship", CheckPermissionResponse_Permissionship, "PERMISSIONSHIP_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 2, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
             { no: 3, name: "debug_trace", kind: "message", T: () => DebugInformation }
         ]);
     }
@@ -2195,8 +2208,8 @@ class ExpandPermissionTreeRequest$Type extends MessageType<ExpandPermissionTreeR
     constructor() {
         super("authzed.api.v1.ExpandPermissionTreeRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
+            { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
         ]);
     }
     create(value?: PartialMessage<ExpandPermissionTreeRequest>): ExpandPermissionTreeRequest {
@@ -2310,11 +2323,11 @@ class LookupResourcesRequest$Type extends MessageType<LookupResourcesRequest> {
     constructor() {
         super("authzed.api.v1.LookupResourcesRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "resource_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 4, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 5, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } },
-            { no: 6, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { gte: 0 } } } },
+            { no: 2, name: "resource_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } }, "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 4, name: "subject", kind: "message", T: () => SubjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 5, name: "context", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
+            { no: 6, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { gte: 0 } }, "validate.rules": { uint32: { gte: 0 } } } },
             { no: 7, name: "optional_cursor", kind: "message", T: () => Cursor }
         ]);
     }
@@ -2400,8 +2413,8 @@ class LookupResourcesResponse$Type extends MessageType<LookupResourcesResponse> 
         super("authzed.api.v1.LookupResourcesResponse", [
             { no: 1, name: "looked_up_at", kind: "message", T: () => ZedToken },
             { no: 2, name: "resource_object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 4, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
+            { no: 3, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 4, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
             { no: 5, name: "after_result_cursor", kind: "message", T: () => Cursor }
         ]);
     }
@@ -2474,12 +2487,12 @@ class LookupSubjectsRequest$Type extends MessageType<LookupSubjectsRequest> {
     constructor() {
         super("authzed.api.v1.LookupSubjectsRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
-            { no: 4, name: "subject_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 5, name: "optional_subject_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
-            { no: 6, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } },
-            { no: 7, name: "optional_concrete_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { gte: 0 } } } },
+            { no: 2, name: "resource", kind: "message", T: () => ObjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "permission", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 4, name: "subject_object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } }, "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 5, name: "optional_subject_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } },
+            { no: 6, name: "context", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
+            { no: 7, name: "optional_concrete_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { gte: 0 } }, "validate.rules": { uint32: { gte: 0 } } } },
             { no: 8, name: "optional_cursor", kind: "message", T: () => Cursor },
             { no: 9, name: "wildcard_option", kind: "enum", T: () => ["authzed.api.v1.LookupSubjectsRequest.WildcardOption", LookupSubjectsRequest_WildcardOption, "WILDCARD_OPTION_"] }
         ]);
@@ -2579,8 +2592,8 @@ class LookupSubjectsResponse$Type extends MessageType<LookupSubjectsResponse> {
             { no: 1, name: "looked_up_at", kind: "message", T: () => ZedToken },
             { no: 2, name: "subject_object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "excluded_subject_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 5, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } },
+            { no: 4, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 5, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
             { no: 6, name: "subject", kind: "message", T: () => ResolvedSubject },
             { no: 7, name: "excluded_subjects", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ResolvedSubject },
             { no: 8, name: "after_result_cursor", kind: "message", T: () => Cursor }
@@ -2673,8 +2686,8 @@ class ResolvedSubject$Type extends MessageType<ResolvedSubject> {
     constructor() {
         super("authzed.api.v1.ResolvedSubject", [
             { no: 1, name: "subject_object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 3, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "validate.rules": { message: { required: false } } } }
+            { no: 2, name: "permissionship", kind: "enum", T: () => ["authzed.api.v1.LookupPermissionship", LookupPermissionship, "LOOKUP_PERMISSIONSHIP_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 3, name: "partial_caveat_info", kind: "message", T: () => PartialCaveatInfo, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<ResolvedSubject>): ResolvedSubject {
@@ -2733,7 +2746,7 @@ export const ResolvedSubject = new ResolvedSubject$Type();
 class ImportBulkRelationshipsRequest$Type extends MessageType<ImportBulkRelationshipsRequest> {
     constructor() {
         super("authzed.api.v1.ImportBulkRelationshipsRequest", [
-            { no: 1, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relationship, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 1, name: "relationships", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Relationship, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ImportBulkRelationshipsRequest>): ImportBulkRelationshipsRequest {
@@ -2828,7 +2841,7 @@ class ExportBulkRelationshipsRequest$Type extends MessageType<ExportBulkRelation
     constructor() {
         super("authzed.api.v1.ExportBulkRelationshipsRequest", [
             { no: 1, name: "consistency", kind: "message", T: () => Consistency },
-            { no: 2, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { gte: 0 } } } },
+            { no: 2, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { gte: 0 } }, "validate.rules": { uint32: { gte: 0 } } } },
             { no: 3, name: "optional_cursor", kind: "message", T: () => Cursor },
             { no: 4, name: "optional_relationship_filter", kind: "message", T: () => RelationshipFilter }
         ]);
@@ -2949,14 +2962,14 @@ export const ExportBulkRelationshipsResponse = new ExportBulkRelationshipsRespon
  * @generated ServiceType for protobuf service authzed.api.v1.PermissionsService
  */
 export const PermissionsService = new ServiceType("authzed.api.v1.PermissionsService", [
-    { name: "ReadRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/relationships/read", body: "*" } }, I: ReadRelationshipsRequest, O: ReadRelationshipsResponse },
-    { name: "WriteRelationships", options: { "google.api.http": { post: "/v1/relationships/write", body: "*" } }, I: WriteRelationshipsRequest, O: WriteRelationshipsResponse },
-    { name: "DeleteRelationships", options: { "google.api.http": { post: "/v1/relationships/delete", body: "*" } }, I: DeleteRelationshipsRequest, O: DeleteRelationshipsResponse },
-    { name: "CheckPermission", options: { "google.api.http": { post: "/v1/permissions/check", body: "*" } }, I: CheckPermissionRequest, O: CheckPermissionResponse },
-    { name: "CheckBulkPermissions", options: { "google.api.http": { post: "/v1/permissions/checkbulk", body: "*" } }, I: CheckBulkPermissionsRequest, O: CheckBulkPermissionsResponse },
-    { name: "ExpandPermissionTree", options: { "google.api.http": { post: "/v1/permissions/expand", body: "*" } }, I: ExpandPermissionTreeRequest, O: ExpandPermissionTreeResponse },
-    { name: "LookupResources", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/resources", body: "*" } }, I: LookupResourcesRequest, O: LookupResourcesResponse },
-    { name: "LookupSubjects", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/subjects", body: "*" } }, I: LookupSubjectsRequest, O: LookupSubjectsResponse },
-    { name: "ImportBulkRelationships", clientStreaming: true, options: { "google.api.http": { post: "/v1/relationships/importbulk", body: "*" } }, I: ImportBulkRelationshipsRequest, O: ImportBulkRelationshipsResponse },
-    { name: "ExportBulkRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/relationships/exportbulk", body: "*" } }, I: ExportBulkRelationshipsRequest, O: ExportBulkRelationshipsResponse }
+    { name: "ReadRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/relationships/read", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: ReadRelationshipsRequest, O: ReadRelationshipsResponse },
+    { name: "WriteRelationships", options: { "google.api.http": { post: "/v1/relationships/write", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: WriteRelationshipsRequest, O: WriteRelationshipsResponse },
+    { name: "DeleteRelationships", options: { "google.api.http": { post: "/v1/relationships/delete", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: DeleteRelationshipsRequest, O: DeleteRelationshipsResponse },
+    { name: "CheckPermission", options: { "google.api.http": { post: "/v1/permissions/check", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: CheckPermissionRequest, O: CheckPermissionResponse },
+    { name: "CheckBulkPermissions", options: { "google.api.http": { post: "/v1/permissions/checkbulk", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: CheckBulkPermissionsRequest, O: CheckBulkPermissionsResponse },
+    { name: "ExpandPermissionTree", options: { "google.api.http": { post: "/v1/permissions/expand", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: ExpandPermissionTreeRequest, O: ExpandPermissionTreeResponse },
+    { name: "LookupResources", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/resources", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: LookupResourcesRequest, O: LookupResourcesResponse },
+    { name: "LookupSubjects", serverStreaming: true, options: { "google.api.http": { post: "/v1/permissions/subjects", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: LookupSubjectsRequest, O: LookupSubjectsResponse },
+    { name: "ImportBulkRelationships", clientStreaming: true, options: { "google.api.http": { post: "/v1/relationships/importbulk", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: ImportBulkRelationshipsRequest, O: ImportBulkRelationshipsResponse },
+    { name: "ExportBulkRelationships", serverStreaming: true, options: { "google.api.http": { post: "/v1/relationships/exportbulk", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Permissions"] } }, I: ExportBulkRelationshipsRequest, O: ExportBulkRelationshipsResponse }
 ]);

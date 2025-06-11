@@ -33,16 +33,9 @@ import * as grpc from "@grpc/grpc-js";
  */
 export interface IExperimentalServiceClient {
     /**
-     * BulkImportRelationships is a faster path to writing a large number of
-     * relationships at once. It is both batched and streaming. For maximum
-     * performance, the caller should attempt to write relationships in as close
-     * to relationship sort order as possible: (resource.object_type,
-     * resource.object_id, relation, subject.object.object_type,
-     * subject.object.object_id, subject.optional_relation)
+     * DEPRECATED: Promoted to ImportBulkRelationships in the stable API.
      *
-     * EXPERIMENTAL
-     * https://github.com/authzed/spicedb/issues/1303
-     *
+     * @deprecated
      * @generated from protobuf rpc: BulkImportRelationships(stream authzed.api.v1.BulkImportRelationshipsRequest) returns (authzed.api.v1.BulkImportRelationshipsResponse);
      */
     bulkImportRelationships(metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: BulkImportRelationshipsResponse) => void): grpc.ClientWritableStream<BulkImportRelationshipsRequest>;
@@ -50,17 +43,15 @@ export interface IExperimentalServiceClient {
     bulkImportRelationships(options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: BulkImportRelationshipsResponse) => void): grpc.ClientWritableStream<BulkImportRelationshipsRequest>;
     bulkImportRelationships(callback: (err: grpc.ServiceError | null, value?: BulkImportRelationshipsResponse) => void): grpc.ClientWritableStream<BulkImportRelationshipsRequest>;
     /**
-     * BulkExportRelationships is the fastest path available to exporting
-     * relationships from the server. It is resumable, and will return results
-     * in an order determined by the server.
+     * DEPRECATED: Promoted to ExportBulkRelationships in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: BulkExportRelationships(authzed.api.v1.BulkExportRelationshipsRequest) returns (stream authzed.api.v1.BulkExportRelationshipsResponse);
      */
     bulkExportRelationships(input: BulkExportRelationshipsRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<BulkExportRelationshipsResponse>;
     bulkExportRelationships(input: BulkExportRelationshipsRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<BulkExportRelationshipsResponse>;
     /**
-     * NOTE: BulkCheckPermission has been promoted to the stable API as "CheckBulkPermission" and the
-     * API will be removed from experimental in a future release.
+     * DEPRECATED: Promoted to CheckBulkPermission in the stable API.
      *
      * @deprecated
      * @generated from protobuf rpc: BulkCheckPermission(authzed.api.v1.BulkCheckPermissionRequest) returns (authzed.api.v1.BulkCheckPermissionResponse);
@@ -151,16 +142,9 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
         this._binaryOptions = binaryOptions;
     }
     /**
-     * BulkImportRelationships is a faster path to writing a large number of
-     * relationships at once. It is both batched and streaming. For maximum
-     * performance, the caller should attempt to write relationships in as close
-     * to relationship sort order as possible: (resource.object_type,
-     * resource.object_id, relation, subject.object.object_type,
-     * subject.object.object_id, subject.optional_relation)
+     * DEPRECATED: Promoted to ImportBulkRelationships in the stable API.
      *
-     * EXPERIMENTAL
-     * https://github.com/authzed/spicedb/issues/1303
-     *
+     * @deprecated
      * @generated from protobuf rpc: BulkImportRelationships(stream authzed.api.v1.BulkImportRelationshipsRequest) returns (authzed.api.v1.BulkImportRelationshipsResponse);
      */
     bulkImportRelationships(metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: BulkImportRelationshipsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: BulkImportRelationshipsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: BulkImportRelationshipsResponse) => void)): grpc.ClientWritableStream<BulkImportRelationshipsRequest> {
@@ -168,10 +152,9 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
         return this.makeClientStreamRequest<BulkImportRelationshipsRequest, BulkImportRelationshipsResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: BulkImportRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): BulkImportRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), (metadata as any), (options as any), (callback as any));
     }
     /**
-     * BulkExportRelationships is the fastest path available to exporting
-     * relationships from the server. It is resumable, and will return results
-     * in an order determined by the server.
+     * DEPRECATED: Promoted to ExportBulkRelationships in the stable API.
      *
+     * @deprecated
      * @generated from protobuf rpc: BulkExportRelationships(authzed.api.v1.BulkExportRelationshipsRequest) returns (stream authzed.api.v1.BulkExportRelationshipsResponse);
      */
     bulkExportRelationships(input: BulkExportRelationshipsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<BulkExportRelationshipsResponse> {
@@ -179,8 +162,7 @@ export class ExperimentalServiceClient extends grpc.Client implements IExperimen
         return this.makeServerStreamRequest<BulkExportRelationshipsRequest, BulkExportRelationshipsResponse>(`/${ExperimentalService.typeName}/${method.name}`, (value: BulkExportRelationshipsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): BulkExportRelationshipsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
     }
     /**
-     * NOTE: BulkCheckPermission has been promoted to the stable API as "CheckBulkPermission" and the
-     * API will be removed from experimental in a future release.
+     * DEPRECATED: Promoted to CheckBulkPermission in the stable API.
      *
      * @deprecated
      * @generated from protobuf rpc: BulkCheckPermission(authzed.api.v1.BulkCheckPermissionRequest) returns (authzed.api.v1.BulkCheckPermissionResponse);

@@ -8,6 +8,8 @@ import { ExperimentalServiceClient } from "./authzedapi/authzed/api/v1/experimen
 import { PermissionsServiceClient } from "./authzedapi/authzed/api/v1/permission_service.grpc-client.js";
 import { SchemaServiceClient } from "./authzedapi/authzed/api/v1/schema_service.grpc-client.js";
 import { WatchServiceClient } from "./authzedapi/authzed/api/v1/watch_service.grpc-client.js";
+import { WatchPermissionsServiceClient } from "./authzedapi/authzed/api/materialize/v0/watchpermissions.grpc-client.js";
+import { WatchPermissionSetsServiceClient } from "./authzedapi/authzed/api/materialize/v0/watchpermissionsets.grpc-client.js";
 import * as util from "./util.js";
 import {
   ClientSecurity,
@@ -59,6 +61,8 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
   private ns: SchemaServiceClient | undefined;
   private watch: WatchServiceClient | undefined;
   private experimental: ExperimentalServiceClient | undefined;
+  private watchPermissions: WatchPermissionsServiceClient | undefined;
+  private watchPermissionSets: WatchPermissionSetsServiceClient | undefined;
   private options: grpc.ClientOptions;
 
   constructor(
@@ -90,6 +94,20 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     }
     if (preconnect & PreconnectServices.WATCH_SERVICE) {
       this.watch = new WatchServiceClient(this.endpoint, this.creds, options);
+    }
+    if (preconnect & PreconnectServices.WATCH_PERMISSIONS_SERVICE) {
+      this.watchPermissions = new WatchPermissionsServiceClient(
+        this.endpoint,
+        this.creds,
+        options,
+      );
+    }
+    if (preconnect & PreconnectServices.WATCH_PERMISSIONSETS_SERVICE) {
+      this.watchPermissionSets = new WatchPermissionSetsServiceClient(
+        this.endpoint,
+        this.creds,
+        options,
+      );
     }
     if (preconnect & PreconnectServices.EXPERIMENTAL_SERVICE) {
       this.experimental = new ExperimentalServiceClient(
@@ -175,6 +193,30 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
       return (this.watch as any)[name];
     }
 
+    if (name in WatchPermissionsServiceClient.prototype) {
+      if (this.watchPermissions === undefined) {
+        this.watchPermissions = new WatchPermissionsServiceClient(
+          this.endpoint,
+          this.creds,
+          this.options,
+        );
+      }
+
+      return (this.watchPermissions as any)[name];
+    }
+
+    if (name in WatchPermissionSetsServiceClient.prototype) {
+      if (this.watchPermissionSets === undefined) {
+        this.watchPermissionSets = new WatchPermissionSetsServiceClient(
+          this.endpoint,
+          this.creds,
+          this.options,
+        );
+      }
+
+      return (this.watchPermissionSets as any)[name];
+    }
+
     if (name in ExperimentalServiceClient.prototype) {
       if (this.experimental === undefined) {
         this.experimental = new ExperimentalServiceClient(
@@ -209,6 +251,8 @@ class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface> {
     "lookupSubjects",
     "bulkExportRelationships",
     "exportBulkRelationships",
+    "watchPermissions",
+    "watchPermissionSets",
   ]);
   private writableStreamMethods = new Set([
     "bulkImportRelationships",
@@ -377,6 +421,24 @@ export * from "./authzedapi/authzed/api/v1/schema_service.js";
 export * from "./authzedapi/authzed/api/v1/schema_service.grpc-client.js";
 export * from "./authzedapi/authzed/api/v1/watch_service.js";
 export * from "./authzedapi/authzed/api/v1/watch_service.grpc-client.js";
+export * from "./authzedapi/authzed/api/materialize/v0/watchpermissions.js";
+export * from "./authzedapi/authzed/api/materialize/v0/watchpermissions.grpc-client.js";
+// NOTE: these are explicitly enumerated because `Cursor` collides with a name in `core` and there isn't an easy way to say
+// "import everything except this name" in TS imports.
+export {
+  WatchPermissionSetsRequest,
+  WatchPermissionSetsResponse,
+  Cursor as MaterializeCursor,
+  LookupPermissionSetsRequest,
+  LookupPermissionSetsResponse,
+  PermissionSetChange,
+  PermissionSetChange_SetOperation,
+  SetReference,
+  MemberReference,
+  LookupPermissionSetsRequired,
+  BreakingSchemaChange,
+} from "./authzedapi/authzed/api/materialize/v0/watchpermissionsets.js";
+export * from "./authzedapi/authzed/api/materialize/v0/watchpermissionsets.grpc-client.js";
 export { ClientSecurity } from "./util.js";
 
 export default {

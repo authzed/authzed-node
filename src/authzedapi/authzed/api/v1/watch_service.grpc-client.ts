@@ -12,6 +12,9 @@ import * as grpc from "@grpc/grpc-js";
  */
 export interface IWatchServiceClient {
     /**
+     * Watch returns a stream of events that occurred in the datastore in ascending timestamp order.
+     * The events can be relationship updates, schema updates, or checkpoints.
+     *
      * @generated from protobuf rpc: Watch(authzed.api.v1.WatchRequest) returns (stream authzed.api.v1.WatchResponse);
      */
     watch(input: WatchRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<WatchResponse>;
@@ -27,6 +30,9 @@ export class WatchServiceClient extends grpc.Client implements IWatchServiceClie
         this._binaryOptions = binaryOptions;
     }
     /**
+     * Watch returns a stream of events that occurred in the datastore in ascending timestamp order.
+     * The events can be relationship updates, schema updates, or checkpoints.
+     *
      * @generated from protobuf rpc: Watch(authzed.api.v1.WatchRequest) returns (stream authzed.api.v1.WatchResponse);
      */
     watch(input: WatchRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<WatchResponse> {

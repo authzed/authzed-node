@@ -40,7 +40,7 @@ export interface Relationship {
      */
     subject?: SubjectReference;
     /**
-     * optional_caveat is a reference to a the caveat that must be enforced over the relationship.
+     * optional_caveat is a reference to a the caveat that must be enforced over the relationship
      *
      * @generated from protobuf field: authzed.api.v1.ContextualizedCaveat optional_caveat = 4;
      */
@@ -286,10 +286,10 @@ export interface PartialCaveatInfo {
 class Relationship$Type extends MessageType<Relationship> {
     constructor() {
         super("authzed.api.v1.Relationship", [
-            { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 3, name: "subject", kind: "message", T: () => SubjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 4, name: "optional_caveat", kind: "message", T: () => ContextualizedCaveat, options: { "validate.rules": { message: { required: false } } } },
+            { no: 1, name: "resource", kind: "message", T: () => ObjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 3, name: "subject", kind: "message", T: () => SubjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "optional_caveat", kind: "message", T: () => ContextualizedCaveat, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
             { no: 5, name: "optional_expires_at", kind: "message", T: () => Timestamp }
         ]);
     }
@@ -361,8 +361,8 @@ export const Relationship = new Relationship$Type();
 class ContextualizedCaveat$Type extends MessageType<ContextualizedCaveat> {
     constructor() {
         super("authzed.api.v1.ContextualizedCaveat", [
-            { no: 1, name: "caveat_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_|-]{0,127})$" } } } },
-            { no: 2, name: "context", kind: "message", T: () => Struct, options: { "validate.rules": { message: { required: false } } } }
+            { no: 1, name: "caveat_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_|-]{0,127})$" } }, "validate.rules": { string: { maxBytes: "128", pattern: "^([a-zA-Z0-9_][a-zA-Z0-9/_|-]{0,127})$" } } } },
+            { no: 2, name: "context", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } }
         ]);
     }
     create(value?: PartialMessage<ContextualizedCaveat>): ContextualizedCaveat {
@@ -415,8 +415,8 @@ export const ContextualizedCaveat = new ContextualizedCaveat$Type();
 class SubjectReference$Type extends MessageType<SubjectReference> {
     constructor() {
         super("authzed.api.v1.SubjectReference", [
-            { no: 1, name: "object", kind: "message", T: () => ObjectReference, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
+            { no: 1, name: "object", kind: "message", T: () => ObjectReference, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "optional_relation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } }, "validate.rules": { string: { maxBytes: "64", pattern: "^([a-z][a-z0-9_]{1,62}[a-z0-9])?$" } } } }
         ]);
     }
     create(value?: PartialMessage<SubjectReference>): SubjectReference {
@@ -469,8 +469,8 @@ export const SubjectReference = new SubjectReference$Type();
 class ObjectReference$Type extends MessageType<ObjectReference> {
     constructor() {
         super("authzed.api.v1.ObjectReference", [
-            { no: 1, name: "object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
-            { no: 2, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024", pattern: "^(([a-zA-Z0-9/_|\\-=+]{1,})|\\*)$" } } } }
+            { no: 1, name: "object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } }, "validate.rules": { string: { maxBytes: "128", pattern: "^([a-z][a-z0-9_]{1,61}[a-z0-9]/)*[a-z][a-z0-9_]{1,62}[a-z0-9]$" } } } },
+            { no: 2, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024", pattern: "^(([a-zA-Z0-9/_|\\-=+]{1,})|\\*)$" } }, "validate.rules": { string: { maxBytes: "1024", pattern: "^(([a-zA-Z0-9/_|\\-=+]{1,})|\\*)$" } } } }
         ]);
     }
     create(value?: PartialMessage<ObjectReference>): ObjectReference {
@@ -523,7 +523,7 @@ export const ObjectReference = new ObjectReference$Type();
 class ZedToken$Type extends MessageType<ZedToken> {
     constructor() {
         super("authzed.api.v1.ZedToken", [
-            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minBytes: "1" } } } }
+            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minBytes: "1" } }, "validate.rules": { string: { minBytes: "1" } } } }
         ]);
     }
     create(value?: PartialMessage<ZedToken>): ZedToken {
@@ -570,7 +570,7 @@ export const ZedToken = new ZedToken$Type();
 class Cursor$Type extends MessageType<Cursor> {
     constructor() {
         super("authzed.api.v1.Cursor", [
-            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minBytes: "1", maxBytes: "102400" } } } }
+            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minBytes: "1", maxBytes: "102400" } }, "validate.rules": { string: { minBytes: "1", maxBytes: "102400" } } } }
         ]);
     }
     create(value?: PartialMessage<Cursor>): Cursor {
@@ -617,8 +617,8 @@ export const Cursor = new Cursor$Type();
 class RelationshipUpdate$Type extends MessageType<RelationshipUpdate> {
     constructor() {
         super("authzed.api.v1.RelationshipUpdate", [
-            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.RelationshipUpdate.Operation", RelationshipUpdate_Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 2, name: "relationship", kind: "message", T: () => Relationship, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.RelationshipUpdate.Operation", RelationshipUpdate_Operation, "OPERATION_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 2, name: "relationship", kind: "message", T: () => Relationship, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<RelationshipUpdate>): RelationshipUpdate {
@@ -745,8 +745,8 @@ export const PermissionRelationshipTree = new PermissionRelationshipTree$Type();
 class AlgebraicSubjectSet$Type extends MessageType<AlgebraicSubjectSet> {
     constructor() {
         super("authzed.api.v1.AlgebraicSubjectSet", [
-            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.AlgebraicSubjectSet.Operation", AlgebraicSubjectSet_Operation, "OPERATION_"], options: { "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
-            { no: 2, name: "children", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PermissionRelationshipTree, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } }
+            { no: 1, name: "operation", kind: "enum", T: () => ["authzed.api.v1.AlgebraicSubjectSet.Operation", AlgebraicSubjectSet_Operation, "OPERATION_"], options: { "buf.validate.field": { enum: { definedOnly: true, notIn: [0] } }, "validate.rules": { enum: { definedOnly: true, notIn: [0] } } } },
+            { no: 2, name: "children", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PermissionRelationshipTree, options: { "buf.validate.field": { repeated: { items: { required: true } } }, "validate.rules": { repeated: { items: { message: { required: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<AlgebraicSubjectSet>): AlgebraicSubjectSet {
@@ -846,7 +846,7 @@ export const DirectSubjectSet = new DirectSubjectSet$Type();
 class PartialCaveatInfo$Type extends MessageType<PartialCaveatInfo> {
     constructor() {
         super("authzed.api.v1.PartialCaveatInfo", [
-            { no: 1, name: "missing_required_context", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1" } } } }
+            { no: 1, name: "missing_required_context", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { minItems: "1" } }, "validate.rules": { repeated: { minItems: "1" } } } }
         ]);
     }
     create(value?: PartialMessage<PartialCaveatInfo>): PartialCaveatInfo {

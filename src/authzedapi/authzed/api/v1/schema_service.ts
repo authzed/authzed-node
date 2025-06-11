@@ -613,7 +613,7 @@ class ReadSchemaResponse$Type extends MessageType<ReadSchemaResponse> {
     constructor() {
         super("authzed.api.v1.ReadSchemaResponse", [
             { no: 1, name: "schema_text", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "read_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "read_at", kind: "message", T: () => ZedToken, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<ReadSchemaResponse>): ReadSchemaResponse {
@@ -666,7 +666,7 @@ export const ReadSchemaResponse = new ReadSchemaResponse$Type();
 class WriteSchemaRequest$Type extends MessageType<WriteSchemaRequest> {
     constructor() {
         super("authzed.api.v1.WriteSchemaRequest", [
-            { no: 1, name: "schema", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "4194304" } } } }
+            { no: 1, name: "schema", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "4194304" } }, "validate.rules": { string: { maxBytes: "4194304" } } } }
         ]);
     }
     create(value?: PartialMessage<WriteSchemaRequest>): WriteSchemaRequest {
@@ -713,7 +713,7 @@ export const WriteSchemaRequest = new WriteSchemaRequest$Type();
 class WriteSchemaResponse$Type extends MessageType<WriteSchemaResponse> {
     constructor() {
         super("authzed.api.v1.WriteSchemaResponse", [
-            { no: 1, name: "written_at", kind: "message", T: () => ZedToken, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "written_at", kind: "message", T: () => ZedToken, options: { "buf.validate.field": { required: true }, "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<WriteSchemaResponse>): WriteSchemaResponse {
@@ -2097,10 +2097,10 @@ export const ReflectionSchemaDiff = new ReflectionSchemaDiff$Type();
  * @generated ServiceType for protobuf service authzed.api.v1.SchemaService
  */
 export const SchemaService = new ServiceType("authzed.api.v1.SchemaService", [
-    { name: "ReadSchema", options: { "google.api.http": { post: "/v1/schema/read", body: "*" } }, I: ReadSchemaRequest, O: ReadSchemaResponse },
-    { name: "WriteSchema", options: { "google.api.http": { post: "/v1/schema/write", body: "*" } }, I: WriteSchemaRequest, O: WriteSchemaResponse },
-    { name: "ReflectSchema", options: { "google.api.http": { post: "/v1/schema/reflectschema", body: "*" } }, I: ReflectSchemaRequest, O: ReflectSchemaResponse },
-    { name: "ComputablePermissions", options: { "google.api.http": { post: "/v1/schema/permissions/computable", body: "*" } }, I: ComputablePermissionsRequest, O: ComputablePermissionsResponse },
-    { name: "DependentRelations", options: { "google.api.http": { post: "/v1/schema/permissions/dependent", body: "*" } }, I: DependentRelationsRequest, O: DependentRelationsResponse },
-    { name: "DiffSchema", options: { "google.api.http": { post: "/v1/schema/diffschema", body: "*" } }, I: DiffSchemaRequest, O: DiffSchemaResponse }
+    { name: "ReadSchema", options: { "google.api.http": { post: "/v1/schema/read", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Schema"] } }, I: ReadSchemaRequest, O: ReadSchemaResponse },
+    { name: "WriteSchema", options: { "google.api.http": { post: "/v1/schema/write", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Schema"] } }, I: WriteSchemaRequest, O: WriteSchemaResponse },
+    { name: "ReflectSchema", options: { "google.api.http": { post: "/v1/schema/reflectschema", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Schema"] } }, I: ReflectSchemaRequest, O: ReflectSchemaResponse },
+    { name: "ComputablePermissions", options: { "google.api.http": { post: "/v1/schema/permissions/computable", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Schema"] } }, I: ComputablePermissionsRequest, O: ComputablePermissionsResponse },
+    { name: "DependentRelations", options: { "google.api.http": { post: "/v1/schema/permissions/dependent", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Schema"] } }, I: DependentRelationsRequest, O: DependentRelationsResponse },
+    { name: "DiffSchema", options: { "google.api.http": { post: "/v1/schema/diffschema", body: "*" }, "grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation": { tags: ["Schema"] } }, I: DiffSchemaRequest, O: DiffSchemaResponse }
 ]);

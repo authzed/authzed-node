@@ -31,7 +31,7 @@ import { Value } from "../../google/protobuf/struct.js";
  *      };
  *      license: {
  *        name: "BSD 3-Clause License";
- *        url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/master/LICENSE.txt";
+ *        url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
  *      };
  *    };
  *    schemes: HTTPS;
@@ -130,12 +130,23 @@ export interface Swagger {
      */
     security: SecurityRequirement[];
     /**
+     * A list of tags for API documentation control. Tags can be used for logical
+     * grouping of operations by resources or any other qualifier.
+     *
+     * @generated from protobuf field: repeated grpc.gateway.protoc_gen_openapiv2.options.Tag tags = 13;
+     */
+    tags: Tag[];
+    /**
      * Additional external documentation.
      *
      * @generated from protobuf field: grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs = 14;
      */
     externalDocs?: ExternalDocumentation;
     /**
+     * Custom properties that start with "x-" such as "x-foo" used to describe
+     * extra functionality that is not covered by the standard OpenAPI Specification.
+     * See: https://swagger.io/docs/specification/2-0/swagger-extensions/
+     *
      * @generated from protobuf field: map<string, google.protobuf.Value> extensions = 15;
      */
     extensions: {
@@ -259,11 +270,108 @@ export interface Operation {
      */
     security: SecurityRequirement[];
     /**
+     * Custom properties that start with "x-" such as "x-foo" used to describe
+     * extra functionality that is not covered by the standard OpenAPI Specification.
+     * See: https://swagger.io/docs/specification/2-0/swagger-extensions/
+     *
      * @generated from protobuf field: map<string, google.protobuf.Value> extensions = 13;
      */
     extensions: {
         [key: string]: Value;
     };
+    /**
+     * Custom parameters such as HTTP request headers.
+     * See: https://swagger.io/docs/specification/2-0/describing-parameters/
+     * and https://swagger.io/specification/v2/#parameter-object.
+     *
+     * @generated from protobuf field: grpc.gateway.protoc_gen_openapiv2.options.Parameters parameters = 14;
+     */
+    parameters?: Parameters;
+}
+/**
+ * `Parameters` is a representation of OpenAPI v2 specification's parameters object.
+ * Note: This technically breaks compatibility with the OpenAPI 2 definition structure as we only
+ * allow header parameters to be set here since we do not want users specifying custom non-header
+ * parameters beyond those inferred from the Protobuf schema.
+ * See: https://swagger.io/specification/v2/#parameter-object
+ *
+ * @generated from protobuf message grpc.gateway.protoc_gen_openapiv2.options.Parameters
+ */
+export interface Parameters {
+    /**
+     * `Headers` is one or more HTTP header parameter.
+     * See: https://swagger.io/docs/specification/2-0/describing-parameters/#header-parameters
+     *
+     * @generated from protobuf field: repeated grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter headers = 1;
+     */
+    headers: HeaderParameter[];
+}
+/**
+ * `HeaderParameter` a HTTP header parameter.
+ * See: https://swagger.io/specification/v2/#parameter-object
+ *
+ * @generated from protobuf message grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter
+ */
+export interface HeaderParameter {
+    /**
+     * `Name` is the header name.
+     *
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * `Description` is a short description of the header.
+     *
+     * @generated from protobuf field: string description = 2;
+     */
+    description: string;
+    /**
+     * `Type` is the type of the object. The value MUST be one of "string", "number", "integer", or "boolean". The "array" type is not supported.
+     * See: https://swagger.io/specification/v2/#parameterType.
+     *
+     * @generated from protobuf field: grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter.Type type = 3;
+     */
+    type: HeaderParameter_Type;
+    /**
+     * `Format` The extending format for the previously mentioned type.
+     *
+     * @generated from protobuf field: string format = 4;
+     */
+    format: string;
+    /**
+     * `Required` indicates if the header is optional
+     *
+     * @generated from protobuf field: bool required = 5;
+     */
+    required: boolean;
+}
+/**
+ * `Type` is a supported HTTP header type.
+ * See https://swagger.io/specification/v2/#parameterType.
+ *
+ * @generated from protobuf enum grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter.Type
+ */
+export enum HeaderParameter_Type {
+    /**
+     * @generated from protobuf enum value: UNKNOWN = 0;
+     */
+    UNKNOWN = 0,
+    /**
+     * @generated from protobuf enum value: STRING = 1;
+     */
+    STRING = 1,
+    /**
+     * @generated from protobuf enum value: NUMBER = 2;
+     */
+    NUMBER = 2,
+    /**
+     * @generated from protobuf enum value: INTEGER = 3;
+     */
+    INTEGER = 3,
+    /**
+     * @generated from protobuf enum value: BOOLEAN = 4;
+     */
+    BOOLEAN = 4
 }
 /**
  * `Header` is a representation of OpenAPI v2 specification's Header object.
@@ -350,6 +458,10 @@ export interface Response {
         [key: string]: string;
     };
     /**
+     * Custom properties that start with "x-" such as "x-foo" used to describe
+     * extra functionality that is not covered by the standard OpenAPI Specification.
+     * See: https://swagger.io/docs/specification/2-0/swagger-extensions/
+     *
      * @generated from protobuf field: map<string, google.protobuf.Value> extensions = 5;
      */
     extensions: {
@@ -375,7 +487,7 @@ export interface Response {
  *      };
  *      license: {
  *        name: "BSD 3-Clause License";
- *        url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/master/LICENSE.txt";
+ *        url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
  *      };
  *    };
  *    ...
@@ -424,6 +536,10 @@ export interface Info {
      */
     version: string;
     /**
+     * Custom properties that start with "x-" such as "x-foo" used to describe
+     * extra functionality that is not covered by the standard OpenAPI Specification.
+     * See: https://swagger.io/docs/specification/2-0/swagger-extensions/
+     *
      * @generated from protobuf field: map<string, google.protobuf.Value> extensions = 7;
      */
     extensions: {
@@ -487,7 +603,7 @@ export interface Contact {
  *      ...
  *      license: {
  *        name: "BSD 3-Clause License";
- *        url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/master/LICENSE.txt";
+ *        url: "https://github.com/grpc-ecosystem/grpc-gateway/blob/main/LICENSE";
  *      };
  *      ...
  *    };
@@ -593,6 +709,82 @@ export interface Schema {
      * @generated from protobuf field: string example = 6;
      */
     example: string;
+}
+/**
+ * `EnumSchema` is subset of fields from the OpenAPI v2 specification's Schema object.
+ * Only fields that are applicable to Enums are included
+ * See: https://github.com/OAI/OpenAPI-Specification/blob/3.0.0/versions/2.0.md#schemaObject
+ *
+ * Example:
+ *
+ *  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_enum) = {
+ *    ...
+ *    title: "MyEnum";
+ *    description:"This is my nice enum";
+ *    example: "ZERO";
+ *    required: true;
+ *    ...
+ *  };
+ *
+ *
+ * @generated from protobuf message grpc.gateway.protoc_gen_openapiv2.options.EnumSchema
+ */
+export interface EnumSchema {
+    /**
+     * A short description of the schema.
+     *
+     * @generated from protobuf field: string description = 1;
+     */
+    description: string;
+    /**
+     * @generated from protobuf field: string default = 2;
+     */
+    default: string;
+    /**
+     * The title of the schema.
+     *
+     * @generated from protobuf field: string title = 3;
+     */
+    title: string;
+    /**
+     * @generated from protobuf field: bool required = 4;
+     */
+    required: boolean;
+    /**
+     * @generated from protobuf field: bool read_only = 5;
+     */
+    readOnly: boolean;
+    /**
+     * Additional external documentation for this schema.
+     *
+     * @generated from protobuf field: grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs = 6;
+     */
+    externalDocs?: ExternalDocumentation;
+    /**
+     * @generated from protobuf field: string example = 7;
+     */
+    example: string;
+    /**
+     * Ref is used to define an external reference to include in the message.
+     * This could be a fully qualified proto message reference, and that type must
+     * be imported into the protofile. If no message is identified, the Ref will
+     * be used verbatim in the output.
+     * For example:
+     *  `ref: ".google.protobuf.Timestamp"`.
+     *
+     * @generated from protobuf field: string ref = 8;
+     */
+    ref: string;
+    /**
+     * Custom properties that start with "x-" such as "x-foo" used to describe
+     * extra functionality that is not covered by the standard OpenAPI Specification.
+     * See: https://swagger.io/docs/specification/2-0/swagger-extensions/
+     *
+     * @generated from protobuf field: map<string, google.protobuf.Value> extensions = 9;
+     */
+    extensions: {
+        [key: string]: Value;
+    };
 }
 /**
  * `JSONSchema` represents properties from JSON Schema taken, and as used, in
@@ -757,6 +949,10 @@ export interface JSONSchema {
      */
     fieldConfiguration?: JSONSchema_FieldConfiguration;
     /**
+     * Custom properties that start with "x-" such as "x-foo" used to describe
+     * extra functionality that is not covered by the standard OpenAPI Specification.
+     * See: https://swagger.io/docs/specification/2-0/swagger-extensions/
+     *
      * @generated from protobuf field: map<string, google.protobuf.Value> extensions = 48;
      */
     extensions: {
@@ -827,6 +1023,14 @@ export enum JSONSchema_JSONSchemaSimpleTypes {
  */
 export interface Tag {
     /**
+     * The name of the tag. Use it to allow override of the name of a
+     * global Tag object, then use that name to reference the tag throughout the
+     * OpenAPI file.
+     *
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
      * A short description for the tag. GFM syntax can be used for rich text
      * representation.
      *
@@ -839,6 +1043,16 @@ export interface Tag {
      * @generated from protobuf field: grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs = 3;
      */
     externalDocs?: ExternalDocumentation;
+    /**
+     * Custom properties that start with "x-" such as "x-foo" used to describe
+     * extra functionality that is not covered by the standard OpenAPI Specification.
+     * See: https://swagger.io/docs/specification/2-0/swagger-extensions/
+     *
+     * @generated from protobuf field: map<string, google.protobuf.Value> extensions = 4;
+     */
+    extensions: {
+        [key: string]: Value;
+    };
 }
 /**
  * `SecurityDefinitions` is a representation of OpenAPI v2 specification's
@@ -937,6 +1151,10 @@ export interface SecurityScheme {
      */
     scopes?: Scopes;
     /**
+     * Custom properties that start with "x-" such as "x-foo" used to describe
+     * extra functionality that is not covered by the standard OpenAPI Specification.
+     * See: https://swagger.io/docs/specification/2-0/swagger-extensions/
+     *
      * @generated from protobuf field: map<string, google.protobuf.Value> extensions = 9;
      */
     extensions: {
@@ -1117,12 +1335,13 @@ class Swagger$Type extends MessageType<Swagger> {
             { no: 10, name: "responses", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Response } },
             { no: 11, name: "security_definitions", kind: "message", T: () => SecurityDefinitions },
             { no: 12, name: "security", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => SecurityRequirement },
+            { no: 13, name: "tags", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Tag },
             { no: 14, name: "external_docs", kind: "message", T: () => ExternalDocumentation },
             { no: 15, name: "extensions", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } }
         ]);
     }
     create(value?: PartialMessage<Swagger>): Swagger {
-        const message = { swagger: "", host: "", basePath: "", schemes: [], consumes: [], produces: [], responses: {}, security: [], extensions: {} };
+        const message = { swagger: "", host: "", basePath: "", schemes: [], consumes: [], produces: [], responses: {}, security: [], tags: [], extensions: {} };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Swagger>(this, message, value);
@@ -1166,6 +1385,9 @@ class Swagger$Type extends MessageType<Swagger> {
                     break;
                 case /* repeated grpc.gateway.protoc_gen_openapiv2.options.SecurityRequirement security */ 12:
                     message.security.push(SecurityRequirement.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated grpc.gateway.protoc_gen_openapiv2.options.Tag tags */ 13:
+                    message.tags.push(Tag.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs */ 14:
                     message.externalDocs = ExternalDocumentation.internalBinaryRead(reader, reader.uint32(), options, message.externalDocs);
@@ -1255,6 +1477,9 @@ class Swagger$Type extends MessageType<Swagger> {
         /* repeated grpc.gateway.protoc_gen_openapiv2.options.SecurityRequirement security = 12; */
         for (let i = 0; i < message.security.length; i++)
             SecurityRequirement.internalBinaryWrite(message.security[i], writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* repeated grpc.gateway.protoc_gen_openapiv2.options.Tag tags = 13; */
+        for (let i = 0; i < message.tags.length; i++)
+            Tag.internalBinaryWrite(message.tags[i], writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         /* grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs = 14; */
         if (message.externalDocs)
             ExternalDocumentation.internalBinaryWrite(message.externalDocs, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
@@ -1290,7 +1515,8 @@ class Operation$Type extends MessageType<Operation> {
             { no: 10, name: "schemes", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["grpc.gateway.protoc_gen_openapiv2.options.Scheme", Scheme] },
             { no: 11, name: "deprecated", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 12, name: "security", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => SecurityRequirement },
-            { no: 13, name: "extensions", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } }
+            { no: 13, name: "extensions", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } },
+            { no: 14, name: "parameters", kind: "message", T: () => Parameters }
         ]);
     }
     create(value?: PartialMessage<Operation>): Operation {
@@ -1344,6 +1570,9 @@ class Operation$Type extends MessageType<Operation> {
                     break;
                 case /* map<string, google.protobuf.Value> extensions */ 13:
                     this.binaryReadMap13(message.extensions, reader, options);
+                    break;
+                case /* grpc.gateway.protoc_gen_openapiv2.options.Parameters parameters */ 14:
+                    message.parameters = Parameters.internalBinaryRead(reader, reader.uint32(), options, message.parameters);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1437,6 +1666,9 @@ class Operation$Type extends MessageType<Operation> {
             Value.internalBinaryWrite(message.extensions[k], writer, options);
             writer.join().join();
         }
+        /* grpc.gateway.protoc_gen_openapiv2.options.Parameters parameters = 14; */
+        if (message.parameters)
+            Parameters.internalBinaryWrite(message.parameters, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1447,6 +1679,128 @@ class Operation$Type extends MessageType<Operation> {
  * @generated MessageType for protobuf message grpc.gateway.protoc_gen_openapiv2.options.Operation
  */
 export const Operation = new Operation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Parameters$Type extends MessageType<Parameters> {
+    constructor() {
+        super("grpc.gateway.protoc_gen_openapiv2.options.Parameters", [
+            { no: 1, name: "headers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => HeaderParameter }
+        ]);
+    }
+    create(value?: PartialMessage<Parameters>): Parameters {
+        const message = { headers: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<Parameters>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Parameters): Parameters {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter headers */ 1:
+                    message.headers.push(HeaderParameter.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Parameters, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter headers = 1; */
+        for (let i = 0; i < message.headers.length; i++)
+            HeaderParameter.internalBinaryWrite(message.headers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message grpc.gateway.protoc_gen_openapiv2.options.Parameters
+ */
+export const Parameters = new Parameters$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class HeaderParameter$Type extends MessageType<HeaderParameter> {
+    constructor() {
+        super("grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "type", kind: "enum", T: () => ["grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter.Type", HeaderParameter_Type] },
+            { no: 4, name: "format", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<HeaderParameter>): HeaderParameter {
+        const message = { name: "", description: "", type: 0, format: "", required: false };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<HeaderParameter>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: HeaderParameter): HeaderParameter {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string description */ 2:
+                    message.description = reader.string();
+                    break;
+                case /* grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter.Type type */ 3:
+                    message.type = reader.int32();
+                    break;
+                case /* string format */ 4:
+                    message.format = reader.string();
+                    break;
+                case /* bool required */ 5:
+                    message.required = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: HeaderParameter, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string description = 2; */
+        if (message.description !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.description);
+        /* grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter.Type type = 3; */
+        if (message.type !== 0)
+            writer.tag(3, WireType.Varint).int32(message.type);
+        /* string format = 4; */
+        if (message.format !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.format);
+        /* bool required = 5; */
+        if (message.required !== false)
+            writer.tag(5, WireType.Varint).bool(message.required);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message grpc.gateway.protoc_gen_openapiv2.options.HeaderParameter
+ */
+export const HeaderParameter = new HeaderParameter$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Header$Type extends MessageType<Header> {
     constructor() {
@@ -2007,6 +2361,129 @@ class Schema$Type extends MessageType<Schema> {
  */
 export const Schema = new Schema$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class EnumSchema$Type extends MessageType<EnumSchema> {
+    constructor() {
+        super("grpc.gateway.protoc_gen_openapiv2.options.EnumSchema", [
+            { no: 1, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "default", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "read_only", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "external_docs", kind: "message", T: () => ExternalDocumentation },
+            { no: 7, name: "example", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "ref", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 9, name: "extensions", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } }
+        ]);
+    }
+    create(value?: PartialMessage<EnumSchema>): EnumSchema {
+        const message = { description: "", default: "", title: "", required: false, readOnly: false, example: "", ref: "", extensions: {} };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<EnumSchema>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: EnumSchema): EnumSchema {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string description */ 1:
+                    message.description = reader.string();
+                    break;
+                case /* string default */ 2:
+                    message.default = reader.string();
+                    break;
+                case /* string title */ 3:
+                    message.title = reader.string();
+                    break;
+                case /* bool required */ 4:
+                    message.required = reader.bool();
+                    break;
+                case /* bool read_only */ 5:
+                    message.readOnly = reader.bool();
+                    break;
+                case /* grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs */ 6:
+                    message.externalDocs = ExternalDocumentation.internalBinaryRead(reader, reader.uint32(), options, message.externalDocs);
+                    break;
+                case /* string example */ 7:
+                    message.example = reader.string();
+                    break;
+                case /* string ref */ 8:
+                    message.ref = reader.string();
+                    break;
+                case /* map<string, google.protobuf.Value> extensions */ 9:
+                    this.binaryReadMap9(message.extensions, reader, options);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap9(map: EnumSchema["extensions"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof EnumSchema["extensions"] | undefined, val: EnumSchema["extensions"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = Value.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field grpc.gateway.protoc_gen_openapiv2.options.EnumSchema.extensions");
+            }
+        }
+        map[key ?? ""] = val ?? Value.create();
+    }
+    internalBinaryWrite(message: EnumSchema, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string description = 1; */
+        if (message.description !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.description);
+        /* string default = 2; */
+        if (message.default !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.default);
+        /* string title = 3; */
+        if (message.title !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.title);
+        /* bool required = 4; */
+        if (message.required !== false)
+            writer.tag(4, WireType.Varint).bool(message.required);
+        /* bool read_only = 5; */
+        if (message.readOnly !== false)
+            writer.tag(5, WireType.Varint).bool(message.readOnly);
+        /* grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs = 6; */
+        if (message.externalDocs)
+            ExternalDocumentation.internalBinaryWrite(message.externalDocs, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* string example = 7; */
+        if (message.example !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.example);
+        /* string ref = 8; */
+        if (message.ref !== "")
+            writer.tag(8, WireType.LengthDelimited).string(message.ref);
+        /* map<string, google.protobuf.Value> extensions = 9; */
+        for (let k of Object.keys(message.extensions)) {
+            writer.tag(9, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            Value.internalBinaryWrite(message.extensions[k], writer, options);
+            writer.join().join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message grpc.gateway.protoc_gen_openapiv2.options.EnumSchema
+ */
+export const EnumSchema = new EnumSchema$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class JSONSchema$Type extends MessageType<JSONSchema> {
     constructor() {
         super("grpc.gateway.protoc_gen_openapiv2.options.JSONSchema", [
@@ -2307,12 +2784,14 @@ export const JSONSchema_FieldConfiguration = new JSONSchema_FieldConfiguration$T
 class Tag$Type extends MessageType<Tag> {
     constructor() {
         super("grpc.gateway.protoc_gen_openapiv2.options.Tag", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "external_docs", kind: "message", T: () => ExternalDocumentation }
+            { no: 3, name: "external_docs", kind: "message", T: () => ExternalDocumentation },
+            { no: 4, name: "extensions", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => Value } }
         ]);
     }
     create(value?: PartialMessage<Tag>): Tag {
-        const message = { description: "" };
+        const message = { name: "", description: "", extensions: {} };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<Tag>(this, message, value);
@@ -2323,11 +2802,17 @@ class Tag$Type extends MessageType<Tag> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
                 case /* string description */ 2:
                     message.description = reader.string();
                     break;
                 case /* grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs */ 3:
                     message.externalDocs = ExternalDocumentation.internalBinaryRead(reader, reader.uint32(), options, message.externalDocs);
+                    break;
+                case /* map<string, google.protobuf.Value> extensions */ 4:
+                    this.binaryReadMap4(message.extensions, reader, options);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2340,13 +2825,39 @@ class Tag$Type extends MessageType<Tag> {
         }
         return message;
     }
+    private binaryReadMap4(map: Tag["extensions"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof Tag["extensions"] | undefined, val: Tag["extensions"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = Value.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field grpc.gateway.protoc_gen_openapiv2.options.Tag.extensions");
+            }
+        }
+        map[key ?? ""] = val ?? Value.create();
+    }
     internalBinaryWrite(message: Tag, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
         /* string description = 2; */
         if (message.description !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.description);
         /* grpc.gateway.protoc_gen_openapiv2.options.ExternalDocumentation external_docs = 3; */
         if (message.externalDocs)
             ExternalDocumentation.internalBinaryWrite(message.externalDocs, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* map<string, google.protobuf.Value> extensions = 4; */
+        for (let k of Object.keys(message.extensions)) {
+            writer.tag(4, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            Value.internalBinaryWrite(message.extensions[k], writer, options);
+            writer.join().join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
