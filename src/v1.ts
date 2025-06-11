@@ -36,11 +36,11 @@ export type ZedDefaultClientInterface = OmitBaseMethods<
 export type ZedPromiseClientInterface =
   PromisifiedClient<PermissionsServiceClient> &
     PromisifiedClient<SchemaServiceClient> &
-  PromisifiedClient<WatchServiceClient> &
-  PromisifiedClient<ExperimentalServiceClient> &
-  PromisifiedClient<WatchPermissionsServiceClient> &
-  PromisifiedClient<WatchPermissionSetsServiceClient> &
-  Pick<ZedDefaultClientInterface, "close">;
+    PromisifiedClient<WatchServiceClient> &
+    PromisifiedClient<ExperimentalServiceClient> &
+    PromisifiedClient<WatchPermissionsServiceClient> &
+    PromisifiedClient<WatchPermissionSetsServiceClient> &
+    Pick<ZedDefaultClientInterface, "close">;
 
 // A combined client containing the root gRPC client methods and a promisified set at a "promises" key
 export type ZedClientInterface = ZedDefaultClientInterface & {
@@ -128,9 +128,14 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
   }
 
   close = () => {
-    [this.acl, this.ns, this.watch, this.experimental, this.watchPermissions, this.watchPermissionSets].forEach((client) =>
-      client?.close(),
-    );
+    [
+      this.acl,
+      this.ns,
+      this.watch,
+      this.experimental,
+      this.watchPermissions,
+      this.watchPermissionSets,
+    ].forEach((client) => client?.close());
   };
 
   get(_target: object, name: string | symbol) {
