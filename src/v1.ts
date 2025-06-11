@@ -403,13 +403,19 @@ export function NewClientWithChannelCredentials(
  * @returns A google.protobuf.Struct object.
  */
 export function createStructFromObject(data: JsonObject): ImportedPbStruct {
-  if (data === null || typeof data !== "object" || Array.isArray(data)) {
-    // Or handle this case as per library's error handling philosophy
-    throw new Error(
-      "Input data for createStructFromObject must be a non-null object.",
-    );
+  try {
+    return ImportedPbStruct.fromJson(data);
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("Unable to parse message google.protobuf.Struct from JSON")
+    ) {
+      throw new Error(
+        "Input data for createStructFromObject must be a non-null object.",
+      );
+    }
+    throw error;
   }
-  return ImportedPbStruct.fromJson(data);
 }
 
 export * from "./authzedapi/authzed/api/v1/core.js";

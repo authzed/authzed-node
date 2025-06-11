@@ -1,5 +1,4 @@
 import * as grpc from "@grpc/grpc-js";
-import {} from "@grpc/grpc-js";
 import { generateTestToken } from "./__utils__/helpers.js";
 import { Struct } from "./authzedapi/google/protobuf/struct.js";
 import { PreconnectServices, deadlineInterceptor } from "./util.js";
