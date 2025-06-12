@@ -19,6 +19,13 @@ import {
 } from "./util.js";
 
 import type { OmitBaseMethods, PromisifiedClient } from "./types.js";
+import {
+  Struct as ImportedPbStruct,
+  NullValue as ImportedPbNullValue,
+} from "./authzedapi/google/protobuf/struct.js";
+import type { JsonObject } from "@protobuf-ts/runtime";
+
+export { ImportedPbStruct as PbStruct, ImportedPbNullValue as PbNullValue };
 
 // A merge of the three generated gRPC clients, with their base methods omitted
 export type ZedDefaultClientInterface = OmitBaseMethods<
@@ -396,6 +403,30 @@ export function NewClientWithChannelCredentials(
   options: grpc.ClientOptions | undefined = undefined,
 ): ZedClientInterface {
   return ZedCombinedClient.create(endpoint, creds, preconnect, options);
+}
+/**
+ * Creates a google.protobuf.Struct object suitable for use as
+ * optionalTransactionMetadata in WriteRelationshipsRequest.
+ *
+ * @param data A simple JavaScript object (e.g., { key: "value" }) to be converted into a Struct.
+ * @returns A google.protobuf.Struct object.
+ */
+export function createStructFromObject(data: JsonObject): ImportedPbStruct {
+  try {
+    return ImportedPbStruct.fromJson(data);
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes(
+        "Unable to parse message google.protobuf.Struct from JSON",
+      )
+    ) {
+      throw new Error(
+        "Input data for createStructFromObject must be a non-null object.",
+      );
+    }
+    throw error;
+  }
 }
 
 export * from "./authzedapi/authzed/api/v1/core.js";
