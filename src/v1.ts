@@ -408,7 +408,9 @@ export function createStructFromObject(data: JsonObject): ImportedPbStruct {
   } catch (error) {
     if (
       error instanceof Error &&
-      error.message.includes("Unable to parse message google.protobuf.Struct from JSON")
+      error.message.includes(
+        "Unable to parse message google.protobuf.Struct from JSON",
+      )
     ) {
       throw new Error(
         "Input data for createStructFromObject must be a non-null object.",
