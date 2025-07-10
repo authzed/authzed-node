@@ -28,15 +28,6 @@ import {
 } from "./v1.js";
 import { generateTestToken } from "./__utils__/helpers.js";
 
-function createTestClient(tokenName: string) {
-  return NewClient(
-    generateTestToken(tokenName),
-    "localhost:50051",
-    ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-    PreconnectServices.PERMISSIONS_SERVICE |
-      PreconnectServices.SCHEMA_SERVICE,
-  );
-}
 
 describe("V1Test", () => {
   it("TestBasicSchema", async () => {
@@ -372,6 +363,16 @@ describe("V1Test", () => {
     importClient.close();
   });
 });
+
+function createTestClient(tokenName: string): ReturnType<typeof NewClient> {
+  return NewClient(
+    generateTestToken(tokenName),
+    "localhost:50051",
+    ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+    PreconnectServices.PERMISSIONS_SERVICE |
+      PreconnectServices.SCHEMA_SERVICE,
+  );
+}
 
 // Helper to write the test schema
 async function writeTestSchema(client: ReturnType<typeof NewClient>, schema: string = `
