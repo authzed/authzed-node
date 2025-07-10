@@ -22,6 +22,9 @@ import {
   WriteSchemaResponse,
   ReadSchemaRequest,
   ReadSchemaResponse,
+  CheckBulkPermissionsRequest,
+  CheckBulkPermissionsRequestItem,
+  CheckBulkPermissionsResponse,
 } from "./v1.js";
 import { generateTestToken } from "./__utils__/helpers.js";
 
@@ -272,18 +275,52 @@ describe("V1Test", () => {
   });
 
   it("TestCheckBulkPermissions", async () => {
-    // Not implemented: CheckBulkPermissionsRequest is not in the node client as of now
-    // Skipping this test
+    const client = createTestClient("v1test-check-bulk-permissions");
+    await writeTestSchema(client);
+    const { emilia, postOne } = await writeTestTuples(client);
+    const checkBulkPermissionsRequest = CheckBulkPermissionsRequest.create({
+      consistency: Consistency.create({
+        requirement: { oneofKind: "fullyConsistent", fullyConsistent: true },
+      }),
+      items: [
+        CheckBulkPermissionsRequestItem.create({
+          resource: postOne,
+          permission: "view",
+          subject: emilia,
+        }),
+        CheckBulkPermissionsRequestItem.create({
+          resource: postOne,
+          permission: "write",
+          subject: emilia,
+        })
+      ]
+    });
+    const response: CheckBulkPermissionsResponse = await new Promise((resolve, reject) => client.checkBulkPermissions(checkBulkPermissionsRequest, (err, response) => {
+      if (err || !response) reject(err);
+      else resolve(response);
+    }));
+    expect(response.pairs.length).toBe(2);
+    if (response.pairs[0].response.oneofKind === "item") {
+      expect(response.pairs[0].response.item.permissionship).toBe(CheckPermissionResponse_Permissionship.HAS_PERMISSION);
+    } else {
+      throw new Error("Expected response.pairs[0].response to be of kind 'item'");
+    }
+    if (response.pairs[1].response.oneofKind === "item") {
+      expect(response.pairs[1].response.item.permissionship).toBe(CheckPermissionResponse_Permissionship.HAS_PERMISSION);
+    } else {
+      throw new Error("Expected response.pairs[1].response to be of kind 'item'");
+    }
   });
 
   it("TestBulkExportImport", async () => {
     const client = createTestClient("v1test-bulk-export-import");
     await writeTestSchema(client);
     await writeTestTuples(client);
+
     // Export
     const exported: Relationship[] = [];
     await new Promise((resolve) => {
-      const stream = client.bulkExportRelationships(
+      const stream = client.exportBulkRelationships(
         BulkExportRelationshipsRequest.create({
           consistency: Consistency.create({
             requirement: { oneofKind: "fullyConsistent", fullyConsistent: true },
@@ -297,11 +334,12 @@ describe("V1Test", () => {
       stream.on("error", (e) => { throw e; });
     });
     expect(exported.length).toBe(4);
+
     // Import into a new client (new preshared key)
     const importClient = createTestClient("v1test-bulk-import");
     await writeTestSchema(importClient);
     await new Promise((resolve) => {
-      const stream = importClient.bulkImportRelationships((err, value) => {
+      const stream = importClient.importBulkRelationships((err, value) => {
         if (err) throw err;
         else resolve(value);
       });
@@ -312,10 +350,11 @@ describe("V1Test", () => {
       );
       stream.end();
     });
+
     // Validate import
     const imported: Relationship[] = [];
     await new Promise((resolve) => {
-      const stream = importClient.bulkExportRelationships(
+      const stream = importClient.exportBulkRelationships(
         BulkExportRelationshipsRequest.create({
           consistency: Consistency.create({
             requirement: { oneofKind: "fullyConsistent", fullyConsistent: true },
