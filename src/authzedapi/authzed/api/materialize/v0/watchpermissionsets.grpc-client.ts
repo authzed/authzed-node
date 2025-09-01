@@ -4,6 +4,8 @@
 import { WatchPermissionSetsService } from "./watchpermissionsets.js";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
+import type { DownloadPermissionSetsResponse } from "./watchpermissionsets.js";
+import type { DownloadPermissionSetsRequest } from "./watchpermissionsets.js";
 import type { LookupPermissionSetsResponse } from "./watchpermissionsets.js";
 import type { LookupPermissionSetsRequest } from "./watchpermissionsets.js";
 import type { WatchPermissionSetsResponse } from "./watchpermissionsets.js";
@@ -68,6 +70,18 @@ export interface IWatchPermissionSetsServiceClient {
      */
     lookupPermissionSets(input: LookupPermissionSetsRequest, metadata?: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupPermissionSetsResponse>;
     lookupPermissionSets(input: LookupPermissionSetsRequest, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupPermissionSetsResponse>;
+    /**
+     * DownloadPermissionSets returns URLs to download permission sets data as Avro files.
+     * This provides an alternative to LookupPermissionSets for customers who need to download
+     * large datasets efficiently. The returned URLs point to compressed Avro files containing
+     * the permission sets data in a normalized format.
+     *
+     * @generated from protobuf rpc: DownloadPermissionSets(authzed.api.materialize.v0.DownloadPermissionSetsRequest) returns (authzed.api.materialize.v0.DownloadPermissionSetsResponse);
+     */
+    downloadPermissionSets(input: DownloadPermissionSetsRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DownloadPermissionSetsResponse) => void): grpc.ClientUnaryCall;
+    downloadPermissionSets(input: DownloadPermissionSetsRequest, metadata: grpc.Metadata, callback: (err: grpc.ServiceError | null, value?: DownloadPermissionSetsResponse) => void): grpc.ClientUnaryCall;
+    downloadPermissionSets(input: DownloadPermissionSetsRequest, options: grpc.CallOptions, callback: (err: grpc.ServiceError | null, value?: DownloadPermissionSetsResponse) => void): grpc.ClientUnaryCall;
+    downloadPermissionSets(input: DownloadPermissionSetsRequest, callback: (err: grpc.ServiceError | null, value?: DownloadPermissionSetsResponse) => void): grpc.ClientUnaryCall;
 }
 /**
  * @generated from protobuf service authzed.api.materialize.v0.WatchPermissionSetsService
@@ -136,5 +150,17 @@ export class WatchPermissionSetsServiceClient extends grpc.Client implements IWa
     lookupPermissionSets(input: LookupPermissionSetsRequest, metadata?: grpc.Metadata | grpc.CallOptions, options?: grpc.CallOptions): grpc.ClientReadableStream<LookupPermissionSetsResponse> {
         const method = WatchPermissionSetsService.methods[1];
         return this.makeServerStreamRequest<LookupPermissionSetsRequest, LookupPermissionSetsResponse>(`/${WatchPermissionSetsService.typeName}/${method.name}`, (value: LookupPermissionSetsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): LookupPermissionSetsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), options);
+    }
+    /**
+     * DownloadPermissionSets returns URLs to download permission sets data as Avro files.
+     * This provides an alternative to LookupPermissionSets for customers who need to download
+     * large datasets efficiently. The returned URLs point to compressed Avro files containing
+     * the permission sets data in a normalized format.
+     *
+     * @generated from protobuf rpc: DownloadPermissionSets(authzed.api.materialize.v0.DownloadPermissionSetsRequest) returns (authzed.api.materialize.v0.DownloadPermissionSetsResponse);
+     */
+    downloadPermissionSets(input: DownloadPermissionSetsRequest, metadata: grpc.Metadata | grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DownloadPermissionSetsResponse) => void), options?: grpc.CallOptions | ((err: grpc.ServiceError | null, value?: DownloadPermissionSetsResponse) => void), callback?: ((err: grpc.ServiceError | null, value?: DownloadPermissionSetsResponse) => void)): grpc.ClientUnaryCall {
+        const method = WatchPermissionSetsService.methods[2];
+        return this.makeUnaryRequest<DownloadPermissionSetsRequest, DownloadPermissionSetsResponse>(`/${WatchPermissionSetsService.typeName}/${method.name}`, (value: DownloadPermissionSetsRequest): Buffer => Buffer.from(method.I.toBinary(value, this._binaryOptions)), (value: Buffer): DownloadPermissionSetsResponse => method.O.fromBinary(value, this._binaryOptions), input, (metadata as any), (options as any), (callback as any));
     }
 }
