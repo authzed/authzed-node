@@ -309,6 +309,46 @@ export interface BreakingSchemaChange {
      */
     changeAt?: ZedToken;
 }
+/**
+ * @generated from protobuf message authzed.api.materialize.v0.DownloadPermissionSetsRequest
+ */
+export interface DownloadPermissionSetsRequest {
+    /**
+     * optional_at_revision is a specific revision to download; for now this will
+     * just validate that it matches the backing store if provided.
+     *
+     * @generated from protobuf field: authzed.api.v1.ZedToken optional_at_revision = 1;
+     */
+    optionalAtRevision?: ZedToken;
+}
+/**
+ * @generated from protobuf message authzed.api.materialize.v0.File
+ */
+export interface File {
+    /**
+     * name is the filename of the downloadable file
+     *
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * url is the download URL for the file (typically a signed S3 URL)
+     *
+     * @generated from protobuf field: string url = 2;
+     */
+    url: string;
+}
+/**
+ * @generated from protobuf message authzed.api.materialize.v0.DownloadPermissionSetsResponse
+ */
+export interface DownloadPermissionSetsResponse {
+    /**
+     * files contains the list of downloadable files with their URLs
+     *
+     * @generated from protobuf field: repeated authzed.api.materialize.v0.File files = 1;
+     */
+    files: File[];
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class WatchPermissionSetsRequest$Type extends MessageType<WatchPermissionSetsRequest> {
     constructor() {
@@ -930,10 +970,159 @@ class BreakingSchemaChange$Type extends MessageType<BreakingSchemaChange> {
  * @generated MessageType for protobuf message authzed.api.materialize.v0.BreakingSchemaChange
  */
 export const BreakingSchemaChange = new BreakingSchemaChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DownloadPermissionSetsRequest$Type extends MessageType<DownloadPermissionSetsRequest> {
+    constructor() {
+        super("authzed.api.materialize.v0.DownloadPermissionSetsRequest", [
+            { no: 1, name: "optional_at_revision", kind: "message", T: () => ZedToken }
+        ]);
+    }
+    create(value?: PartialMessage<DownloadPermissionSetsRequest>): DownloadPermissionSetsRequest {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<DownloadPermissionSetsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DownloadPermissionSetsRequest): DownloadPermissionSetsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* authzed.api.v1.ZedToken optional_at_revision */ 1:
+                    message.optionalAtRevision = ZedToken.internalBinaryRead(reader, reader.uint32(), options, message.optionalAtRevision);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DownloadPermissionSetsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* authzed.api.v1.ZedToken optional_at_revision = 1; */
+        if (message.optionalAtRevision)
+            ZedToken.internalBinaryWrite(message.optionalAtRevision, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.materialize.v0.DownloadPermissionSetsRequest
+ */
+export const DownloadPermissionSetsRequest = new DownloadPermissionSetsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class File$Type extends MessageType<File> {
+    constructor() {
+        super("authzed.api.materialize.v0.File", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<File>): File {
+        const message = { name: "", url: "" };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<File>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: File): File {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string url */ 2:
+                    message.url = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: File, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string url = 2; */
+        if (message.url !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.url);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.materialize.v0.File
+ */
+export const File = new File$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DownloadPermissionSetsResponse$Type extends MessageType<DownloadPermissionSetsResponse> {
+    constructor() {
+        super("authzed.api.materialize.v0.DownloadPermissionSetsResponse", [
+            { no: 1, name: "files", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => File }
+        ]);
+    }
+    create(value?: PartialMessage<DownloadPermissionSetsResponse>): DownloadPermissionSetsResponse {
+        const message = { files: [] };
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<DownloadPermissionSetsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DownloadPermissionSetsResponse): DownloadPermissionSetsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated authzed.api.materialize.v0.File files */ 1:
+                    message.files.push(File.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DownloadPermissionSetsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated authzed.api.materialize.v0.File files = 1; */
+        for (let i = 0; i < message.files.length; i++)
+            File.internalBinaryWrite(message.files[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message authzed.api.materialize.v0.DownloadPermissionSetsResponse
+ */
+export const DownloadPermissionSetsResponse = new DownloadPermissionSetsResponse$Type();
 /**
  * @generated ServiceType for protobuf service authzed.api.materialize.v0.WatchPermissionSetsService
  */
 export const WatchPermissionSetsService = new ServiceType("authzed.api.materialize.v0.WatchPermissionSetsService", [
     { name: "WatchPermissionSets", serverStreaming: true, options: {}, I: WatchPermissionSetsRequest, O: WatchPermissionSetsResponse },
-    { name: "LookupPermissionSets", serverStreaming: true, options: {}, I: LookupPermissionSetsRequest, O: LookupPermissionSetsResponse }
+    { name: "LookupPermissionSets", serverStreaming: true, options: {}, I: LookupPermissionSetsRequest, O: LookupPermissionSetsResponse },
+    { name: "DownloadPermissionSets", options: {}, I: DownloadPermissionSetsRequest, O: DownloadPermissionSetsResponse }
 ]);
