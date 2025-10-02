@@ -9,4 +9,4 @@ plugins:
       - client_grpc1
 inputs:
   # This SHA refers to the v1.41.0 commit with deprecated APIs removed
-  - module: "buf.build/authzed/api:v1.45.0"
+  - module: "buf.build/authzed/api:v1.45.4"

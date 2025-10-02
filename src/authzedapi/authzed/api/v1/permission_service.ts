@@ -294,6 +294,8 @@ export interface WriteRelationshipsRequest {
  */
 export interface WriteRelationshipsResponse {
     /**
+     * written_at is the revision at which the relationships were written or deleted.
+     *
      * @generated from protobuf field: authzed.api.v1.ZedToken written_at = 1;
      */
     writtenAt?: ZedToken;

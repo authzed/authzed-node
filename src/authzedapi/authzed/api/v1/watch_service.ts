@@ -17,7 +17,7 @@ import { RelationshipUpdate } from "./core.js";
 import { RelationshipFilter } from "./permission_service.js";
 import { ZedToken } from "./core.js";
 /**
- * WatchRequest specifies what mutations to watch for, and an optional start snapshot for when to start
+ * WatchRequest specifies what mutations to watch for, and an optional start point for when to start
  * watching.
  *
  * @generated from protobuf message authzed.api.v1.WatchRequest
@@ -34,9 +34,7 @@ export interface WatchRequest {
     /**
      * optional_start_cursor is the ZedToken holding the point-in-time at
      * which to start watching for changes.
-     * If not specified, the watch will begin at the current head revision
-     * of the datastore, returning any updates that occur after the caller
-     * makes the request.
+     * If not specified, the watch will start from the current SpiceDB revision time of the request ("head revision").
      * Note that if this cursor references a point-in-time containing data
      * that has been garbage collected, an error will be returned.
      *
@@ -55,23 +53,25 @@ export interface WatchRequest {
     optionalRelationshipFilters: RelationshipFilter[];
     /**
      * optional_update_kinds, if specified, indicates what kinds of mutations to include.
+     * If your SpiceDB instance is running behind a proxy that aborts idle connections,
+     * we recommend including Checkpoints to keep the stream alive even when there are no changes.
      *
      * @generated from protobuf field: repeated authzed.api.v1.WatchKind optional_update_kinds = 4;
      */
     optionalUpdateKinds: WatchKind[];
 }
 /**
- * WatchResponse contains all mutation events in ascending timestamp order,
- * from the requested start snapshot to a snapshot
- * encoded in the watch response. The client can use the snapshot to resume
- * watching where the previous watch response left off.
+ * WatchResponse contains all mutation events in ascending timestamp order.
+ * This excludes relationships that were deleted because they expired.
+ * The response includes a field that can be used to resume
+ * watching from that point.
  *
  * @generated from protobuf message authzed.api.v1.WatchResponse
  */
 export interface WatchResponse {
     /**
      * updates are the RelationshipUpdate events that have occurred since the
-     * last watch response.
+     * call was made, or since the point in time specified by changes_through.
      *
      * @generated from protobuf field: repeated authzed.api.v1.RelationshipUpdate updates = 1;
      */
@@ -87,7 +87,8 @@ export interface WatchResponse {
     /**
      * optional_transaction_metadata is an optional field that returns the transaction metadata
      * given to SpiceDB during the transaction that produced the changes in this response.
-     * This field may not exist if no transaction metadata was provided.
+     * This field may not exist if no transaction metadata was provided, or if multiple pieces
+     * of metadata were found during the transaction (in which case it is ambiguous which to return).
      *
      * @generated from protobuf field: google.protobuf.Struct optional_transaction_metadata = 3;
      */
@@ -106,6 +107,15 @@ export interface WatchResponse {
      * @generated from protobuf field: bool is_checkpoint = 5;
      */
     isCheckpoint: boolean;
+    /**
+     * full_revision_metadata contains all transaction metadata given to SpiceDB during the
+     * revision that produced the changes in this response. Some datastores (such as CockroachDB)
+     * can "merge" multiple transactions into a single revision (if the changes occurred concurrently),
+     * so this field is a list of all transaction metadata seen during the revision.
+     *
+     * @generated from protobuf field: repeated google.protobuf.Struct full_revision_metadata = 6;
+     */
+    fullRevisionMetadata: Struct[];
 }
 /**
  * @generated from protobuf enum authzed.api.v1.WatchKind
@@ -214,11 +224,12 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
             { no: 2, name: "changes_through", kind: "message", T: () => ZedToken },
             { no: 3, name: "optional_transaction_metadata", kind: "message", T: () => Struct },
             { no: 4, name: "schema_updated", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "is_checkpoint", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 5, name: "is_checkpoint", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "full_revision_metadata", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Struct }
         ]);
     }
     create(value?: PartialMessage<WatchResponse>): WatchResponse {
-        const message = { updates: [], schemaUpdated: false, isCheckpoint: false };
+        const message = { updates: [], schemaUpdated: false, isCheckpoint: false, fullRevisionMetadata: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<WatchResponse>(this, message, value);
@@ -243,6 +254,9 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
                     break;
                 case /* bool is_checkpoint */ 5:
                     message.isCheckpoint = reader.bool();
+                    break;
+                case /* repeated google.protobuf.Struct full_revision_metadata */ 6:
+                    message.fullRevisionMetadata.push(Struct.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -271,6 +285,9 @@ class WatchResponse$Type extends MessageType<WatchResponse> {
         /* bool is_checkpoint = 5; */
         if (message.isCheckpoint !== false)
             writer.tag(5, WireType.Varint).bool(message.isCheckpoint);
+        /* repeated google.protobuf.Struct full_revision_metadata = 6; */
+        for (let i = 0; i < message.fullRevisionMetadata.length; i++)
+            Struct.internalBinaryWrite(message.fullRevisionMetadata[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
