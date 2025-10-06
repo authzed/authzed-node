@@ -27,6 +27,8 @@ import type { JsonObject } from "@protobuf-ts/runtime";
 
 export { ImportedPbStruct as PbStruct, ImportedPbNullValue as PbNullValue };
 
+export { ErrorReason } from "./authzedapi/authzed/api/v1/error_reason.js";
+
 // A merge of the three generated gRPC clients, with their base methods omitted
 export type ZedDefaultClientInterface = OmitBaseMethods<
   PermissionsServiceClient,
