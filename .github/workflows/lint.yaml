@@ -1,0 +1,32 @@
+---
+name: "Lint"
+permissions:
+  contents: "read"
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "*"
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: "depot-ubuntu-24.04-small"
+    steps:
+      - uses: "actions/checkout@v5"
+      - uses: "bahmutov/npm-install@v1"
+        with:
+          useLockFile: false
+      - name: "Run prettier"
+        run: "CI=true yarn run prettier src -c"
+      - name: "Run lint"
+        run: "CI=true yarn lint"
+
+  conventional-commits:
+    name: "Lint Commit Messages"
+    runs-on: "depot-ubuntu-24.04-small"
+    if: "github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened' || github.event.action == 'edited')"
+    steps:
+      - uses: "actions/checkout@v5"
+      - uses: "webiny/action-conventional-commits@v1.3.0"

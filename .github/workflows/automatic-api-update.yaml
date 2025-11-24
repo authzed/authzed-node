@@ -40,8 +40,9 @@ jobs:
         with:
           delete-branch: "true"
           title: "Update API to ${{ github.event.client_payload.BUFTAG }}"
+          commit-message: "chore: update api version"
           # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs
           draft: "always-true"
           branch: "api-change/${{ github.event.client_payload.BUFTAG }}"
           base: "main"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: "${{ secrets.GITHUB_TOKEN }}"

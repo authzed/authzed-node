@@ -40,9 +40,10 @@ jobs:
         if: steps.buf-update.outputs.updated == 'true'
         with:
           delete-branch: "true"
-          title: Update API to ${{ inputs.buftag }}
+          title: "Update API to ${{ inputs.buftag }}"
+          commit-message: "chore: update api version"
           # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs
           draft: "always-true"
-          branch: api-change/${{ inputs.buftag }}
+          branch: "api-change/${{ inputs.buftag }}"
           base: "main"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: "${{ secrets.GITHUB_TOKEN }}"
