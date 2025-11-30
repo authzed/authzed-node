@@ -1,5 +1,5 @@
 ---
-name: "Lint and Test"
+name: "Test"
 on:
   push:
     branches:
@@ -25,7 +25,7 @@ jobs:
               - js-dist/package.json
               - buf.gen.yaml
   test:
-    name: Lint and Test
+    name: "Test"
     runs-on: "depot-ubuntu-24.04-small"
     strategy:
       matrix:
@@ -34,26 +34,22 @@ jobs:
     if: |
       needs.paths-filter.outputs.codechange == 'true'
     steps:
-      - uses: actions/checkout@v5
+      - uses: "actions/checkout@v5"
       - uses: "authzed/action-spicedb@v1"
         with:
           version: "latest"
-      - uses: actions/setup-node@v6
+      - uses: "actions/setup-node@v6"
         with:
           node-version: ${{ matrix.node-version }}
           cache-dependency-path: ./package.json
           cache: "yarn"
-      - uses: bahmutov/npm-install@v1
+      - uses: "bahmutov/npm-install@v1"
         with:
           useLockFile: false
-      - name: Run lint
-        run: "CI=true yarn lint"
-      - name: Run prettier
-        run: "CI=true yarn run prettier src -c"
       - name: Run Yarn tests
         run: "CI=true yarn only-run-tests"
   build-js-client:
-    name: Build and Test JS client
+    name: "Build and Test JS client"
     runs-on: "depot-ubuntu-24.04-small"
     strategy:
       matrix:
