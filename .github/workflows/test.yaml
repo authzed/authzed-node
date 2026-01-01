@@ -80,7 +80,7 @@ jobs:
       - name: Run tests
         run: CI=true yarn only-run-tests
         working-directory: ./js-dist
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: js-client-${{ matrix.node-version }}
           path: |
