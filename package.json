@@ -43,24 +43,24 @@
     "build-js-client": "tsc --declaration false --outDir js-dist"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.14.1",
+    "@grpc/grpc-js": "^1.14.3",
     "@protobuf-ts/runtime": "^2.11.1",
     "@protobuf-ts/runtime-rpc": "^2.11.1",
     "google-protobuf": "^4.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^9.39.2",
     "@protobuf-ts/plugin": "^2.11.1",
     "@tsconfig/node18": "^18.2.6",
-    "@typescript-eslint/eslint-plugin": "^8.48.0",
-    "@typescript-eslint/parser": "^8.48.0",
-    "eslint": "^9.39.1",
-    "grpc-tools": "^1.13.0",
-    "prettier": "^3.7.3",
-    "rollup": "^4.53.3",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
+    "eslint": "^9.39.2",
+    "grpc-tools": "^1.13.1",
+    "prettier": "^3.7.4",
+    "rollup": "^4.54.0",
     "tsc-esm-fix": "^3.1.2",
     "typescript": "^5.9",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.16"
   }
 }
