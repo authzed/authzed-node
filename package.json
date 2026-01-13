@@ -28,14 +28,21 @@
       "import": "./dist/src/index.js"
     }
   },
-  "repository": "https://github.com/authzed/authzed-node",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/authzed/authzed-node.git"
+  },
   "license": "Apache-2.0",
   "private": false,
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "test": "./scripts/run-and-test.sh",
     "only-run-tests": "vitest",
     "buf": "buf generate && tsc-esm-fix --src src/authzedapi --ext='.js'",
     "lint": "./node_modules/.bin/eslint src",
+    "lint:package": "publint --pack npm",
     "format": "prettier -w src",
     "build": "tsc",
     "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs && cp dist/src/index.d.ts dist/src/index.d.cts",
@@ -58,6 +65,7 @@
     "eslint": "^9.39.2",
     "grpc-tools": "^1.13.1",
     "prettier": "^3.7.4",
+    "publint": "^0.3.16",
     "rollup": "^4.54.0",
     "tsc-esm-fix": "^3.1.2",
     "typescript": "^5.9",

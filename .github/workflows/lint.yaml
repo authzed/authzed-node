@@ -22,6 +22,8 @@ jobs:
         run: "CI=true yarn run prettier src -c"
       - name: "Run lint"
         run: "CI=true yarn lint"
+      - name: "Run publint"
+        run: "yarn build && yarn lint:package"
 
   conventional-commits:
     name: "Lint Commit Messages"
