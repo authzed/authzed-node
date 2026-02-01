@@ -27,6 +27,6 @@
   },
   "devDependencies": {
     "grpc-tools": "^1.13.1",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.18"
   }
 }
