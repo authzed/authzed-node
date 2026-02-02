@@ -30,10 +30,7 @@ export { ImportedPbStruct as PbStruct, ImportedPbNullValue as PbNullValue };
 export { ErrorReason } from "./authzedapi/authzed/api/v1/error_reason.js";
 
 // A merge of the three generated gRPC clients, with their base methods omitted
-export type ZedDefaultClientInterface = OmitBaseMethods<
-  PermissionsServiceClient,
-  grpc.Client
-> &
+export type ZedDefaultClientInterface = OmitBaseMethods<PermissionsServiceClient, grpc.Client> &
   OmitBaseMethods<SchemaServiceClient, grpc.Client> &
   OmitBaseMethods<WatchServiceClient, grpc.Client> &
   OmitBaseMethods<ExperimentalServiceClient, grpc.Client> &
@@ -42,14 +39,13 @@ export type ZedDefaultClientInterface = OmitBaseMethods<
   Pick<grpc.Client, "close">;
 
 // The promisified version of the interface
-export type ZedPromiseClientInterface =
-  PromisifiedClient<PermissionsServiceClient> &
-    PromisifiedClient<SchemaServiceClient> &
-    PromisifiedClient<WatchServiceClient> &
-    PromisifiedClient<ExperimentalServiceClient> &
-    PromisifiedClient<WatchPermissionsServiceClient> &
-    PromisifiedClient<WatchPermissionSetsServiceClient> &
-    Pick<ZedDefaultClientInterface, "close">;
+export type ZedPromiseClientInterface = PromisifiedClient<PermissionsServiceClient> &
+  PromisifiedClient<SchemaServiceClient> &
+  PromisifiedClient<WatchServiceClient> &
+  PromisifiedClient<ExperimentalServiceClient> &
+  PromisifiedClient<WatchPermissionsServiceClient> &
+  PromisifiedClient<WatchPermissionSetsServiceClient> &
+  Pick<ZedDefaultClientInterface, "close">;
 
 // A combined client containing the root gRPC client methods and a promisified set at a "promises" key
 export type ZedClientInterface = ZedDefaultClientInterface & {
@@ -89,11 +85,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     };
 
     if (preconnect & PreconnectServices.PERMISSIONS_SERVICE) {
-      this.acl = new PermissionsServiceClient(
-        this.endpoint,
-        this.creds,
-        options,
-      );
+      this.acl = new PermissionsServiceClient(this.endpoint, this.creds, options);
     }
     if (preconnect & PreconnectServices.SCHEMA_SERVICE) {
       this.ns = new SchemaServiceClient(this.endpoint, this.creds, options);
@@ -102,11 +94,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
       this.watch = new WatchServiceClient(this.endpoint, this.creds, options);
     }
     if (preconnect & PreconnectServices.WATCH_PERMISSIONS_SERVICE) {
-      this.watchPermissions = new WatchPermissionsServiceClient(
-        this.endpoint,
-        this.creds,
-        options,
-      );
+      this.watchPermissions = new WatchPermissionsServiceClient(this.endpoint, this.creds, options);
     }
     if (preconnect & PreconnectServices.WATCH_PERMISSIONSETS_SERVICE) {
       this.watchPermissionSets = new WatchPermissionSetsServiceClient(
@@ -116,11 +104,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
       );
     }
     if (preconnect & PreconnectServices.EXPERIMENTAL_SERVICE) {
-      this.experimental = new ExperimentalServiceClient(
-        this.endpoint,
-        this.creds,
-        options,
-      );
+      this.experimental = new ExperimentalServiceClient(this.endpoint, this.creds, options);
     }
   }
 
@@ -130,10 +114,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     preconnect: PreconnectServices,
     options: grpc.ClientOptions | undefined,
   ) {
-    return new Proxy(
-      {} as any,
-      new ZedClient(endpoint, creds, preconnect, options),
-    );
+    return new Proxy({} as any, new ZedClient(endpoint, creds, preconnect, options));
   }
 
   close = () => {
@@ -157,11 +138,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     // pick ACL by default since its the most likely be used.
     if (typeof name === "symbol") {
       if (this.acl === undefined) {
-        this.acl = new PermissionsServiceClient(
-          this.endpoint,
-          this.creds,
-          this.options,
-        );
+        this.acl = new PermissionsServiceClient(this.endpoint, this.creds, this.options);
       }
 
       return (this.acl as any)[name];
@@ -170,11 +147,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     // Otherwise, lazily instantiate the client based on the method requested.
     if (name in PermissionsServiceClient.prototype) {
       if (this.acl === undefined) {
-        this.acl = new PermissionsServiceClient(
-          this.endpoint,
-          this.creds,
-          this.options,
-        );
+        this.acl = new PermissionsServiceClient(this.endpoint, this.creds, this.options);
       }
 
       return (this.acl as any)[name];
@@ -182,11 +155,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
 
     if (name in SchemaServiceClient.prototype) {
       if (this.ns === undefined) {
-        this.ns = new SchemaServiceClient(
-          this.endpoint,
-          this.creds,
-          this.options,
-        );
+        this.ns = new SchemaServiceClient(this.endpoint, this.creds, this.options);
       }
 
       return (this.ns as any)[name as string];
@@ -194,11 +163,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
 
     if (name in WatchServiceClient.prototype) {
       if (this.watch === undefined) {
-        this.watch = new WatchServiceClient(
-          this.endpoint,
-          this.creds,
-          this.options,
-        );
+        this.watch = new WatchServiceClient(this.endpoint, this.creds, this.options);
       }
 
       return (this.watch as any)[name];
@@ -230,11 +195,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
 
     if (name in ExperimentalServiceClient.prototype) {
       if (this.experimental === undefined) {
-        this.experimental = new ExperimentalServiceClient(
-          this.endpoint,
-          this.creds,
-          this.options,
-        );
+        this.experimental = new ExperimentalServiceClient(this.endpoint, this.creds, this.options);
       }
 
       return (this.experimental as any)[name];
@@ -265,10 +226,7 @@ class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface> {
     "watchPermissions",
     "watchPermissionSets",
   ]);
-  private writableStreamMethods = new Set([
-    "bulkImportRelationships",
-    "importBulkRelationships",
-  ]);
+  private writableStreamMethods = new Set(["bulkImportRelationships", "importBulkRelationships"]);
 
   constructor(client: ZedDefaultClientInterface) {
     this.client = client;
@@ -283,16 +241,13 @@ class ZedPromiseClient implements ProxyHandler<ZedPromiseClientInterface> {
       const clientMethod = (this.client as any)[name as string];
       if (clientMethod !== undefined) {
         if (this.streamMethods.has(name as string)) {
-          this.promiseCache[name as string] = promisifyStream(
-            clientMethod,
-            this.client,
-          );
+          this.promiseCache[name as string] = promisifyStream(clientMethod, this.client);
         } else if (this.writableStreamMethods.has(name as string)) {
           this.promiseCache[name as string] = clientMethod.bind(this.client);
         } else if (typeof clientMethod === "function") {
-          this.promiseCache[name as string] = promisify(
-            (this.client as any)[name as string],
-          ).bind(this.client);
+          this.promiseCache[name as string] = promisify((this.client as any)[name as string]).bind(
+            this.client,
+          );
         } else {
           return clientMethod;
         }
@@ -314,10 +269,7 @@ class ZedCombinedClient implements ProxyHandler<ZedCombinedClient> {
   private client: ZedDefaultClientInterface;
   private promiseClient: ZedPromiseClientInterface;
 
-  constructor(
-    client: ZedDefaultClientInterface,
-    promiseClient: ZedPromiseClientInterface,
-  ) {
+  constructor(client: ZedDefaultClientInterface, promiseClient: ZedPromiseClientInterface) {
     this.client = client;
     this.promiseClient = promiseClient;
   }
@@ -419,13 +371,9 @@ export function createStructFromObject(data: JsonObject): ImportedPbStruct {
   } catch (error) {
     if (
       error instanceof Error &&
-      error.message.includes(
-        "Unable to parse message google.protobuf.Struct from JSON",
-      )
+      error.message.includes("Unable to parse message google.protobuf.Struct from JSON")
     ) {
-      throw new Error(
-        "Input data for createStructFromObject must be a non-null object.",
-      );
+      throw new Error("Input data for createStructFromObject must be a non-null object.");
     }
     throw error;
   }

@@ -1,8 +1,7 @@
 {
   "name": "@authzed/authzed-node",
-  "author": "authzed",
   "version": "0.19.0",
-  "type": "module",
+  "private": false,
   "description": "authzed client for nodejs",
   "keywords": [
     "authorization",
@@ -13,6 +12,16 @@
     "spicedb",
     "zanzibar"
   ],
+  "license": "Apache-2.0",
+  "author": "authzed",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/authzed/authzed-node.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
   "main": "dist/src/index.cjs",
   "module": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
@@ -28,15 +37,6 @@
       "import": "./dist/src/index.js"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/authzed/authzed-node.git"
-  },
-  "license": "Apache-2.0",
-  "private": false,
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "test": "./scripts/run-and-test.sh",
     "only-run-tests": "vitest",

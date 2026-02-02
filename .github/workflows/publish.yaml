@@ -1,7 +1,7 @@
 ---
 # yamllint disable rule:line-length
 name: "Publish to NPM"
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   release:
     types:
       - "published"

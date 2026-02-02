@@ -44,18 +44,9 @@ export type StreamCall<T, U> = (
  * Matches a gRPC method that returns a ClientWritableStream
  */
 export type WritableStreamCall<T, U> = (
-  metadata:
-    | Metadata
-    | CallOptions
-    | ((err: ServiceError | null, value?: U | undefined) => void),
-  options?:
-    | CallOptions
-    | ((err: ServiceError | null, value?: U | undefined) => void)
-    | undefined,
-  callback?: (
-    err: ServiceError | null,
-    value?: U | undefined,
-  ) => void | undefined,
+  metadata: Metadata | CallOptions | ((err: ServiceError | null, value?: U | undefined) => void),
+  options?: CallOptions | ((err: ServiceError | null, value?: U | undefined) => void) | undefined,
+  callback?: (err: ServiceError | null, value?: U | undefined) => void | undefined,
 ) => ClientWritableStream<T>;
 
 /**
@@ -82,15 +73,10 @@ export type PromisifiedCall<T, U> = (
  */
 export type PromisifiedCallbackClient<C> = {
   [prop in Exclude<
-    Exclude<
-      keyof ExcludeReturnType<C, ClientReadableStream<unknown>>,
-      keyof Client
-    >,
+    Exclude<keyof ExcludeReturnType<C, ClientReadableStream<unknown>>, keyof Client>,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     keyof PickReturnType<C, ClientWritableStream<any>>
-  >]: C[prop] extends UnaryCall<infer T, infer U>
-    ? PromisifiedCall<T, U>
-    : never;
+  >]: C[prop] extends UnaryCall<infer T, infer U> ? PromisifiedCall<T, U> : never;
 };
 
 /**
@@ -100,9 +86,7 @@ export type PromisifiedStreamClient<C> = {
   [prop in Exclude<
     keyof PickReturnType<C, ClientReadableStream<unknown>>,
     keyof Client
-  >]: C[prop] extends StreamCall<infer T1, infer U1>
-    ? PromisifiedCall<T1, U1[]>
-    : never;
+  >]: C[prop] extends StreamCall<infer T1, infer U1> ? PromisifiedCall<T1, U1[]> : never;
 };
 
 export type WritableStreamClient<C> = {
@@ -110,9 +94,7 @@ export type WritableStreamClient<C> = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     keyof PickReturnType<C, ClientWritableStream<any>>,
     keyof Client
-  >]: C[prop] extends WritableStreamCall<infer T1, infer U1>
-    ? WritableStreamCall<T1, U1>
-    : never;
+  >]: C[prop] extends WritableStreamCall<infer T1, infer U1> ? WritableStreamCall<T1, U1> : never;
 };
 
 /**

@@ -2,7 +2,7 @@
 services:
   spicedb-servetesting:
     image: quay.io/authzed/spicedb:latest
-    ports: ['50051:50051']
+    ports: ["50051:50051"]
     command: serve-testing
     healthcheck:
       test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=:50051"]

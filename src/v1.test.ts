@@ -74,8 +74,7 @@ describe("a check with an known namespace", () => {
         generateTestToken("v1-namespace"),
         "localhost:50051",
         ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-        PreconnectServices.PERMISSIONS_SERVICE |
-          PreconnectServices.SCHEMA_SERVICE,
+        PreconnectServices.PERMISSIONS_SERVICE | PreconnectServices.SCHEMA_SERVICE,
       );
 
       const request = WriteSchemaRequest.create({
@@ -154,13 +153,10 @@ describe("a check with an known namespace", () => {
               }),
             });
 
-            client.checkPermission(
-              checkPermissionRequest,
-              function (err, response) {
-                expect(err).toBe(null);
-                resolve(response);
-              },
-            );
+            client.checkPermission(checkPermissionRequest, function (err, response) {
+              expect(err).toBe(null);
+              resolve(response);
+            });
           });
         })
         .then((response) => {
@@ -269,13 +265,10 @@ describe("a check with an known namespace", () => {
                 context: Struct.fromJson({ special: true }),
               });
 
-              client.checkPermission(
-                checkPermissionRequest,
-                function (err, response) {
-                  expect(err).toBe(null);
-                  resolve(response);
-                },
-              );
+              client.checkPermission(checkPermissionRequest, function (err, response) {
+                expect(err).toBe(null);
+                resolve(response);
+              });
             });
           })
           .then((response) => {
@@ -363,11 +356,7 @@ describe("Lookup APIs", () => {
 
   it("can lookup subjects", () =>
     new Promise<void>((done, fail) => {
-      const client = NewClient(
-        token,
-        "localhost:50051",
-        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-      );
+      const client = NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
 
       const request = LookupSubjectsRequest.create({
         resource: ObjectReference.create({
@@ -387,9 +376,7 @@ describe("Lookup APIs", () => {
       const resStream = client.lookupSubjects(request);
 
       resStream.on("data", function (subject: LookupSubjectsResponse) {
-        expect(["someuser", "someuser2"]).toContain(
-          subject.subject?.subjectObjectId,
-        );
+        expect(["someuser", "someuser2"]).toContain(subject.subject?.subjectObjectId);
       });
 
       resStream.on("end", function () {
@@ -409,11 +396,7 @@ describe("Lookup APIs", () => {
 
   it("can lookup resources", () =>
     new Promise<void>((done, fail) => {
-      const client = NewClient(
-        token,
-        "localhost:50051",
-        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-      );
+      const client = NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
 
       const request = LookupResourcesRequest.create({
         subject: SubjectReference.create({
@@ -526,11 +509,7 @@ describe("Experimental Service", () => {
 
   it("can bulk import relationships", () =>
     new Promise<void>((done, fail) => {
-      const client = NewClient(
-        token,
-        "localhost:50051",
-        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-      );
+      const client = NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
 
       const writeStream = client.bulkImportRelationships((err, value) => {
         if (err) {
@@ -583,11 +562,7 @@ describe("Experimental Service", () => {
 
   it("can bulk export relationships", () =>
     new Promise<void>((done, fail) => {
-      const client = NewClient(
-        token,
-        "localhost:50051",
-        ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-      );
+      const client = NewClient(token, "localhost:50051", ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
 
       const resource = ObjectReference.create({
         objectType: "test/document",
@@ -639,35 +614,32 @@ describe("Experimental Service", () => {
           }),
         );
 
-        resStream.on(
-          "data",
-          function (response: BulkExportRelationshipsResponse) {
-            expect(response.relationships).toEqual([
-              {
-                relation: "viewer",
-                resource: {
-                  objectType: "test/document",
-                  objectId: "somedocument",
-                },
-                subject: {
-                  optionalRelation: "",
-                  object: { objectType: "test/user", objectId: "someuser" },
-                },
+        resStream.on("data", function (response: BulkExportRelationshipsResponse) {
+          expect(response.relationships).toEqual([
+            {
+              relation: "viewer",
+              resource: {
+                objectType: "test/document",
+                objectId: "somedocument",
               },
-              {
-                relation: "viewer",
-                resource: {
-                  objectType: "test/document",
-                  objectId: "somedocument",
-                },
-                subject: {
-                  optionalRelation: "",
-                  object: { objectType: "test/user", objectId: "someuser2" },
-                },
+              subject: {
+                optionalRelation: "",
+                object: { objectType: "test/user", objectId: "someuser" },
               },
-            ]);
-          },
-        );
+            },
+            {
+              relation: "viewer",
+              resource: {
+                objectType: "test/document",
+                objectId: "somedocument",
+              },
+              subject: {
+                optionalRelation: "",
+                object: { objectType: "test/user", objectId: "someuser2" },
+              },
+            },
+          ]);
+        });
 
         resStream.on("end", function () {
           client.close();
@@ -693,14 +665,10 @@ describe("Experimental Service", () => {
           testToken,
           "localhost:50051",
           ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
-          PreconnectServices.SCHEMA_SERVICE |
-            PreconnectServices.PERMISSIONS_SERVICE,
+          PreconnectServices.SCHEMA_SERVICE | PreconnectServices.PERMISSIONS_SERVICE,
         );
 
-        const writeSpy = vi.spyOn(
-          PermissionsServiceClient.prototype,
-          "writeRelationships",
-        );
+        const writeSpy = vi.spyOn(PermissionsServiceClient.prototype, "writeRelationships");
 
         const schema = `
         definition test/user {}
@@ -765,20 +733,15 @@ describe("Experimental Service", () => {
 
             expect(writeSpy).toHaveBeenCalledTimes(1);
 
-            const actualRequest = writeSpy.mock
-              .calls[0][0] as WriteRelationshipsRequest;
+            const actualRequest = writeSpy.mock.calls[0][0] as WriteRelationshipsRequest;
 
             expect(actualRequest.updates).toEqual(updates);
 
             expect(actualRequest.optionalTransactionMetadata).toBeDefined();
-            expect(actualRequest.optionalTransactionMetadata).toEqual(
-              transactionMetadata,
-            );
+            expect(actualRequest.optionalTransactionMetadata).toEqual(transactionMetadata);
 
             const transactionIdField =
-              actualRequest.optionalTransactionMetadata?.fields?.[
-                "transaction_id"
-              ];
+              actualRequest.optionalTransactionMetadata?.fields?.["transaction_id"];
             expect(transactionIdField?.kind?.oneofKind).toBe("stringValue");
             if (transactionIdField?.kind?.oneofKind === "stringValue") {
               expect(transactionIdField.kind.stringValue).toBe("test-tx-123");
@@ -849,16 +812,12 @@ describe("createStructFromObject unit tests", () => {
       struct.fields.nestedProp.kind.structValue;
     expect(nestedStruct).toBeTruthy();
     if (nestedStruct) {
-      expect(nestedStruct.fields.innerString?.kind.oneofKind).toBe(
-        "stringValue",
-      );
+      expect(nestedStruct.fields.innerString?.kind.oneofKind).toBe("stringValue");
       expect(
         nestedStruct.fields.innerString?.kind.oneofKind === "stringValue" &&
           nestedStruct.fields.innerString?.kind.stringValue,
       ).toBe("world");
-      expect(nestedStruct.fields.innerNumber?.kind.oneofKind).toBe(
-        "numberValue",
-      );
+      expect(nestedStruct.fields.innerNumber?.kind.oneofKind).toBe("numberValue");
       expect(
         nestedStruct.fields.innerNumber?.kind.oneofKind === "numberValue" &&
           nestedStruct.fields.innerNumber?.kind.numberValue,

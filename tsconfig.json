@@ -9,15 +9,8 @@
     "rootDir": "./",
     "declaration": true,
     "outDir": "./dist",
-    "typeRoots": [
-      "node_modules/@types"
-    ]
+    "typeRoots": ["node_modules/@types"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "src/**/*.test.*/*"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "src/**/*.test.*/*"]
 }

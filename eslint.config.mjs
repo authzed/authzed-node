@@ -9,32 +9,36 @@ import { FlatCompat } from "@eslint/eslintrc";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
-export default [{
+export default [
+  {
     ignores: ["src/authzedapi/**/*", "src/*.test.js"],
-}, ...compat.extends(
+  },
+  ...compat.extends(
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-), {
+  ),
+  {
     plugins: {
-        "@typescript-eslint": typescriptEslint,
+      "@typescript-eslint": typescriptEslint,
     },
 
     languageOptions: {
-        globals: {
-            ...globals.browser,
-            ...globals.commonjs,
-        },
+      globals: {
+        ...globals.browser,
+        ...globals.commonjs,
+      },
 
-        parser: tsParser,
-        ecmaVersion: 12,
-        sourceType: "script",
+      parser: tsParser,
+      ecmaVersion: 12,
+      sourceType: "script",
     },
 
     rules: {},
-}];
+  },
+];
