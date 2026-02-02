@@ -57,20 +57,21 @@ Everything required to connect and make API calls is located in a module respect
 You will have to provide a your own API Token from the [Authzed dashboard] in place of `t_your_token_here_1234567deadbeef` in the following example:
 
 ```js
-import { v1 } from '@authzed/authzed-node';
+import { v1 } from "@authzed/authzed-node";
 // if your endpoint is localhost
 // const client = v1.NewClient('t_your_token_here_1234567deadbeef', 'localhost:50051', v1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
-const client = v1.NewClient('t_your_token_here_1234567deadbeef');
+const client = v1.NewClient("t_your_token_here_1234567deadbeef");
 ```
 
 Or to use a custom certificate authority, load the CA certificate and pass the file reference to `NewClientWithCustomCert`.
-```js
-import { v1 } from '@authzed/authzed-node';
-import fs from 'fs';
 
-const endpoint = 'localhost:50051';
-const cert = fs.readFileSync('path/to/cert.pem');
-const client = v1.NewClientWithCustomCert('t_your_token_here_1234567deadbeef', endpoint, cert);
+```js
+import { v1 } from "@authzed/authzed-node";
+import fs from "fs";
+
+const endpoint = "localhost:50051";
+const cert = fs.readFileSync("path/to/cert.pem");
+const client = v1.NewClientWithCustomCert("t_your_token_here_1234567deadbeef", endpoint, cert);
 ```
 
 ### Performing an API call
@@ -80,36 +81,36 @@ Because of the verbosity of these types, we recommend writing your own functions
 The `create` method on generated classes takes attributes as input and defaults unspecified attributes to their empty value. This allows you to create request messages, for example, by specifying only relevant fields and leaves optional fields empty.
 
 ```js
-import { v1 } from '@authzed/authzed-node';
+import { v1 } from "@authzed/authzed-node";
 
-const client = v1.NewClient('token')
+const client = v1.NewClient("token");
 
 // Create the relationship between the resource and the user.
 const firstPost = v1.ObjectReference.create({
-    objectType: "blog/post",
-    objectId: "1",
+  objectType: "blog/post",
+  objectId: "1",
 });
 
 // Create the user reference.
 const emilia = v1.ObjectReference.create({
-    objectType: "blog/user",
-    objectId: "emilia",
+  objectType: "blog/user",
+  objectId: "emilia",
 });
 
 // Create the subject reference using the user reference
 const subject = v1.SubjectReference.create({
-    object: emilia,
+  object: emilia,
 });
 
 const checkPermissionRequest = v1.CheckPermissionRequest.create({
-    resource: firstPost,
-    permission: "read",
-    subject,
+  resource: firstPost,
+  permission: "read",
+  subject,
 });
 
 client.checkPermission(checkPermissionRequest, (err, response) => {
-    console.log(response);
-    console.log(err);
+  console.log(response);
+  console.log(err);
 });
 ```
 
@@ -131,9 +132,9 @@ const result = await promiseClient.checkPermission(checkPermissionRequest);
 For stream-returning methods, including `client.readRelationships()`, `client.lookupResources()` and `client.lookupSubjects()`, the promise-style method will result in an array of response objects once the stream has been closed.
 
 ```js
-import { v1 } from '@authzed/authzed-node';
+import { v1 } from "@authzed/authzed-node";
 
-const client = v1.NewClient('token');
+const client = v1.NewClient("token");
 const { promises: promiseClient } = client; // access client.promises
 
 const results = await promiseClient.readRelationships(/** req **/);
@@ -150,28 +151,28 @@ writing context will fail silently and the relations won't reflect the context.
 An example:
 
 ```js
-import { protobuf } from '@authzed/authzed-node';
+import { protobuf } from "@authzed/authzed-node";
 const { Struct } = protobuf;
 
 const writeRequest = WriteRelationshipsRequest.create({
-updates: [
-  RelationshipUpdate.create({
-    relationship: Relationship.create({
-      resource: resource,
-      relation: "caveated_viewer",
-      subject: SubjectReference.create({
-        object: testUser,
-      }),
-      optionalCaveat: ContextualizedCaveat.create({
-        caveatName: "has_special_attribute",
-        context: Struct.fromJson({
-          special: true,
+  updates: [
+    RelationshipUpdate.create({
+      relationship: Relationship.create({
+        resource: resource,
+        relation: "caveated_viewer",
+        subject: SubjectReference.create({
+          object: testUser,
+        }),
+        optionalCaveat: ContextualizedCaveat.create({
+          caveatName: "has_special_attribute",
+          context: Struct.fromJson({
+            special: true,
+          }),
         }),
       }),
+      operation: RelationshipUpdate_Operation.CREATE,
     }),
-    operation: RelationshipUpdate_Operation.CREATE,
-  }),
-],
+  ],
 });
 
 const response = await client.writeRelationships(writeRequest);

@@ -19,7 +19,7 @@ jobs:
         with:
           useLockFile: false
       - name: "Run prettier"
-        run: "CI=true yarn run prettier src -c"
+        run: "CI=true yarn run oxfmt --check"
       - name: "Run lint"
         run: "CI=true yarn lint"
       - name: "Run publint"

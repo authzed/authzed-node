@@ -120,6 +120,7 @@ You can regenerate the code by executing `buf.gen.yaml`:
 Releases are published to NPM using a GitHub action.
 
 To create a new release:
+
 1. Use the [yarn version] command to bump the package version.
 1. Create a new [release on GitHub] to initiate the release action.
 

@@ -1,7 +1,7 @@
-import { v1 } from '@authzed/authzed-node';
+import { v1 } from "@authzed/authzed-node";
 // set up it on localhost like this:
 // const client = v1.NewClient('mytokenhere', 'localhost:50051', v1.ClientSecurity.INSECURE_LOCALHOST_ALLOWED);
-const client = v1.NewClient('mytokenhere');
+const client = v1.NewClient("mytokenhere");
 const { promises: promiseClient } = client; // access client.promises after instantiating client
 
 const writeRequest = v1.WriteSchemaRequest.create({
@@ -28,14 +28,14 @@ const writeRelationshipRequest = v1.WriteRelationshipsRequest.create({
     v1.RelationshipUpdate.create({
       relationship: v1.Relationship.create({
         resource: v1.ObjectReference.create({
-          objectType: 'test/document',
-          objectId: 'somedocument',
+          objectType: "test/document",
+          objectId: "somedocument",
         }),
-        relation: 'viewer',
+        relation: "viewer",
         subject: v1.SubjectReference.create({
           object: v1.ObjectReference.create({
-            objectType: 'test/user',
-            objectId: 'fred',
+            objectType: "test/user",
+            objectId: "fred",
           }),
         }),
       }),
@@ -54,19 +54,19 @@ await new Promise((resolve, reject) => {
 // Check a permission.
 const checkPermissionRequest = v1.CheckPermissionRequest.create({
   resource: v1.ObjectReference.create({
-    objectType: 'test/document',
-    objectId: 'somedocument',
+    objectType: "test/document",
+    objectId: "somedocument",
   }),
-  permission: 'view',
+  permission: "view",
   subject: v1.SubjectReference.create({
     object: v1.ObjectReference.create({
-      objectType: 'test/user',
-      objectId: 'fred',
+      objectType: "test/user",
+      objectId: "fred",
     }),
   }),
   consistency: v1.Consistency.create({
     requirement: {
-      oneofKind: 'fullyConsistent',
+      oneofKind: "fullyConsistent",
       fullyConsistent: true,
     },
   }),
@@ -80,8 +80,7 @@ const checkResult = await new Promise((resolve, reject) => {
 });
 
 console.log(
-  checkResult.permissionship ===
-    v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION
+  checkResult.permissionship === v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION,
 );
 
 // Lookup Resources
@@ -89,20 +88,20 @@ console.log(
 const lookupResourcesRequest = v1.LookupResourcesRequest.create({
   consistency: v1.Consistency.create({
     requirement: {
-      oneofKind: 'fullyConsistent', 
+      oneofKind: "fullyConsistent",
       fullyConsistent: true,
     },
   }),
-  resourceObjectType: 'test/document', 
-  permission: 'view', 
+  resourceObjectType: "test/document",
+  permission: "view",
   subject: v1.SubjectReference.create({
     object: v1.ObjectReference.create({
-      objectType: 'test/user', 
-      objectId: 'fred', 
+      objectType: "test/user",
+      objectId: "fred",
     }),
   }),
 });
 
-const results = await promiseClient.lookupResources(lookupResourcesRequest)
+const results = await promiseClient.lookupResources(lookupResourcesRequest);
 
 console.log(results);

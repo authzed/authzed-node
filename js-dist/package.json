@@ -1,8 +1,7 @@
 {
   "name": "@authzed/authzed-js-node",
-  "author": "authzed",
   "version": "0.19.0",
-  "type": "module",
+  "private": false,
   "description": "authzed js client for nodejs",
   "keywords": [
     "authorization",
@@ -13,10 +12,11 @@
     "spicedb",
     "zanzibar"
   ],
-  "main": "src/index.js",
-  "repository": "https://github.com/authzed/authzed-node",
   "license": "Apache-2.0",
-  "private": false,
+  "author": "authzed",
+  "repository": "https://github.com/authzed/authzed-node",
+  "type": "module",
+  "main": "src/index.js",
   "scripts": {
     "test": "../scripts/run-and-test.sh",
     "only-run-tests": "vitest"

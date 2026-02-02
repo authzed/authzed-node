@@ -73,9 +73,7 @@ describe("a check following a write of schema and relationships", () => {
       }),
     });
 
-    const permissionResponse = await v1client.checkPermission(
-      checkPermissionRequest,
-    );
+    const permissionResponse = await v1client.checkPermission(checkPermissionRequest);
     expect(permissionResponse?.permissionship).toBe(
       v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION,
     );

@@ -21,10 +21,7 @@ class ComposedChannelCredentials extends grpc.ChannelCredentials {
   }
   compose(callCredentials: grpc.CallCredentials) {
     const combinedCallCredentials = this.callCreds.compose(callCredentials);
-    return new ComposedChannelCredentials(
-      this.channelCredentials,
-      combinedCallCredentials,
-    );
+    return new ComposedChannelCredentials(this.channelCredentials, combinedCallCredentials);
   }
   _isSecure(): boolean {
     return false;
@@ -120,8 +117,7 @@ function createClientCreds(
   if (
     security === ClientSecurity.SECURE ||
     security === ClientSecurity.INSECURE_PLAINTEXT_CREDENTIALS ||
-    (security === ClientSecurity.INSECURE_LOCALHOST_ALLOWED &&
-      endpoint.startsWith("localhost:"))
+    (security === ClientSecurity.INSECURE_LOCALHOST_ALLOWED && endpoint.startsWith("localhost:"))
   ) {
     creds.push(
       grpc.credentials.createFromMetadataGenerator((_, callback) => {
@@ -200,12 +196,7 @@ export function deadlineInterceptor(timeoutInMS: number): grpc.Interceptor {
 
 const authzedEndpoint = "grpc.authzed.com:443";
 
-export {
-  createClientCreds,
-  createClientCredsWithCustomCert,
-  authzedEndpoint,
-  promisifyStream,
-};
+export { createClientCreds, createClientCredsWithCustomCert, authzedEndpoint, promisifyStream };
 export default {
   createClientCreds,
   createClientCredsWithCustomCert,

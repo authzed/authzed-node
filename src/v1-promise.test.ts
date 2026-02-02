@@ -51,9 +51,7 @@ describe("a check with an unknown namespace", () => {
       await client.checkPermission(checkPermissionRequest);
       throw new Error("Error should be thrown");
     } catch (err) {
-      expect((err as grpc.ServiceError)?.code).toBe(
-        grpc.status.FAILED_PRECONDITION,
-      );
+      expect((err as grpc.ServiceError)?.code).toBe(grpc.status.FAILED_PRECONDITION);
       client.close();
     }
   });
@@ -359,9 +357,7 @@ describe("a check with an known namespace", () => {
         }),
       });
 
-      const checkResponse = await client.checkPermission(
-        checkPermissionRequest,
-      );
+      const checkResponse = await client.checkPermission(checkPermissionRequest);
       expect(checkResponse?.permissionship).toBe(
         CheckPermissionResponse_Permissionship.HAS_PERMISSION,
       );
@@ -474,9 +470,7 @@ describe("Lookup APIs", () => {
     );
 
     const result = await client.lookupSubjects(lookupSubjectRequest);
-    expect(["someuser", "someuser2"]).toContain(
-      result[0].subject?.subjectObjectId,
-    );
+    expect(["someuser", "someuser2"]).toContain(result[0].subject?.subjectObjectId);
     client.close();
   });
 
@@ -505,9 +499,7 @@ describe("Lookup APIs", () => {
       new grpc.Metadata(),
       {} as grpc.CallOptions,
     );
-    expect(["someuser", "someuser2"]).toContain(
-      result[0].subject?.subjectObjectId,
-    );
+    expect(["someuser", "someuser2"]).toContain(result[0].subject?.subjectObjectId);
 
     const resStream = await client.lookupResources(
       lookupResourceRequest,
