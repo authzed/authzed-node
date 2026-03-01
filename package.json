@@ -53,20 +53,20 @@
     "@grpc/grpc-js": "^1.14.3",
     "@protobuf-ts/runtime": "^2.11.1",
     "@protobuf-ts/runtime-rpc": "^2.11.1",
-    "google-protobuf": "^4.0.1"
+    "google-protobuf": "^4.0.2"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.2",
+    "@eslint/eslintrc": "^3.3.4",
+    "@eslint/js": "^10.0.1",
     "@protobuf-ts/plugin": "^2.11.1",
     "@tsconfig/node18": "^18.2.6",
-    "@typescript-eslint/eslint-plugin": "^8.54.0",
-    "@typescript-eslint/parser": "^8.54.0",
-    "eslint": "^9.39.2",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "eslint": "^10.0.2",
     "grpc-tools": "^1.13.1",
-    "oxfmt": "^0.28.0",
+    "oxfmt": "^0.35.0",
     "publint": "^0.3.17",
-    "rollup": "^4.57.1",
+    "rollup": "^4.59.0",
     "tsc-esm-fix": "^3.1.2",
     "typescript": "^5.9",
     "vitest": "^4.0.18"
