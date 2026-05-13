@@ -74,7 +74,7 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     options: grpc.ClientOptions | undefined,
   ) {
     this.options = {
-      ...(options ?? {}),
+      ...options,
       interceptors: [
         ...(options?.interceptors ?? []),
 
@@ -308,7 +308,7 @@ export function NewClient(
   endpoint = util.authzedEndpoint,
   security: ClientSecurity = ClientSecurity.SECURE,
   preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE,
-  options: grpc.ClientOptions | undefined = undefined,
+  options?: grpc.ClientOptions,
 ) {
   const creds = util.createClientCreds(endpoint, token, security);
   return NewClientWithChannelCredentials(endpoint, creds, preconnect, options);
@@ -328,7 +328,7 @@ export function NewClientWithCustomCert(
   endpoint = util.authzedEndpoint,
   certificate: Buffer,
   preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE,
-  options: grpc.ClientOptions | undefined = undefined,
+  options?: grpc.ClientOptions,
 ) {
   const creds = util.createClientCredsWithCustomCert(token, certificate);
   return NewClientWithChannelCredentials(endpoint, creds, preconnect, options);
@@ -354,7 +354,7 @@ export function NewClientWithChannelCredentials(
   endpoint = util.authzedEndpoint,
   creds: grpc.ChannelCredentials,
   preconnect: PreconnectServices = PreconnectServices.PERMISSIONS_SERVICE,
-  options: grpc.ClientOptions | undefined = undefined,
+  options?: grpc.ClientOptions,
 ): ZedClientInterface {
   return ZedCombinedClient.create(endpoint, creds, preconnect, options);
 }

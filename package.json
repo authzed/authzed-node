@@ -41,13 +41,14 @@
     "test": "./scripts/run-and-test.sh",
     "only-run-tests": "vitest",
     "buf": "buf generate && tsc-esm-fix --src src/authzedapi --ext='.js'",
-    "lint": "./node_modules/.bin/eslint src",
-    "lint:package": "publint --pack npm",
-    "format": "oxfmt",
-    "build": "tsc",
+    "lint": "pnpm oxlint --type-check --type-aware",
+    "lint:package": "pnpm publint --pack npm",
+    "format": "pnpm oxfmt",
+    "format:check": "pnpm oxfmt --check",
+    "build": "pnpm tsc",
     "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs && cp dist/src/index.d.ts dist/src/index.d.cts",
-    "prepublish": "yarn build",
-    "build-js-client": "tsc --declaration false --outDir js-dist"
+    "prepublish": "pnpm build",
+    "build-js-client": "pnpm tsc --declaration false --outDir js-dist"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.14.3",
@@ -56,19 +57,17 @@
     "google-protobuf": "^4.0.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.2",
     "@protobuf-ts/plugin": "^2.11.1",
     "@tsconfig/node18": "^18.2.6",
-    "@typescript-eslint/eslint-plugin": "^8.54.0",
-    "@typescript-eslint/parser": "^8.54.0",
-    "eslint": "^9.39.2",
     "grpc-tools": "^1.13.1",
     "oxfmt": "^0.28.0",
+    "oxlint": "^1.64.0",
+    "oxlint-tsgolint": "^0.22.1",
     "publint": "^0.3.17",
     "rollup": "^4.57.1",
     "tsc-esm-fix": "^3.1.2",
     "typescript": "^5.9",
     "vitest": "^4.0.18"
-  }
+  },
+  "packageManager": "pnpm@11.1.1"
 }

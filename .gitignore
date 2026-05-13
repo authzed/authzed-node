@@ -1,12 +1,4 @@
 node_modules
 dist
 
-# Because of how node's dependency management works,
-# and the fact that a lockfile in a published package
-# isn't exported, keeping these files out of the repo
-# will make our tests reflect installed usage more closely.
-yarn.lock
-package-lock.json
-js-dist/yarn.lock
-js-dist/package-lock.json
 js-dist/src

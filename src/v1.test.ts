@@ -87,7 +87,7 @@ describe("a check with an known namespace", () => {
       `,
       });
 
-      new Promise((resolve) => {
+      void new Promise((resolve) => {
         client.writeSchema(request, function (err, response) {
           expect(err).toBe(null);
           resolve(response);
@@ -195,7 +195,7 @@ describe("a check with an known namespace", () => {
       `,
         });
 
-        new Promise((resolve) => {
+        void new Promise((resolve) => {
           client.writeSchema(request, function (err, response) {
             expect(err).toBe(null);
             resolve(response);
