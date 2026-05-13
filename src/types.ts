@@ -44,9 +44,9 @@ export type StreamCall<T, U> = (
  * Matches a gRPC method that returns a ClientWritableStream
  */
 export type WritableStreamCall<T, U> = (
-  metadata: Metadata | CallOptions | ((err: ServiceError | null, value?: U | undefined) => void),
-  options?: CallOptions | ((err: ServiceError | null, value?: U | undefined) => void) | undefined,
-  callback?: (err: ServiceError | null, value?: U | undefined) => void | undefined,
+  metadata: Metadata | CallOptions | ((err: ServiceError | null, value?: U) => void),
+  options?: CallOptions | ((err: ServiceError | null, value?: U) => void),
+  callback?: (err: ServiceError | null, value?: U) => void | undefined,
 ) => ClientWritableStream<T>;
 
 /**

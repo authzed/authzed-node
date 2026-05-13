@@ -29,7 +29,7 @@ jobs:
     runs-on: "depot-ubuntu-24.04-small"
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [22, 24, 26]
     needs: "paths-filter"
     if: |
       needs.paths-filter.outputs.codechange == 'true'
@@ -41,19 +41,18 @@ jobs:
       - uses: "actions/setup-node@v6"
         with:
           node-version: ${{ matrix.node-version }}
-          cache-dependency-path: ./package.json
-          cache: "yarn"
-      - uses: "bahmutov/npm-install@v1"
+      - uses: "pnpm/action-setup@v6"
         with:
-          useLockFile: false
-      - name: Run Yarn tests
-        run: "CI=true yarn only-run-tests"
+          cache: true
+          run_install: true
+      - name: Run tests
+        run: "CI=true pnpm only-run-tests"
   build-js-client:
     name: "Build and Test JS client"
     runs-on: "depot-ubuntu-24.04-small"
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [22, 24, 26]
     needs: "paths-filter"
     if: |
       needs.paths-filter.outputs.codechange == 'true'
@@ -65,20 +64,15 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache-dependency-path: ./package.json
-          cache: "yarn"
-      - uses: bahmutov/npm-install@v1
+      - uses: "pnpm/action-setup@v6"
         with:
-          useLockFile: false
+          cache: true
+          run_install: true
       - name: Run build
-        run: yarn build-js-client
+        run: pnpm build-js-client
         working-directory: ./
-      - uses: bahmutov/npm-install@v1
-        with:
-          useLockFile: false
-          working-directory: ./js-dist
       - name: Run tests
-        run: CI=true yarn only-run-tests
+        run: CI=true pnpm only-run-tests
         working-directory: ./js-dist
       - uses: actions/upload-artifact@v6
         with:
