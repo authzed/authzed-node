@@ -20,7 +20,7 @@ jobs:
           filters: |
             codechange:
               - src/**
-              - .github/workflows/authzed-node.yaml
+              - .github/workflows/test.yaml
               - package.json
               - js-dist/package.json
               - buf.gen.yaml
@@ -80,3 +80,16 @@ jobs:
           path: |
             js-dist/**
             !js-dist/node_modules/**
+  # NOTE: this is the single required status check for this workflow. Matrix
+  # jobs that are skipped via a job-level `if` never expand, so their per-entry
+  # checks (e.g. "Test (22)") would otherwise sit at pending forever.
+  tests-passed:
+    name: "Tests Passed"
+    runs-on: "depot-ubuntu-24.04-small"
+    needs: ["paths-filter", "test", "build-js-client"]
+    if: always()
+    steps:
+      - uses: "re-actors/alls-green@v1.2.2"
+        with:
+          allowed-skips: "test, build-js-client"
+          jobs: "${{ toJSON(needs) }}"
