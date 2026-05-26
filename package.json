@@ -47,7 +47,7 @@
     "format:check": "pnpm oxfmt --check",
     "build": "pnpm tsc",
     "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs && cp dist/src/index.d.ts dist/src/index.d.cts",
-    "prepublish": "pnpm build",
+    "prepublishOnly": "pnpm build",
     "build-js-client": "pnpm tsc --declaration false --outDir js-dist"
   },
   "dependencies": {
