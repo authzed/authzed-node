@@ -34,7 +34,7 @@ jobs:
         if: steps.buf-update.outputs.updated == 'true'
       - name: "Run buf generate"
         if: steps.buf-update.outputs.updated == 'true'
-        run: "pnpm run buf"
+        run: "pnpm buf"
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v8.1.0
         if: steps.buf-update.outputs.updated == 'true'
