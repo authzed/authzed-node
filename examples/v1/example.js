@@ -15,12 +15,7 @@ const writeRequest = v1.WriteSchemaRequest.create({
 });
 
 // Write a schema.
-await new Promise((resolve, reject) => {
-  client.writeSchema(writeRequest, function (err, response) {
-    if (err) reject(err);
-    resolve(response);
-  });
-});
+await promiseClient.writeSchema(writeRequest);
 
 // Write a relationship.
 const writeRelationshipRequest = v1.WriteRelationshipsRequest.create({
@@ -44,12 +39,7 @@ const writeRelationshipRequest = v1.WriteRelationshipsRequest.create({
   ],
 });
 
-await new Promise((resolve, reject) => {
-  client.writeRelationships(writeRelationshipRequest, function (err, response) {
-    if (err) reject(err);
-    resolve(response);
-  });
-});
+await promiseClient.writeRelationships(writeRelationshipRequest);
 
 // Check a permission.
 const checkPermissionRequest = v1.CheckPermissionRequest.create({
@@ -72,12 +62,7 @@ const checkPermissionRequest = v1.CheckPermissionRequest.create({
   }),
 });
 
-const checkResult = await new Promise((resolve, reject) => {
-  client.checkPermission(checkPermissionRequest, function (err, response) {
-    if (err) reject(err);
-    resolve(response);
-  });
-});
+const checkResult = await promiseClient.checkPermission(checkPermissionRequest);
 
 console.log(
   checkResult.permissionship === v1.CheckPermissionResponse_Permissionship.HAS_PERMISSION,
@@ -105,3 +90,46 @@ const lookupResourcesRequest = v1.LookupResourcesRequest.create({
 const results = await promiseClient.lookupResources(lookupResourcesRequest);
 
 console.log(results);
+
+// Read all relationships for a resource type, optionally filtered by relation
+// and/or a specific resource ID. ReadRelationships is a server-streaming RPC;
+// the promise client buffers the stream and returns all results as an array.
+const readRelationshipsRequest = v1.ReadRelationshipsRequest.create({
+  consistency: v1.Consistency.create({
+    requirement: {
+      oneofKind: "fullyConsistent",
+      fullyConsistent: true,
+    },
+  }),
+  relationshipFilter: v1.RelationshipFilter.create({
+    resourceType: "test/document",
+    optionalResourceId: "somedocument",
+    optionalRelation: "viewer",
+  }),
+});
+
+const readRelationshipsResult = await promiseClient.readRelationships(readRelationshipsRequest);
+
+console.log(readRelationshipsResult);
+
+// Delete relationships matching a filter. Note that DeleteRelationships takes
+// a RelationshipFilter, not a Relationship — to delete a single specific
+// relationship, fill in resourceType, optionalResourceId, optionalRelation,
+// and optionalSubjectFilter so the filter matches exactly one row.
+const deleteRelationshipsRequest = v1.DeleteRelationshipsRequest.create({
+  relationshipFilter: v1.RelationshipFilter.create({
+    resourceType: "test/document",
+    optionalResourceId: "somedocument",
+    optionalRelation: "viewer",
+    optionalSubjectFilter: v1.SubjectFilter.create({
+      subjectType: "test/user",
+      optionalSubjectId: "fred",
+    }),
+  }),
+});
+
+const deleteRelationshipsResult = await promiseClient.deleteRelationships(
+  deleteRelationshipsRequest,
+);
+
+console.log(deleteRelationshipsResult);
