@@ -1,0 +1,7 @@
+{
+  // Build config for the published package: excludes test files from dist/.
+  // `extends` REPLACES the base exclude array (it does not merge), so
+  // "node_modules" must be re-listed here alongside the test glob.
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "src/**/*.test.*"]
+}

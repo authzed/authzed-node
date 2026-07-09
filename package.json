@@ -45,7 +45,7 @@
     "lint:package": "pnpm publint --pack npm",
     "format": "pnpm oxfmt",
     "format:check": "pnpm oxfmt --check",
-    "build": "pnpm tsc",
+    "build": "pnpm tsc -p tsconfig.build.json",
     "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs && cp dist/src/index.d.ts dist/src/index.d.cts",
     "prepublishOnly": "pnpm build",
     "build-js-client": "pnpm tsc --declaration false --outDir js-dist"
