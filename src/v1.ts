@@ -74,6 +74,10 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     options: grpc.ClientOptions | undefined,
   ) {
     this.options = {
+      // Default to disabling gRPC retries to avoid unrecoverable failures
+      // through envoy/istio (see #112). Placed before ...options so callers can
+      // re-enable retries by passing "grpc.enable_retries" explicitly.
+      "grpc.enable_retries": 0,
       ...options,
       interceptors: [
         ...(options?.interceptors ?? []),
@@ -85,26 +89,30 @@ class ZedClient implements ProxyHandler<ZedDefaultClientInterface> {
     };
 
     if (preconnect & PreconnectServices.PERMISSIONS_SERVICE) {
-      this.acl = new PermissionsServiceClient(this.endpoint, this.creds, options);
+      this.acl = new PermissionsServiceClient(this.endpoint, this.creds, this.options);
     }
     if (preconnect & PreconnectServices.SCHEMA_SERVICE) {
-      this.ns = new SchemaServiceClient(this.endpoint, this.creds, options);
+      this.ns = new SchemaServiceClient(this.endpoint, this.creds, this.options);
     }
     if (preconnect & PreconnectServices.WATCH_SERVICE) {
-      this.watch = new WatchServiceClient(this.endpoint, this.creds, options);
+      this.watch = new WatchServiceClient(this.endpoint, this.creds, this.options);
     }
     if (preconnect & PreconnectServices.WATCH_PERMISSIONS_SERVICE) {
-      this.watchPermissions = new WatchPermissionsServiceClient(this.endpoint, this.creds, options);
+      this.watchPermissions = new WatchPermissionsServiceClient(
+        this.endpoint,
+        this.creds,
+        this.options,
+      );
     }
     if (preconnect & PreconnectServices.WATCH_PERMISSIONSETS_SERVICE) {
       this.watchPermissionSets = new WatchPermissionSetsServiceClient(
         this.endpoint,
         this.creds,
-        options,
+        this.options,
       );
     }
     if (preconnect & PreconnectServices.EXPERIMENTAL_SERVICE) {
-      this.experimental = new ExperimentalServiceClient(this.endpoint, this.creds, options);
+      this.experimental = new ExperimentalServiceClient(this.endpoint, this.creds, this.options);
     }
   }
 

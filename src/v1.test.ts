@@ -859,3 +859,38 @@ describe("createStructFromObject unit tests", () => {
     );
   });
 });
+
+describe("gRPC retry default (#200)", () => {
+  // Capture the channel options the client actually applies, via grpc-js's
+  // channelFactoryOverride hook (called with the final merged options).
+  function capturedChannelOptions(extra?: grpc.ClientOptions): grpc.ChannelOptions {
+    let captured: grpc.ChannelOptions = {};
+    const client = NewClient(
+      "tok",
+      "localhost:50051",
+      ClientSecurity.INSECURE_LOCALHOST_ALLOWED,
+      PreconnectServices.PERMISSIONS_SERVICE,
+      {
+        ...extra,
+        channelFactoryOverride: (
+          address: string,
+          creds: grpc.ChannelCredentials,
+          options: grpc.ChannelOptions,
+        ) => {
+          captured = options;
+          return new grpc.Channel(address, creds, options);
+        },
+      } as grpc.ClientOptions,
+    );
+    client.close();
+    return captured;
+  }
+
+  it("disables retries by default", () => {
+    expect(capturedChannelOptions()["grpc.enable_retries"]).toBe(0);
+  });
+
+  it("lets the caller re-enable retries", () => {
+    expect(capturedChannelOptions({ "grpc.enable_retries": 1 })["grpc.enable_retries"]).toBe(1);
+  });
+});
