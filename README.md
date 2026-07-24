@@ -114,6 +114,25 @@ client.checkPermission(checkPermissionRequest, (err, response) => {
 });
 ```
 
+### Optional fields
+
+Many fields in the API are documented as optional (and are often named `optional*`), but scalar fields are not marked optional in the generated TypeScript types. This is expected: the API's Protobuf definitions do not use proto3 `optional`, following the Protobuf convention of treating absent values and zero values as equivalent, and `protobuf-ts` generates those fields as required.
+
+Leaving such a field "unset" means setting it to its zero value: `""` for strings, `0` for numbers, `false` for booleans, and `[]` for repeated fields. Message-typed fields are the exception; they are generated as optional properties and can be left `undefined`.
+
+Rather than spelling out zero values by hand, use the `create` method as shown above: any fields not passed to `create` are filled in with their zero values.
+
+```js
+import { v1 } from "@authzed/authzed-node";
+
+// optionalResourceId, optionalResourceIdPrefix and optionalRelation
+// default to "", and optionalSubjectFilter to undefined, all of which
+// the API treats as unset.
+const filter = v1.RelationshipFilter.create({
+  resourceType: "blog/post",
+});
+```
+
 ### Promises (async/await) support
 
 Each method available in the client has an associated promise-style method in place of callbacks, that can be accessed at the `.promises` property on the client.
