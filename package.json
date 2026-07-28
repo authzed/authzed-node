@@ -25,6 +25,13 @@
   "main": "dist/src/index.cjs",
   "module": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "v1": [
+        "./dist/src/v1.d.ts"
+      ]
+    }
+  },
   "exports": {
     "./package.json": "./package.json",
     ".": {
@@ -35,6 +42,15 @@
       },
       "require": "./dist/src/index.cjs",
       "import": "./dist/src/index.js"
+    },
+    "./v1": {
+      "types": {
+        "import": "./dist/src/v1.d.ts",
+        "require": "./dist/src/v1.d.cts",
+        "default": "./dist/src/v1.d.ts"
+      },
+      "require": "./dist/src/v1.cjs",
+      "import": "./dist/src/v1.js"
     }
   },
   "scripts": {
@@ -46,7 +62,7 @@
     "format": "pnpm oxfmt",
     "format:check": "pnpm oxfmt --check",
     "build": "pnpm tsc",
-    "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs && cp dist/src/index.d.ts dist/src/index.d.cts",
+    "postbuild": "rollup dist/src/index.js --file dist/src/index.cjs --format cjs && cp dist/src/index.d.ts dist/src/index.d.cts && rollup dist/src/v1.js --file dist/src/v1.cjs --format cjs && cp dist/src/v1.d.ts dist/src/v1.d.cts",
     "prepublishOnly": "pnpm build",
     "build-js-client": "pnpm tsc --declaration false --outDir js-dist"
   },

@@ -63,6 +63,14 @@ import { v1 } from "@authzed/authzed-node";
 const client = v1.NewClient("t_your_token_here_1234567deadbeef");
 ```
 
+Each API version is also available as a subpath export, so its members can be imported directly:
+
+```js
+import { NewClient, ClientSecurity } from "@authzed/authzed-node/v1";
+
+const client = NewClient("t_your_token_here_1234567deadbeef");
+```
+
 Or to use a custom certificate authority, load the CA certificate and pass the file reference to `NewClientWithCustomCert`.
 
 ```js
