@@ -343,6 +343,20 @@ export interface DeleteRelationshipsRequest {
      * @generated from protobuf field: google.protobuf.Struct optional_transaction_metadata = 5;
      */
     optionalTransactionMetadata?: Struct;
+    /**
+     * optional_cursor, if specified, indicates the cursor after which deletion should resume. It is used to
+     * continue a batched, partial deletion where a previous call left off, by passing back the
+     * after_result_cursor returned on the previous DeleteRelationshipsResponse.
+     *
+     * A cursor allows a large deletion to be performed as a series of calls without re-examining the
+     * relationships already deleted by earlier calls. It therefore requires optional_limit and
+     * optional_allow_partial_deletions to be set, and is only supported by datastores whose deletion can be
+     * ordered and resumed; datastores that do not support cursored deletion will return an error if a cursor
+     * is provided.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor optional_cursor = 6;
+     */
+    optionalCursor?: Cursor;
 }
 /**
  * @generated from protobuf message authzed.api.v1.DeleteRelationshipsResponse
@@ -366,6 +380,16 @@ export interface DeleteRelationshipsResponse {
      * @generated from protobuf field: uint64 relationships_deleted_count = 3;
      */
     relationshipsDeletedCount: string;
+    /**
+     * after_result_cursor holds a cursor that can be used to resume the deletion after the relationships
+     * deleted by this call, by supplying it as the optional_cursor on a subsequent DeleteRelationshipsRequest.
+     *
+     * It is populated only when deletion_progress is DELETION_PROGRESS_PARTIAL and the datastore supports
+     * cursored deletion; it is unset once DELETION_PROGRESS_COMPLETE is returned.
+     *
+     * @generated from protobuf field: authzed.api.v1.Cursor after_result_cursor = 4;
+     */
+    afterResultCursor?: Cursor;
 }
 /**
  * @generated from protobuf enum authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress
@@ -1625,7 +1649,8 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
             { no: 2, name: "optional_preconditions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Precondition, options: { "validate.rules": { repeated: { items: { message: { required: true } } } } } },
             { no: 3, name: "optional_limit", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { gte: 0 } }, "validate.rules": { uint32: { gte: 0 } } } },
             { no: 4, name: "optional_allow_partial_deletions", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "optional_transaction_metadata", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } }
+            { no: 5, name: "optional_transaction_metadata", kind: "message", T: () => Struct, options: { "buf.validate.field": { required: false }, "validate.rules": { message: { required: false } } } },
+            { no: 6, name: "optional_cursor", kind: "message", T: () => Cursor }
         ]);
     }
     create(value?: PartialMessage<DeleteRelationshipsRequest>): DeleteRelationshipsRequest {
@@ -1655,6 +1680,9 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
                 case /* google.protobuf.Struct optional_transaction_metadata */ 5:
                     message.optionalTransactionMetadata = Struct.internalBinaryRead(reader, reader.uint32(), options, message.optionalTransactionMetadata);
                     break;
+                case /* authzed.api.v1.Cursor optional_cursor */ 6:
+                    message.optionalCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.optionalCursor);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1682,6 +1710,9 @@ class DeleteRelationshipsRequest$Type extends MessageType<DeleteRelationshipsReq
         /* google.protobuf.Struct optional_transaction_metadata = 5; */
         if (message.optionalTransactionMetadata)
             Struct.internalBinaryWrite(message.optionalTransactionMetadata, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* authzed.api.v1.Cursor optional_cursor = 6; */
+        if (message.optionalCursor)
+            Cursor.internalBinaryWrite(message.optionalCursor, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1698,7 +1729,8 @@ class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsRe
         super("authzed.api.v1.DeleteRelationshipsResponse", [
             { no: 1, name: "deleted_at", kind: "message", T: () => ZedToken },
             { no: 2, name: "deletion_progress", kind: "enum", T: () => ["authzed.api.v1.DeleteRelationshipsResponse.DeletionProgress", DeleteRelationshipsResponse_DeletionProgress, "DELETION_PROGRESS_"] },
-            { no: 3, name: "relationships_deleted_count", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 3, name: "relationships_deleted_count", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "after_result_cursor", kind: "message", T: () => Cursor }
         ]);
     }
     create(value?: PartialMessage<DeleteRelationshipsResponse>): DeleteRelationshipsResponse {
@@ -1722,6 +1754,9 @@ class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsRe
                 case /* uint64 relationships_deleted_count */ 3:
                     message.relationshipsDeletedCount = reader.uint64().toString();
                     break;
+                case /* authzed.api.v1.Cursor after_result_cursor */ 4:
+                    message.afterResultCursor = Cursor.internalBinaryRead(reader, reader.uint32(), options, message.afterResultCursor);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1743,6 +1778,9 @@ class DeleteRelationshipsResponse$Type extends MessageType<DeleteRelationshipsRe
         /* uint64 relationships_deleted_count = 3; */
         if (message.relationshipsDeletedCount !== "0")
             writer.tag(3, WireType.Varint).uint64(message.relationshipsDeletedCount);
+        /* authzed.api.v1.Cursor after_result_cursor = 4; */
+        if (message.afterResultCursor)
+            Cursor.internalBinaryWrite(message.afterResultCursor, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
