@@ -15,6 +15,8 @@ jobs:
       - uses: "actions/setup-node@v6"
         with:
           node-version: "24"
+          # This is as opposed to other package registries
+          registry-url: "https://registry.npmjs.org"
       - uses: "pnpm/action-setup@v6"
         with:
           cache: true
@@ -28,11 +30,10 @@ jobs:
       # NOTE: the flag is necessary because otherwise `npm version <version>` attempts to
       # cut a git tag with that version, which fails because the git user isn't configured.
       - run: "npm version ${VERSION} --no-git-tag-version"
-      - uses: JS-DevTools/npm-publish@v4
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          tag: ${{ steps.get_version.outputs.version }}
-          access: public
+      - name: Publish to NPM
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   # NOTE: this publishes an alternate version that doesn't depend on protobuf-ts/runtime
   publish-js-client:
     name: Publish JS client to NPM
@@ -42,6 +43,7 @@ jobs:
       - uses: "actions/setup-node@v6"
         with:
           node-version: "24"
+          registry-url: "https://registry.npmjs.org"
       - uses: "pnpm/action-setup@v6"
         with:
           cache: true
@@ -58,10 +60,8 @@ jobs:
       # cut a git tag with that version, which fails because the git user isn't configured.
       - run: "npm version ${VERSION} --no-git-tag-version"
         working-directory: ./js-dist
-      - uses: JS-DevTools/npm-publish@v4
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-          tag: ${{ steps.get_version.outputs.version }}
-          # Point at the js-dist directory as the working directory
-          package: js-dist
-          access: public
+      - name: Publish JS client to NPM
+        run: npm publish --access public
+        working-directory: ./js-dist
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
